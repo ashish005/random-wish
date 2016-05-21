@@ -8,9 +8,8 @@
     var app = angular.module(appName, ['ui.bootstrap']);
     var _rootPath = './app/';
 
-    function config($routeProvider) {
+    function config($routeProvider) {}
 
-    }
     function angularHelper( $controllerProvider, $provide, $compileProvider ) {
         // Let's keep the older references.
         app._controller = app.controller;
@@ -49,17 +48,16 @@
         };
     }
 
-    function ideController($scope){
-    };
+    function ideController($scope){};
 
     function landingScrollspy(){
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
-                element.scrollspy({
+                /*element.scrollspy({
                     target: '.navbar-fixed-top',
                     offset: 80
-                });
+                });*/
             }
         }
     }
@@ -104,7 +102,7 @@
             app.constant('appMenu', resp['data']['menu']);
             app.constant('appInfo', resp['data']['app']);
             app.constant('userInfo', resp['data']['user']);
-            document.body.innerHTML='<div><div ide-header></div><div landing-scrollspy ng-view ng-controller="ideController" ide-home> </div></div>';
+            document.body.innerHTML='<div ng-controller="ideController as main" landing-scrollspy id="page-top"><div ide-header></div><div id="wrapper" ng-view ide-home></div></div>';
             angular.bootstrap(document, [appName]);
         }, function (error) {
             throw new Error('Config file has error : ' + error);
