@@ -1,0 +1,92 @@
+<div class="row border-bottom">
+    <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header" style="margin-left: 20px; margin-right: -4px; margin-top: 5px;">
+            <a class="navbar-minimalize btn btn-primary" href="#"><i class="fa fa-bars"></i> {{appInfo["appName"]}} </a>
+        </div>
+        <div class="clear">
+            <div class="navbar-header">
+            <div id='cssmenu'>
+                <ul>
+                    <li ng-repeat="items in menuInfo track by $index">
+                        <a ><span case="{{items['case']}}" key="{{items['key']}}">{{items["text"]}}</span></a>
+                        <ul ng-if="items['child'].length>0">
+                            <li class='has-sub' ng-repeat="itemChilds in items['child'] track by $index">
+                                <a ><span case="{{itemChilds['case']}}" key="{{itemChilds['key']}}">{{itemChilds["text"]}}</span></a>
+                                <ul ng-if="itemChilds['child'].length>0">
+                                    <li class='has-sub' ng-repeat="childs in itemChilds['child'] track by $index">
+                                        <a><span case="{{childs['case']}}" key="{{childs['key']}}">{{childs["text"]}}</span></a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+            <ul class="nav navbar-top-links navbar-right">
+            <li class="dropdown">
+                <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+                    <i class="fa fa-envelope"></i>  <span class="label label-warning">16</span>
+                </a>
+            </li>
+            <li class="dropdown">
+                <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+                    <i class="fa fa-bell"></i>  <span class="label label-primary">8</span>
+                </a>
+            </li>
+            <li>
+                <a href="login.html">
+                    <i class="fa fa-sign-out"></i> Log out
+                </a>
+            </li>
+            <li class="dropdown">
+                <div class="dropdown profile-element">
+                    <span>
+                        <img alt="image" class="img-circle" ng-src="{{userInfo['pic']}}">
+                     </span>
+                </div>
+            </li>
+            <li>
+                <a class="right-sidebar-toggle">
+                    <i class="fa fa-tasks"></i>
+                </a>
+            </li>
+        </ul>
+        </div>
+        <div class="clear">
+            <div class="navbar-header" style="width: 70%; min-width: 500px;">
+                <form role="search" class="ng-pristine ng-valid" action="search_results.html">
+                    <div class="form-group" style="margin: 5px 0 0 10px;">
+                        <input type="text" placeholder="Search for something..." class="form-control" name="top-search" id="top-search">
+                    </div>
+                </form>
+            </div>
+            <ul class="nav navbar-top-links navbar-right">
+                <li>
+                    <span class="m-r-sm text-muted welcome-message"></span>
+                </li>
+                <li>
+                    <div id="run_ideCode">
+                        <a class="right-sidebar-toggle">
+                            <i class="fa fa-play"></i>
+                        </a>
+                    </div>
+                </li>
+                <li>
+                    <a class="right-sidebar-toggle">
+                        <i class="fa fa-search"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+<style>
+    .navbar{
+        min-height: 30px;
+    }
+    .navbar-top-links li a {
+        padding: 10px 10px;
+        min-height: 30px;
+    }
+</style>

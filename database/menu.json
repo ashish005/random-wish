@@ -1,0 +1,208 @@
+[
+  { 
+    "id": 1, "text":"File", "order":1,
+    "child":
+      [
+        { "id": 1, "text":"New Project...", "order":1, "case":1, "key":"new-project", "child":[]},
+        { "id": 1, "text":"New...", "order":1, "case":1, "key":"new", "child":[]},
+        { "id": 1, "text":"Open...", "order":1, "case":1, "key":"open", "child":[]},
+        { "id": 1, "text":"Open URL...", "order":1, "case":1, "key":"open-url", "child":[]},
+        { "id": 1, "text":"Save As..", "order":1, "key":"save-as", "child":[]},
+        { 
+          "id": 1, "text":"Reopen Project", "order":1, "key":"reopen-project",
+          "child":
+          [
+            { "id": 1, "text":"Clear List", "order":1, "child":[]}
+          ]
+        },
+        { "id": 1, "text":"Close Project", "order":1, "key":"close-project", "child":[]},
+        { "id": 1, "text":"Rename Project...", "order":1, "key":"rename-project", "child":[]}
+    ]
+  },
+  {
+  "id": 2, "text":"Edit", "order":1,
+  "child": [
+    {
+      "id": 1, "text":"Undo Typing", "order":1,
+      "child":[
+
+      ]
+    },
+    {
+      "id": 2, "text":"Redo", "order":1,
+      "child":[
+
+      ]
+    }
+  ]
+  },
+  {
+    "id": 3, "text":"View", "order":1,
+    "child": [
+      {
+        "id": 1, "text":"Tool Windows", "order":1,
+        "child":[]
+      },
+      {
+        "id": 2, "text":"Quick Definition", "order":1,
+        "child":[]
+      }
+    ]
+  },
+  {
+    "id": 4, "text":"Navigate", "order":1,
+    "child": [
+      {
+        "id": 1, "text":"Class...", "order":1,
+        "child":[]
+      },
+      {
+        "id": 2, "text":"File...", "order":1,
+        "child":[]
+      }
+    ]
+  },
+  {
+    "id": 5, "text":"Code", "order":1,
+    "child": [
+      {
+        "id": 1, "text":"Override Methods...", "order":1,
+        "child":[]
+      },
+      {
+        "id": 2, "text":"Implement Methods...", "order":1,
+        "child":[]
+      }
+    ]
+  },
+  {
+    "id": 6, "text":"Refactor", "order":1,
+    "child": [
+      {
+        "id": 1, "text":"Refactor this...", "order":1,
+        "child":[]
+      },
+      {
+        "id": 2, "text":"Rename...", "order":1,
+        "child":[]
+      },
+      {
+        "id": 3, "text":"Move...", "order":1,
+        "child":[]
+      },
+      {
+        "id": 4, "text":"Copy...", "order":1,
+        "child":[]
+      },
+      {
+        "id": 5, "text":"Safe Delete...", "order":1,
+        "child":[]
+      },
+      {
+        "id": 6, "text":"Extract", "order":1,
+        "child":[]
+      }
+    ]
+  },
+  {
+    "id": 7, "text":"Run", "order":1,
+    "child": [
+      {
+        "id": 1, "text":"Run", "order":1,
+        "child":[]
+      },
+      {
+        "id": 2, "text":"Debug", "order":1,
+        "child":[]
+      },
+      {
+        "id": 2, "text":"Run With Coverage", "order":1,
+        "child":[]
+      }
+    ]
+  },
+  {
+    "id": 8, "text":"Tools", "order":1,
+    "child": [
+      {
+        "id": 1, "text":"Tasks and Contexts", "order":1,
+        "child":[]
+      },
+      {
+        "id": 2, "text":"Save File as Template...", "order":1,
+        "child":[]
+      },
+      {
+        "id": 2, "text":"New Scratch File", "order":1,
+        "child":[]
+      },
+      {
+        "id": 2, "text":"Deployment", "order":1,
+        "child":[]
+      },
+      {
+        "id": 2, "text":"V8 Profiling", "order":1,
+        "child":[]
+      }
+    ]
+  },
+  {
+    "id": 9, "text":"VCS", "order":1,
+    "child": [
+      {
+        "id": 1, "text":"Local History", "order":1,
+        "child":[]
+      },
+      {
+        "id": 2, "text":"Enable Version Control Integration...", "order":1,
+        "child":[]
+      },
+      {
+        "id": 3, "text":"VCS Operations Popup...", "order":1,
+        "child":[]
+      },
+      {
+        "id": 4, "text":"Apply Patch...", "order":1,
+        "child":[]
+      },
+      {
+        "id": 5, "text":"Checkout from Version Control", "order":1,
+        "child":[]
+      },
+      {
+        "id": 6, "text":"Import into Version Control", "order":1,
+        "child":[]
+      },
+      {
+        "id": 7, "text":"Browse VCS Repository", "order":1,
+        "child":[]
+      }
+    ]
+  },
+  {
+    "id": 10, "text":"Window", "order":1,
+    "child": [
+      {
+        "id": 1, "text":"Store Current Layout as Default", "order":1,
+        "child":[]
+      },
+      {
+        "id": 2, "text":"Restore Default Layout", "order":1,
+        "child":[]
+      }
+    ]
+  },
+  {
+    "id": 11, "text":"Help", "order":1,
+    "child": [
+      {
+        "id": 1, "text":"Find Action...", "order":1,
+        "child":[]
+      },
+      {
+        "id": 2, "text":"Check for Update...", "order":1,
+        "child":[]
+      }
+    ]
+  }
+]
