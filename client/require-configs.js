@@ -15,7 +15,9 @@ require.config({
         angularAMD:  _basePath.libs+'angular/angularAMD.min',
         ngRoute:  _basePath.libs+'angular/angular-route',
         bootstrap: _basePath.libs+'bootstrap/bootstrap.min',
-        'ui-bootstrap': _basePath.libs+'bootstrap/ui-bootstrap-tpls-0.12.0.min'
+        'ui-bootstrap': _basePath.libs+'bootstrap/ui-bootstrap-tpls-0.12.0.min',
+        "app-core":"core/core",
+        "ui-grid":"http://ui-grid.info/release/ui-grid-unstable"
     },
     // angular does not support AMD out of the box, put it in a shim
     shim: {
@@ -25,10 +27,14 @@ require.config({
         bootstrap:{deps:['jQuery']},
         jqHighlight:{deps:['jQuery']},
         'ui-bootstrap':{deps: ['jQuery', 'angular']},
+        "ui-grid":{deps: ['angular']},
+        "app-core":{
+            deps: ['bootstrap', 'angular']
+        },
         app:{
-            deps: ['bootstrap', 'ui-bootstrap']
+            deps: ['bootstrap', 'ngRoute', 'ui-bootstrap',"ui-grid"]
         }
     },
     // kick start application
-    deps: ['app']
+    deps: ['app', "app-core"]
 });
