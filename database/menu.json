@@ -1,276 +1,292 @@
 {
-  "4000":[
-    {
-      "id": 1, "text":"Home", "order":1
+  "4002":{
+    "appInfo":{
+      "appName" : "ACE++",
+      "appLogo" : "data:image/png;charset=utf-8;base64,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",
+      "appId" : 19088753,
+      "landingPage":"login"
     },
-    {
-      "id": 2, "text":"Fund Performers", "order":1,
-      "child": [
-        {
-          "id": 1, "text":"Top Gainers", "order":1, "child":[]
-        },
-        {
-          "id": 2, "text":"Top Losers", "order":1, "child":[]
-        }
-      ]
-    },
-    {
-      "id": 3, "text":"NFOs", "order":1,
-      "child": []
-    },
-    {
-      "id": 4, "text":"Dividends", "order":1,
-      "child": []
-    },
-    {
-      "id": 5, "text":"Indices", "order":1,
-      "child": []
-    },
-    {
-      "id": 6, "text":"News", "order":1,
-      "child": []
-    },
-    {
-      "id": 7, "text":"Tools", "order":1,
-      "child": [
-        {
-          "id": 1, "text":"Fund Search", "order":1,
-          "child":[]
-        },
-        {
-          "id": 2, "text":"MF Tools", "order":1,
-          "child":[]
-        }
-      ]
-    },
-    {
-      "id": 8, "text":"Download", "order":1,
-      "child": [
-        {
-          "id": 1, "text":"Application Forms", "order":1,
-          "child":[]
-        },
-        {
-          "id": 2, "text":"Fact Sheets", "order":1,
-          "child":[]
-        },
-        {
-          "id": 2, "text":"PAN Forms", "order":1,
-          "child":[]
-        },
-        {
-          "id": 2, "text":"KYC Forms", "order":1,
-          "child":[]
-        }
-      ]
-    }
-  ],
-  "4002":[
-    {
-      "id": 1, "text":"File", "order":1,
-      "child":
-      [
-        { "id": 1, "text":"New Project...", "order":1, "case":1, "key":"new-project", "child":[]},
-        { "id": 1, "text":"New...", "order":1, "case":1, "key":"new", "child":[]},
-        { "id": 1, "text":"Open...", "order":1, "case":1, "key":"open", "child":[]},
-        { "id": 1, "text":"Open URL...", "order":1, "case":1, "key":"open-url", "child":[]},
-        { "id": 1, "text":"Save As..", "order":1, "key":"save-as", "child":[]},
-        {
-          "id": 1, "text":"Reopen Project", "order":1, "key":"reopen-project",
-          "child":
-          [
-            { "id": 1, "text":"Clear List", "order":1, "child":[]}
-          ]
-        },
-        { "id": 1, "text":"Close Project", "order":1, "key":"close-project", "child":[]},
-        { "id": 1, "text":"Rename Project...", "order":1, "key":"rename-project", "child":[]}
-      ]
-    },
-    {
-      "id": 2, "text":"Edit", "order":1,
-      "child": [
-        {
-          "id": 1, "text":"Undo Typing", "order":1,
-          "child":[
+    "menu":[
+      {
+        "id": 1, "text":"File", "order":1,
+        "child":
+        [
+          { "id": 1, "text":"New Project...", "order":1, "case":1, "key":"new-project", "child":[]},
+          { "id": 1, "text":"New...", "order":1, "case":1, "key":"new", "child":[]},
+          { "id": 1, "text":"Open...", "order":1, "case":1, "key":"open", "child":[]},
+          { "id": 1, "text":"Open URL...", "order":1, "case":1, "key":"open-url", "child":[]},
+          { "id": 1, "text":"Save As..", "order":1, "key":"save-as", "child":[]},
+          {
+            "id": 1, "text":"Reopen Project", "order":1, "key":"reopen-project",
+            "child":
+            [
+              { "id": 1, "text":"Clear List", "order":1, "child":[]}
+            ]
+          },
+          { "id": 1, "text":"Close Project", "order":1, "key":"close-project", "child":[]},
+          { "id": 1, "text":"Rename Project...", "order":1, "key":"rename-project", "child":[]}
+        ]
+      },
+      {
+        "id": 2, "text":"Edit", "order":1,
+        "child": [
+          {
+            "id": 1, "text":"Undo Typing", "order":1,
+            "child":[
 
-          ]
-        },
-        {
-          "id": 2, "text":"Redo", "order":1,
-          "child":[
+            ]
+          },
+          {
+            "id": 2, "text":"Redo", "order":1,
+            "child":[
 
-          ]
-        }
-      ]
+            ]
+          }
+        ]
+      },
+      {
+        "id": 3, "text":"View", "order":1,
+        "child": [
+          {
+            "id": 1, "text":"Tool Windows", "order":1,
+            "child":[]
+          },
+          {
+            "id": 2, "text":"Quick Definition", "order":1,
+            "child":[]
+          }
+        ]
+      },
+      {
+        "id": 4, "text":"Navigate", "order":1,
+        "child": [
+          {
+            "id": 1, "text":"Class...", "order":1,
+            "child":[]
+          },
+          {
+            "id": 2, "text":"File...", "order":1,
+            "child":[]
+          }
+        ]
+      },
+      {
+        "id": 5, "text":"Code", "order":1,
+        "child": [
+          {
+            "id": 1, "text":"Override Methods...", "order":1,
+            "child":[]
+          },
+          {
+            "id": 2, "text":"Implement Methods...", "order":1,
+            "child":[]
+          }
+        ]
+      },
+      {
+        "id": 6, "text":"Refactor", "order":1,
+        "child": [
+          {
+            "id": 1, "text":"Refactor this...", "order":1,
+            "child":[]
+          },
+          {
+            "id": 2, "text":"Rename...", "order":1,
+            "child":[]
+          },
+          {
+            "id": 3, "text":"Move...", "order":1,
+            "child":[]
+          },
+          {
+            "id": 4, "text":"Copy...", "order":1,
+            "child":[]
+          },
+          {
+            "id": 5, "text":"Safe Delete...", "order":1,
+            "child":[]
+          },
+          {
+            "id": 6, "text":"Extract", "order":1,
+            "child":[]
+          }
+        ]
+      },
+      {
+        "id": 7, "text":"Run", "order":1,
+        "child": [
+          {
+            "id": 1, "text":"Run", "order":1,
+            "child":[]
+          },
+          {
+            "id": 2, "text":"Debug", "order":1,
+            "child":[]
+          },
+          {
+            "id": 2, "text":"Run With Coverage", "order":1,
+            "child":[]
+          }
+        ]
+      },
+      {
+        "id": 8, "text":"Tools", "order":1,
+        "child": [
+          {
+            "id": 1, "text":"Tasks and Contexts", "order":1,
+            "child":[]
+          },
+          {
+            "id": 2, "text":"Save File as Template...", "order":1,
+            "child":[]
+          },
+          {
+            "id": 2, "text":"New Scratch File", "order":1,
+            "child":[]
+          },
+          {
+            "id": 2, "text":"Deployment", "order":1,
+            "child":[]
+          },
+          {
+            "id": 2, "text":"V8 Profiling", "order":1,
+            "child":[]
+          }
+        ]
+      },
+      {
+        "id": 9, "text":"VCS", "order":1,
+        "child": [
+          {
+            "id": 1, "text":"Local History", "order":1,
+            "child":[]
+          },
+          {
+            "id": 2, "text":"Enable Version Control Integration...", "order":1,
+            "child":[]
+          },
+          {
+            "id": 3, "text":"VCS Operations Popup...", "order":1,
+            "child":[]
+          },
+          {
+            "id": 4, "text":"Apply Patch...", "order":1,
+            "child":[]
+          },
+          {
+            "id": 5, "text":"Checkout from Version Control", "order":1,
+            "child":[]
+          },
+          {
+            "id": 6, "text":"Import into Version Control", "order":1,
+            "child":[]
+          },
+          {
+            "id": 7, "text":"Browse VCS Repository", "order":1,
+            "child":[]
+          }
+        ]
+      },
+      {
+        "id": 10, "text":"Window", "order":1,
+        "child": [
+          {
+            "id": 1, "text":"Store Current Layout as Default", "order":1,
+            "child":[]
+          },
+          {
+            "id": 2, "text":"Restore Default Layout", "order":1,
+            "child":[]
+          }
+        ]
+      },
+      {
+        "id": 11, "text":"Help", "order":1,
+        "child": [
+          {
+            "id": 1, "text":"Find Action...", "order":1,
+            "child":[]
+          },
+          {
+            "id": 2, "text":"Check for Update...", "order":1,
+            "child":[]
+          }
+        ]
+      }
+    ]
+  },
+  "4000":{
+    "appInfo":{
+      "appName" : "Money Control",
+      "appLogo" : "data:image/png;charset=utf-8;base64,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",
+      "appId" : 1654864,
+      "landingPage":"login"
     },
-    {
-      "id": 3, "text":"View", "order":1,
-      "child": [
-        {
-          "id": 1, "text":"Tool Windows", "order":1,
-          "child":[]
-        },
-        {
-          "id": 2, "text":"Quick Definition", "order":1,
-          "child":[]
-        }
-      ]
-    },
-    {
-      "id": 4, "text":"Navigate", "order":1,
-      "child": [
-        {
-          "id": 1, "text":"Class...", "order":1,
-          "child":[]
-        },
-        {
-          "id": 2, "text":"File...", "order":1,
-          "child":[]
-        }
-      ]
-    },
-    {
-      "id": 5, "text":"Code", "order":1,
-      "child": [
-        {
-          "id": 1, "text":"Override Methods...", "order":1,
-          "child":[]
-        },
-        {
-          "id": 2, "text":"Implement Methods...", "order":1,
-          "child":[]
-        }
-      ]
-    },
-    {
-      "id": 6, "text":"Refactor", "order":1,
-      "child": [
-        {
-          "id": 1, "text":"Refactor this...", "order":1,
-          "child":[]
-        },
-        {
-          "id": 2, "text":"Rename...", "order":1,
-          "child":[]
-        },
-        {
-          "id": 3, "text":"Move...", "order":1,
-          "child":[]
-        },
-        {
-          "id": 4, "text":"Copy...", "order":1,
-          "child":[]
-        },
-        {
-          "id": 5, "text":"Safe Delete...", "order":1,
-          "child":[]
-        },
-        {
-          "id": 6, "text":"Extract", "order":1,
-          "child":[]
-        }
-      ]
-    },
-    {
-      "id": 7, "text":"Run", "order":1,
-      "child": [
-        {
-          "id": 1, "text":"Run", "order":1,
-          "child":[]
-        },
-        {
-          "id": 2, "text":"Debug", "order":1,
-          "child":[]
-        },
-        {
-          "id": 2, "text":"Run With Coverage", "order":1,
-          "child":[]
-        }
-      ]
-    },
-    {
-      "id": 8, "text":"Tools", "order":1,
-      "child": [
-        {
-          "id": 1, "text":"Tasks and Contexts", "order":1,
-          "child":[]
-        },
-        {
-          "id": 2, "text":"Save File as Template...", "order":1,
-          "child":[]
-        },
-        {
-          "id": 2, "text":"New Scratch File", "order":1,
-          "child":[]
-        },
-        {
-          "id": 2, "text":"Deployment", "order":1,
-          "child":[]
-        },
-        {
-          "id": 2, "text":"V8 Profiling", "order":1,
-          "child":[]
-        }
-      ]
-    },
-    {
-      "id": 9, "text":"VCS", "order":1,
-      "child": [
-        {
-          "id": 1, "text":"Local History", "order":1,
-          "child":[]
-        },
-        {
-          "id": 2, "text":"Enable Version Control Integration...", "order":1,
-          "child":[]
-        },
-        {
-          "id": 3, "text":"VCS Operations Popup...", "order":1,
-          "child":[]
-        },
-        {
-          "id": 4, "text":"Apply Patch...", "order":1,
-          "child":[]
-        },
-        {
-          "id": 5, "text":"Checkout from Version Control", "order":1,
-          "child":[]
-        },
-        {
-          "id": 6, "text":"Import into Version Control", "order":1,
-          "child":[]
-        },
-        {
-          "id": 7, "text":"Browse VCS Repository", "order":1,
-          "child":[]
-        }
-      ]
-    },
-    {
-      "id": 10, "text":"Window", "order":1,
-      "child": [
-        {
-          "id": 1, "text":"Store Current Layout as Default", "order":1,
-          "child":[]
-        },
-        {
-          "id": 2, "text":"Restore Default Layout", "order":1,
-          "child":[]
-        }
-      ]
-    },
-    {
-      "id": 11, "text":"Help", "order":1,
-      "child": [
-        {
-          "id": 1, "text":"Find Action...", "order":1,
-          "child":[]
-        },
-        {
-          "id": 2, "text":"Check for Update...", "order":1,
-          "child":[]
-        }
-      ]
-    }
-  ]
+    "menu":[
+      {
+        "id": 1, "text":"Home", "order":1
+      },
+      {
+        "id": 2, "text":"Fund Performers", "order":1,
+        "child": [
+          {
+            "id": 1, "text":"Top Gainers", "order":1, "child":[]
+          },
+          {
+            "id": 2, "text":"Top Losers", "order":1, "child":[]
+          }
+        ]
+      },
+      {
+        "id": 3, "text":"NFOs", "order":1,
+        "child": []
+      },
+      {
+        "id": 4, "text":"Dividends", "order":1,
+        "child": []
+      },
+      {
+        "id": 5, "text":"Indices", "order":1,
+        "child": []
+      },
+      {
+        "id": 6, "text":"News", "order":1,
+        "child": []
+      },
+      {
+        "id": 7, "text":"Tools", "order":1,
+        "child": [
+          {
+            "id": 1, "text":"Fund Search", "order":1,
+            "child":[]
+          },
+          {
+            "id": 2, "text":"MF Tools", "order":1,
+            "child":[]
+          }
+        ]
+      },
+      {
+        "id": 8, "text":"Download", "order":1,
+        "child": [
+          {
+            "id": 1, "text":"Application Forms", "order":1,
+            "child":[]
+          },
+          {
+            "id": 2, "text":"Fact Sheets", "order":1,
+            "child":[]
+          },
+          {
+            "id": 2, "text":"PAN Forms", "order":1,
+            "child":[]
+          },
+          {
+            "id": 2, "text":"KYC Forms", "order":1,
+            "child":[]
+          }
+        ]
+      }
+    ]
+  }
 }

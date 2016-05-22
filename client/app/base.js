@@ -115,8 +115,11 @@
         return {
             restrict: 'AE',
             templateUrl: _rootPath+'controls/grid.html',
-            link: function (scope, elem) {},
-            controller:function($scope){
+            link: function (scope, elem) {
+
+            },
+            controller:function($scope, $element){
+                $scope.gridHeight =  $(window).height()-270 +"px";
                 $scope.gridOptions = {
                     infiniteScrollRowsFromEnd: 40,
                     infiniteScrollUp: true,

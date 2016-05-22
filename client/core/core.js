@@ -165,12 +165,6 @@
         };
     }
 
-    function validateURL(view) {
-        debugger;
-        document.body.innerHTML='<div id="wrapper" ng-view></div>';
-        return _viewOptions[view];
-     };
-// _viewOptions['register']
     function routeProvider ($routeProvider, $locationProvider) {
         $routeProvider
             .when('/login', _viewOptions['login'])
@@ -216,7 +210,6 @@
     core
         .factory('authenticationFactory', ["$window", authenticationFactory])
         .factory('tokenInterceptor', ['$q', '$location', 'authenticationFactory', tokenInterceptor])
-        .factory('validateURL', ['$document', '$location', validateURL])
         .config(['$routeProvider', '$locationProvider', routeProvider])
         .controller('authController', ['$scope', '$rootScope', '$http', '$location', 'authenticationFactory', 'coreApis', authController])
         .service("coreApis", ["$http", '$rootScope', '$location', coreApis])

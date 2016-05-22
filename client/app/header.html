@@ -1,23 +1,26 @@
 <div class="row border-bottom">
     <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
         <div class="navbar-header">
-            <span minimaliza-sidebar></span>
-            <div id='cssmenu' style="margin: 10px 10px 10px 25px;">
-                <ul>
-                    <li ng-repeat="items in menuInfo track by $index">
-                        <a ><span case="{{items['case']}}" key="{{items['key']}}">{{items["text"]}}</span></a>
-                        <ul ng-if="items['child'].length>0">
-                            <li class='has-sub' ng-repeat="itemChilds in items['child'] track by $index">
-                                <a ><span case="{{itemChilds['case']}}" key="{{itemChilds['key']}}">{{itemChilds["text"]}}</span></a>
-                                <ul ng-if="itemChilds['child'].length>0">
-                                    <li class='has-sub' ng-repeat="childs in itemChilds['child'] track by $index">
-                                        <a><span case="{{childs['case']}}" key="{{childs['key']}}">{{childs["text"]}}</span></a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
+            <span minimaliza-sidebar=""><a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="" ng-click="minimalize()"><i class="fa fa-bars"></i>{{appInfo.appName}}</a></span>
+
+            <div role="search" class="navbar-form-custom ng-pristine ng-valid">
+                <div id='cssmenu' style="margin: 10px   ">
+                    <ul>
+                        <li ng-repeat="items in menuInfo track by $index">
+                            <a ><span case="{{items['case']}}" key="{{items['key']}}">{{items["text"]}}</span></a>
+                            <ul ng-if="items['child'].length>0">
+                                <li class='has-sub' ng-repeat="itemChilds in items['child'] track by $index">
+                                    <a ><span case="{{itemChilds['case']}}" key="{{itemChilds['key']}}">{{itemChilds["text"]}}</span></a>
+                                    <ul ng-if="itemChilds['child'].length>0">
+                                        <li class='has-sub' ng-repeat="childs in itemChilds['child'] track by $index">
+                                            <a><span case="{{childs['case']}}" key="{{childs['key']}}">{{childs["text"]}}</span></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
         <ul class="nav navbar-top-links navbar-right">
