@@ -1,0 +1,22 @@
+-----configureEnricher-----
+CREATE TABLE configureEnricher
+(
+  appid bigint NOT NULL DEFAULT 0,
+  owner text,
+  id integer NOT NULL DEFAULT nextval('"configureEnricher_id_seq"'::regclass),
+  logo text,
+  menu json,
+  url text,
+  name text,
+  CONSTRAINT "configureEnricher_pkey" PRIMARY KEY (id)
+)
+
+-----apis Tracker-----
+CREATE TABLE apistracker
+(
+  request json,
+  response json,
+  timeconsumed text,
+  id serial NOT NULL,
+  CONSTRAINT id PRIMARY KEY (id)
+)

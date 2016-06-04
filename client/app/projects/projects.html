@@ -1,21 +1,8 @@
-<div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-sm-4">
-        <h2>Project detail</h2>
-        <ol class="breadcrumb">
-            <li>
-                <a href="index.html">Home</a>
-            </li>
-            <li class="active">
-                <strong>Project detail</strong>
-            </li>
-        </ol>
-    </div>
-</div>
 <div class="row">
     <div class="col-lg-3">
         <div class="wrapper wrapper-content project-manager">
             <h4>Controles</h4>
-            <ul class="folder-list" style="padding: 0">
+            <ul class="folder-list connectPanels" ui-sortable="sortableOptions" style="padding: 0">
                 <li><a href=""><i class="fa fa-folder"></i> Grid</a></li>
                 <li><a href=""><i class="fa fa-folder"></i> Chart</a></li>
                 <li><a href=""><i class="fa fa-folder"></i> Text Box</a></li>
@@ -31,11 +18,8 @@
             <div class="ibox">
                 <div class="ibox-content">
                     <div class="row">
-                        <div class="col-lg-12">
-                            <div class="m-b-md">
-                                <a href="" class="btn btn-white btn-xs pull-right">Edit project</a>
-                                <h2>Start Creating your application - View</h2>
-                            </div>
+                        <div class="col-lg-12 connectPanels receiver-container" id="sortable-receiver" ui-sortable="sortableReceiverOptions">
+                            <div class="m-b-md"></div>
                         </div>
                     </div>
                 </div>

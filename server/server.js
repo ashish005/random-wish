@@ -2,6 +2,8 @@
  * Created by wiznidev on 5/21/16.
  */
 module.exports = function() {
+    'use strict'
+
     var express = require('express'),
         bodyParser = require('body-parser'),
         cors = require('cors'),
@@ -15,7 +17,6 @@ module.exports = function() {
     server.use(bodyParser.json());
     server.use(cors());
 
-
     server.use('/apis', require('./routes')(express));
 
     var port = process.env.PORT || 4000;        // set our port
@@ -27,7 +28,12 @@ module.exports = function() {
     //============================================================================
     server.listen(server.get('port'), function () {
         console.log('I am listening to' + server.get('port'));
+
     });
+
+
+    //var shopAllRouters = require('./routes/routes')(server, express, connector);//Define All routes here
+
     return {
         server:server,
         express:express

@@ -5,7 +5,7 @@
     var appName = 'goLive';
     window['name'] = appName;
 
-    var app = angular.module(appName, ['ngRoute', appName+'.core', 'ui.bootstrap', 'ui.grid', 'ui.grid.infiniteScroll']);
+    var app = angular.module(appName, ['ngRoute', appName+'.core', 'ui.bootstrap', 'ui.grid', 'ui.grid.infiniteScroll', 'ui.sortable']);
     var _rootPath = './app/';
     var _baseModulesPath = {
         templateUrl:'./app/'
@@ -16,7 +16,16 @@
             templateUrl: _baseModulesPath.templateUrl +'home.html'
         },
         projects:{
-            templateUrl: _baseModulesPath.templateUrl +'projects/projects.html'
+            templateUrl: _baseModulesPath.templateUrl +'projects/projects.html',
+            controller:draggablePanels
+        },
+        apiTracker:{
+            templateUrl: _baseModulesPath.templateUrl +'projects/projects.html',
+            controller:ideViewController
+        },
+        admin:{
+            templateUrl: _baseModulesPath.templateUrl +'admin/dashboard.html',
+            controller:draggablePanels
         }
     };
 
@@ -24,6 +33,8 @@
         $routeProvider
             .when('/', routeConfig['home'])
             .when('/projects', routeConfig['projects'])
+            .when('/admin', routeConfig['admin'])
+            .when('/api-tracker', routeConfig['apiTracker'])
             .otherwise({redirectTo: '/'});//Handle all exceptions
     };
 
@@ -66,6 +77,8 @@
     }
 
     function ideController($scope){};
+    function ideViewController($scope){
+    };
 
     function landingScrollspy(){
         return {
@@ -78,6 +91,42 @@
             }
         }
     }
+    function draggablePanels($scope) {
+
+        $scope.sortableOptions = {
+            connectWith: ".connectPanels",
+            handler: ".ibox-title",
+            helper: function (e, li) {
+                this.copyHelper = li.clone().insertAfter(li);
+
+                $(this).data('copied', false);
+
+                return li.clone();
+            },
+            stop: function () {
+                var copied = $(this).data('copied');
+
+                if (!copied) {
+                    this.copyHelper.remove();
+                }
+
+                this.copyHelper = null;
+            },
+            receive: function (e, ui) {
+                ui.sender.data('copied', true);
+            }
+        };
+
+
+        $scope.sortableReceiverOptions = {
+            //placeholder: ".receiver-container",
+            connectWith: "#receiver-container",
+            receive: function (e, ui) {
+                ui.sender.data('copied', true);
+            }
+        };
+    }
+
 
     /**
      *   - Directive for iBox tools elements in right corner of ibox
@@ -295,6 +344,43 @@
         };
     }
 
+    function skinConfigChanger(){
+        return {
+            restrict: 'AE',
+            templateUrl:  _rootPath+'controls/skin-config.html'
+        };
+    }
+
+    function minimalizaSidebar($timeout) {
+        return {
+            restrict: 'A',
+            template: '<a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="" ng-click="minimalize()"><i class="fa fa-bars"></i></a>',
+            controller: function ($scope, $element) {
+                $scope.minimalize = function () {
+                    $("body").toggleClass("mini-navbar");
+                    if (!$('body').hasClass('mini-navbar') || $('body').hasClass('body-small')) {
+                        // Hide menu in order to smoothly turn on when maximize menu
+                        $('#side-menu').hide();
+                        // For smoothly turn on menu
+                        setTimeout(
+                            function () {
+                                $('#side-menu').fadeIn(500);
+                            }, 100);
+                    } else if ($('body').hasClass('fixed-sidebar')){
+                        $('#side-menu').hide();
+                        setTimeout(
+                            function () {
+                                $('#side-menu').fadeIn(500);
+                            }, 300);
+                    } else {
+                        // Remove all inline style from jquery fadeIn function to reset menu state
+                        $('#side-menu').removeAttr('style');
+                    }
+                }
+            }
+        };
+    };
+
     app
         .config(angularHelper)
         .config(['$routeProvider', '$locationProvider', config])
@@ -302,8 +388,12 @@
         .directive('ideGrid', ['$q', '$http','$timeout', ideGrid])
         .directive('landingScrollspy', landingScrollspy)
         .directive('iboxTools',['$timeout', iboxTools])
+        .directive('skinConfigChanger',skinConfigChanger)
+        .directive('minimalizaSidebar', minimalizaSidebar)
         .directive('ideSplitter', ideSplitter)
         .controller('ideController', ideController)
+        .controller('draggablePanels', draggablePanels)
+        .controller('ideViewController', ideViewController)
         .run(['$rootScope', function($rootScope) {
             $rootScope.$on("$routeChangeStart", function (event, nextRoute, currentRoute) {});
             $rootScope.$on('$routeChangeSuccess', function (event, nextRoute, currentRoute) {});
@@ -316,10 +406,11 @@
         var $http = initInjector.get("$http");
         $http({method: 'GET', url: '/apis/setup'}).then(function (resp)
         {
-            app.constant('appMenu', resp['data']['menu']);
-            app.constant('appInfo', resp['data']['app']);
-            app.constant('userInfo', resp['data']['user']);
-            document.body.innerHTML='<div ng-controller="ideController as main" landing-scrollspy id="page-top"><div ide-header></div><div id="wrapper" ng-view></div></div>';
+            var _info = resp['data'];
+            app.constant('appMenu', _info['data']['menu']);
+            app.constant('appInfo', _info['data']['app']);
+            app.constant('userInfo', _info['data']['user']);
+            document.body.innerHTML='<div ng-controller="ideController as main" landing-scrollspy id="page-top"><div id="wrapper"><div ide-header></div><div ng-view></div></div><div skin-config-changer></div></div>';
             angular.bootstrap(document, [appName]);
         }, function (error) {
             throw new Error('Config file has error : ' + error);
