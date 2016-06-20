@@ -5,7 +5,7 @@
     var appName = 'goLive';
     window['name'] = appName;
 
-    var app = angular.module(appName, ['ngRoute', appName+'.core', 'ui.bootstrap', 'ui.grid', 'ui.grid.infiniteScroll', 'ui.sortable']);
+    var app = angular.module(appName, ['ngRoute', appName+'.core', 'ui.bootstrap', 'ui.grid', 'ui.grid.infiniteScroll','dndLists']);
     var _rootPath = './app/';
     var _baseModulesPath = {
         templateUrl:'./app/'
@@ -13,7 +13,7 @@
 
     var routeConfig = {
         home:{
-            templateUrl: _baseModulesPath.templateUrl +'home.html'
+            templateUrl: _baseModulesPath.templateUrl +'home.html',
         },
         projects:{
             templateUrl: _baseModulesPath.templateUrl +'projects/projects.html',
@@ -31,7 +31,7 @@
 
     function config($routeProvider) {
         $routeProvider
-            .when('/', routeConfig['home'])
+            .when('/home', routeConfig['home'])
             .when('/projects', routeConfig['projects'])
             .when('/admin', routeConfig['admin'])
             .when('/api-tracker', routeConfig['apiTracker'])
@@ -92,41 +92,198 @@
         }
     }
     function draggablePanels($scope) {
-
-        $scope.sortableOptions = {
-            connectWith: ".connectPanels",
-            handler: ".ibox-title",
-            helper: function (e, li) {
-                this.copyHelper = li.clone().insertAfter(li);
-
-                $(this).data('copied', false);
-
-                return li.clone();
-            },
-            stop: function () {
-                var copied = $(this).data('copied');
-
-                if (!copied) {
-                    this.copyHelper.remove();
+        var _controls = {
+            grid: {key:'grid', name: 'Grid', panal: '<div ide-grid></div>'},
+            dropdown: {key:'dropdown', name: 'Dropdown', panal: '<div ide-grid></div>'}
+        };
+        $scope.controls = _controls;
+        /*************/
+        var _rows = [
+            [
+                {
+                    "type": "item",
+                    "id": "1"
+                },
+                {
+                    "type": "item",
+                    "id": "2"
                 }
-
-                this.copyHelper = null;
-            },
-            receive: function (e, ui) {
-                ui.sender.data('copied', true);
+            ],
+            [
+                {
+                    "type": "item",
+                    "id": "3"
+                }
+            ]
+        ];
+        $scope.models = {
+            selected: null,
+            templates: [
+                {type:'tabContainer', id:4, templateUrl:'app/controls/tab-container.html'},
+                {type:'grid', id:3,},
+                {type: "item", id: 2},
+                {type: "textBox", id: 5},
+                {type: "container", id: 1, columns: [[], []]}
+            ],
+            dropzones: {
+                0: [
+                    {
+                        "type": "container",
+                        "id": 1,
+                        "columns": [
+                            [
+                                {
+                                    "type": "grid",
+                                    "id": "3"
+                                },
+                                {type:'tabContainer', id:4, templateUrl:'app/controls/tab-container.html'},
+                            ],
+                            [
+                                {type:'tabContainer', id:4, templateUrl:'app/controls/tab-container.html'},
+                            ]
+                        ]
+                    },
+                    {
+                        "type": "item",
+                        "id": "4"
+                    },
+                    {
+                        "type": "item",
+                        "id": "5"
+                    }
+                ],
+                1: [
+                   /* {
+                        "type": "item",
+                        "id": 7
+                    },
+                    {
+                        "type": "item",
+                        "id": "8"
+                    },*/
+                    {
+                        "type": "container",
+                        "id": "2",
+                        "columns": [
+                            [
+                                {
+                                    "type": "container",
+                                    "id": "3",
+                                    "columns": [
+                                        [
+                                            {
+                                                "type": "item",
+                                                "id": "13"
+                                            }
+                                        ],
+                                        [
+                                            {
+                                                "type": "item",
+                                                "id": "14"
+                                            }
+                                        ]
+                                    ]
+                                },
+                            ],
+                            [
+                                {
+                                    "type": "container",
+                                    "id": "3",
+                                    "columns": [
+                                        [
+                                            {
+                                                "type": "item",
+                                                "id": "13"
+                                            }
+                                        ],
+                                        [
+                                            {
+                                                "type": "item",
+                                                "id": "14"
+                                            }
+                                        ]
+                                    ]
+                                },
+                            ]
+                        ]
+                    },
+                    /*{
+                        "type": "item",
+                        "id": 16
+                    }*/
+                ]
             }
         };
 
 
-        $scope.sortableReceiverOptions = {
-            //placeholder: ".receiver-container",
-            connectWith: "#receiver-container",
-            receive: function (e, ui) {
-                ui.sender.data('copied', true);
-            }
-        };
-    }
+        $scope.getZoneClass = function(_colLength){
+            var _classInfo = {
+                1: 'col-md-12',
+                2: 'col-md-6',
+                3: 'col-md-4',
+                4: 'col-md-3',
+                5: 'col-md-15 col-sm-3',
+                6: 'col-md-2',
+                12: 'col-md-1'
+            };
+            return _classInfo[_colLength];
+        }
+        var _col = [
+            [
+                {
+                    "type": "item",
+                    "id": "1"
+                },
+                {
+                    "type": "item",
+                    "id": "2"
+                }
+            ],
+            [
+                {
+                    "type": "item",
+                    "id": "3"
+                }
+            ]
+        ];
+        var col1 = [
+            [
+                {
+                    "type": "container",
+                    "id": "3",
+                    "columns": [
+                        [
+                            {
+                                "type": "grid",
+                                "id": "3"
+                            }
+                        ]
+                    ]
+                }
+            ]
+        ];
+        $scope.createDropzone = function() {
 
+            var _info = $scope.models.dropzones;
+            var _keys = Object.keys(_info).length;
+            $scope.models.dropzones[_keys] = [
+                {
+                    type: "container",
+                    id: 2,
+                    columns: col1
+                },
+                {
+                    type: "container",
+                    id: 2,
+                    columns: _col
+                }
+            ];
+        }
+
+        $scope.splitColumn = function(){
+            alert('hi');
+        }
+    };
 
     /**
      *   - Directive for iBox tools elements in right corner of ibox
@@ -394,8 +551,10 @@
         .controller('ideController', ideController)
         .controller('draggablePanels', draggablePanels)
         .controller('ideViewController', ideViewController)
-        .run(['$rootScope', function($rootScope) {
-            $rootScope.$on("$routeChangeStart", function (event, nextRoute, currentRoute) {});
+        .run(['$rootScope','authenticationFactory', function($rootScope, authenticationFactory) {
+            $rootScope.$on("$routeChangeStart", function (event, nextRoute, currentRoute) {
+                $rootScope.isLoggedIn = authenticationFactory.isLoggedIn;
+            });
             $rootScope.$on('$routeChangeSuccess', function (event, nextRoute, currentRoute) {});
             $rootScope.$on('$routeChangeError', function (event, current, previous, rejection) {});
             $rootScope.$on('$viewContentLoaded', function () {});
@@ -410,10 +569,10 @@
             app.constant('appMenu', _info['data']['menu']);
             app.constant('appInfo', _info['data']['app']);
             app.constant('userInfo', _info['data']['user']);
-            document.body.innerHTML='<div ng-controller="ideController as main" landing-scrollspy id="page-top"><div id="wrapper"><div ide-header></div><div ng-view></div></div><div skin-config-changer></div></div>';
+            document.body.innerHTML='<div ng-controller="ideController as main" landing-scrollspy id="page-top"><div id="wrapper"><div ide-header ng-if="isLoggedIn"></div><div ng-view></div></div><div skin-config-changer></div></div>';
             angular.bootstrap(document, [appName]);
         }, function (error) {
-            throw new Error('Config file has error : ' + error);
+            throw new Error('Config file has error : ' + error.statusText);
         });
     });
     return;

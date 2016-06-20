@@ -3,6 +3,7 @@
  */
 (function(define, angular){
     "use strict";
+    window['name'] = 'goLive';
     var _mod = window['name'] + '.core';
     var core = angular.module(_mod, ['ui.bootstrap', 'ngRoute']);
 
@@ -30,7 +31,7 @@
 
     function authenticationFactory($window) {
         var auth = {
-            isLogged: false,
+            isLoggedIn: false,
             userInfo:{
                 name: '',
                 email: '',
@@ -42,9 +43,9 @@
             check: function () {
                 if ($window.localStorage.token && $window.localStorage.email)
                 {
-                    this.isLogged = true;
+                    this.isLoggedIn = true;
                 } else {
-                    this.isLogged = false;
+                    this.isLoggedIn = false;
                     delete this.user;
                 }
             },
@@ -79,7 +80,7 @@
                 this.userInfo['isAuthenticated'] = $window.localStorage.isAuthenticated;
             },
             clearInfo: function () {
-                this.isLogged = false;
+                this.isLoggedIn = false;
 
                 delete this.userInfo['name'];
                 delete this.userInfo['email'];
@@ -135,7 +136,13 @@
         };
     }
 
-    function authController($scope, $rootScope, $http, $location, authenticationFactory, coreApis) {
+    function authController($scope, $rootScope, $http, $location, authenticationFactory, coreApis, appInfo) {
+        $scope.appInfo = {
+            appName:appInfo.name,
+            logo:appInfo.logo,
+        };
+
+
         $scope.initLoginForm = function() {
             $scope.form = {
                 email: 'me.ashish005@gmail.com',
@@ -167,6 +174,7 @@
 
     function routeProvider ($routeProvider, $locationProvider) {
         $routeProvider
+            .when('/', _viewOptions['login'])
             .when('/login', _viewOptions['login'])
             .when('/register', _viewOptions['register'])
             .when('/forgot_password', _viewOptions['forgot_password'])
@@ -180,7 +188,7 @@
            return $http(request);
         }
         var apis = {
-            coreBase:'http://localhost:4001/core',
+            coreBase:$location.$$absUrl.split('#')[0] +'core',
             initApp: function(){
                 var _req = {method: 'GET', url: this.coreBase};
                 $http(_req).then(function (resp)
@@ -211,6 +219,6 @@
         .factory('authenticationFactory', ["$window", authenticationFactory])
         .factory('tokenInterceptor', ['$q', '$location', 'authenticationFactory', tokenInterceptor])
         .config(['$routeProvider', '$locationProvider', routeProvider])
-        .controller('authController', ['$scope', '$rootScope', '$http', '$location', 'authenticationFactory', 'coreApis', authController])
+        .controller('authController', ['$scope', '$rootScope', '$http', '$location', 'authenticationFactory', 'coreApis', 'appInfo', authController])
         .service("coreApis", ["$http", '$rootScope', '$location', coreApis])
 })(window.define, window.angular);

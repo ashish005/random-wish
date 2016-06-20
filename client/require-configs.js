@@ -2,7 +2,8 @@
  * Created by wizdev on 10/22/2015.
  */
 var _basePath = {
-    libs:'assets/libs/'
+    libs:'assets/libs/',
+    app:'app/'
 };
 
 require.config({
@@ -18,8 +19,9 @@ require.config({
         bootstrap: _basePath.libs+'bootstrap/bootstrap.min',
         'ui-bootstrap': _basePath.libs+'bootstrap/ui-bootstrap-tpls-0.12.0.min',
         "app-core":"core/core",
-        "ui-grid":"http://ui-grid.info/release/ui-grid-unstable",
-        "ui-sortable":_basePath.libs+'ui-sortable/sortable'
+        "ui-grid":_basePath.libs+"ui-grid/ui-grid-unstable",
+        "ui-sortable":_basePath.libs+'ui-sortable/sortable',
+        "dndLists":_basePath.app+'controls/drag-drop.helper'
     },
     // angular does not support AMD out of the box, put it in a shim
     shim: {
@@ -33,14 +35,17 @@ require.config({
         "app-core":{
             deps: ['bootstrap', 'angular']
         },
+        "dndLists":{
+            deps: ['angular']
+        },
         'jQuery-ui':{
             deps: ['jQuery']
         },
         "ui-sortable":{deps: ['angular','jQuery-ui']},
         app:{
-            deps: ['bootstrap', 'ngRoute', 'ui-bootstrap',"ui-grid", "ui-sortable"]
+            deps: ["app-core",'bootstrap', 'ngRoute', 'ui-bootstrap',"ui-grid", "dndLists"]
         }
     },
     // kick start application
-    deps: ['app', "app-core"]
+    deps: ['app']
 });

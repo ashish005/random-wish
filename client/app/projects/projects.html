@@ -1,29 +1,162 @@
-<div class="row">
-    <div class="col-lg-3">
-        <div class="wrapper wrapper-content project-manager">
-            <h4>Controles</h4>
-            <ul class="folder-list connectPanels" ui-sortable="sortableOptions" style="padding: 0">
-                <li><a href=""><i class="fa fa-folder"></i> Grid</a></li>
-                <li><a href=""><i class="fa fa-folder"></i> Chart</a></li>
-                <li><a href=""><i class="fa fa-folder"></i> Text Box</a></li>
-                <li><a href=""><i class="fa fa-folder"></i> Dropdown</a></li>
-                <li><a href=""><i class="fa fa-folder"></i> Tab Control</a></li>
-                <li><a href=""><i class="fa fa-folder"></i> View</a></li>
-            </ul>
-            <div class="clearfix"></div>
-        </div>
-    </div>
-    <div class="col-lg-9">
-        <div class="wrapper wrapper-content animated fadeInUp">
-            <div class="ibox">
-                <div class="ibox-content">
-                    <div class="row">
-                        <div class="col-lg-12 connectPanels receiver-container" id="sortable-receiver" ui-sortable="sortableReceiverOptions">
-                            <div class="m-b-md"></div>
-                        </div>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-2">
+            <div class="ibox ">
+                <div class="ibox-content" style="background-color: transparent;">
+                    <h4> CONTROLS </h4>
+                    <ul class="folder-list" style="padding: 0">
+                        <li ng-repeat="item in models.templates" dnd-draggable="item" dnd-effect-allowed="copy" dnd-copied="item.id = item.id + 1">
+                            {{item.type}}
+                        </li>
+                    </ul>
+                    <div ng-if="models.selected" class="box box-grey box-padding">
+                        <h3>Selected</h3>
+                        <strong>Type: </strong> {{models.selected.type}}<br>
+                        <input type="text" ng-model="models.selected.id" class="form-control" style="margin-top: 5px" />
                     </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-10" style="border-left: 1px solid #FFF; background-color: transparent;">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="btn-group">
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-primary" ng-click="createDropzone()">Create a DropZone</button>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <form role="form" class="ng-pristine ng-valid">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" placeholder="Enter email" class="form-control"></div>
+                    </form>
+                </div>
+                <div class="col-lg-4">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12" ng-repeat="(zone, list) in models.dropzones"
+                     dnd-list="list"
+                     ng-include="'responsiveColumns.html'">
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script type="text/ng-template" id="grid.html"><div ide-grid></div></script>
+<script type="text/ng-template" id="responsiveColumns.html">
+    <div ng-repeat="item in list"
+         dnd-draggable="item"
+         dnd-effect-allowed="move"
+         dnd-moved="list.splice($index, 1)"
+         ng-include="item.type + '.html'">
+    </div>
+</script>
+<!-- This template is responsible for rendering a container element. It uses the above list template to render each container column -->
+<script type="text/ng-template" id="container.html">
+    <div class="ibox">
+        <div class="ibox-title">
+            <h5>Container {{item.id}}</h5>
+            <div class="pull-right">
+                <div ibox-tools></div>
+            </div>
+        </div>
+        <div class="ibox-content">
+            <div class="row">
+                <div ng-repeat="list in item.columns" dnd-list="list" ng-include="'responsiveColumns.html'" ng-class="getZoneClass(item.columns.length)"></div>
+            </div>
+         </div>
+    </div>
+    <div class="clearfix"></div>
+</script>
+<!-- Template for a normal list item -->
+<script type="text/ng-template" id="item.html">
+    <div class="item">Item {{item.id}}</div>
+</script>
+
+<script type="text/ng-template" id="textBox.html">
+    <div class="form-group">
+        <label class="col-lg-2 control-label">Email</label>
+        <div class="col-lg-10">
+            <input type="email" placeholder="Email" class="form-control">
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="tabContainer.html"><div ng-include src="item.templateUrl"></div></script>
+<!--
+<script type="text/ng-template" id="responsiveColumns.html">
+    <div ng-repeat="item in list"
+         dnd-draggable="item"
+         dnd-effect-allowed="move"
+         dnd-moved="list.splice($index, 1)"
+         ng-class="getZoneClass($index, list)"
+         ng-include="item.type + '.html'">
+    </div>
+</script>
+<script type="text/ng-template" id="list.html">
+    <ul dnd-list="list" style="list-style: none;">
+        <li ng-repeat="item in list"
+            dnd-draggable="item"
+            dnd-effect-allowed="move"
+            dnd-moved="list.splice($index, 1)"
+            ng-class="{selected: models.selected === item}"
+            ng-include="item.type + '.html'">
+        </li>
+    </ul>
+</script>
+<script type="text/ng-template" id="dafault.html">
+    <div class="ibox">
+        <div class="ibox-title">
+            <h5>Container {{item.id}} {{list[0].columns}}</h5>
+            <div class="pull-right">
+                <div ibox-tools></div>
+            </div>
+            <div class="pull-right">
+                <div class="btn-group">
+                    <button type="button" column-splitter='0' class="btn btn-xs btn-white active" ng-click="">None</button>
+                    <button type="button" column-splitter='2' class="btn btn-xs btn-white">2</button>
+                    <button type="button" column-splitter='3' class="btn btn-xs btn-white">3</button>
+                    <button type="button" column-splitter='4' class="btn btn-xs btn-white">4</button>
+                    <button type="button" column-splitter='5' class="btn btn-xs btn-white">5</button>
+                    <button type="button" column-splitter='6' class="btn btn-xs btn-white">6</button>
+                    <button type="button" column-splitter='7' class="btn btn-xs btn-white">7</button>
+                    <button type="button" column-splitter='8' class="btn btn-xs btn-white">8</button>
+                    <button type="button" column-splitter='9' class="btn btn-xs btn-white">9</button>
+                    <button type="button" column-splitter='10' class="btn btn-xs btn-white">10</button>
+                    <button type="button" column-splitter='11' class="btn btn-xs btn-white">11</button>
+                    <button type="button" column-splitter='12' class="btn btn-xs btn-white">12</button>
+                </div>
+            </div>
+        </div>
+        <div class="ibox-content">
+            <div ng-include="'list.html'"></div>
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="dafaultContainer.html">
+    <div class="ibox">
+        <div class="ibox-title">
+            <h5>Container {{item.id}}</h5>
+            <div class="pull-right">
+                <div ibox-tools></div>
+            </div>
+        </div>
+        <div class="ibox-content">
+            <div ng-repeat="rows in list[$index].columns"
+                    dnd-draggable="rows"
+                    dnd-effect-allowed="move"
+                    dnd-moved="list[$index].columns.splice($index, 1)">
+                    <div class="item">Item {{rows.id}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="tabContainer.html"><div ng-include src="item.templateUrl"></div></script>
+<script type="text/ng-template" id="grid.html"><div ide-grid></div></script>
+<script type="text/ng-template" id="item.html">
+    <div class="item">Item {{item.id}}</div>
+</script>-->
