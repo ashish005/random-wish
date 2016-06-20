@@ -77,8 +77,7 @@
     }
 
     function ideController($scope){};
-    function ideViewController($scope){
-    };
+    function ideViewController($scope){};
 
     function landingScrollspy(){
         return {
@@ -91,7 +90,7 @@
             }
         }
     }
-    function draggablePanels($scope) {
+    function draggablePanels($scope, projectService) {
         var _controls = {
             grid: {key:'grid', name: 'Grid', panal: '<div ide-grid></div>'},
             dropdown: {key:'dropdown', name: 'Dropdown', panal: '<div ide-grid></div>'}
@@ -116,6 +115,7 @@
                 }
             ]
         ];
+
         $scope.models = {
             selected: null,
             templates: [
@@ -280,8 +280,8 @@
             ];
         }
 
-        $scope.splitColumn = function(){
-            alert('hi');
+        $scope.createView = function(){
+            projectService.submit($scope.models.dropzones);
         }
     };
 
@@ -538,6 +538,21 @@
         };
     };
 
+
+    function ideProjectService($http){
+        var projectService = {
+            submit:function(data){
+                $http({method: 'post', url: '/apis/projectView', data:data}).then(function (resp)
+                {
+                    alert("success");
+                }, function (error) {
+                   alert("error"+error.message);
+                });
+            }
+        };
+        return projectService;
+    }
+
     app
         .config(angularHelper)
         .config(['$routeProvider', '$locationProvider', config])
@@ -549,8 +564,9 @@
         .directive('minimalizaSidebar', minimalizaSidebar)
         .directive('ideSplitter', ideSplitter)
         .controller('ideController', ideController)
-        .controller('draggablePanels', draggablePanels)
+        .controller('draggablePanels',['$scope', 'projectService', draggablePanels])
         .controller('ideViewController', ideViewController)
+        .service('projectService', ['$http', ideProjectService])
         .run(['$rootScope','authenticationFactory', function($rootScope, authenticationFactory) {
             $rootScope.$on("$routeChangeStart", function (event, nextRoute, currentRoute) {
                 $rootScope.isLoggedIn = authenticationFactory.isLoggedIn;
