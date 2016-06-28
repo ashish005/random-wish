@@ -1,0 +1,12 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" data-ng-click="modalOptions.close()"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+    <h4 class="modal-title">Tree : <strong> {{modalOptions.model['name']}} </strong> </h4>
+</div>
+<div class="modal-body" ng-init="model = modalOptions.model">
+    <form class="form-horizontal">
+{{model['info']}}
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-white" data-dismiss="modal" data-ng-click="modalOptions.close()">Close</button>
+</div>

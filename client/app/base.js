@@ -11,6 +11,18 @@
         templateUrl:'./app/'
     };
 
+    var popupView = {
+        dashboard:{
+            view:{ templateUrl:_baseModulesPath['templateUrl'] + 'templates/popups/popup-view.html' },
+            delete:{ templateUrl:_baseModulesPath['templateUrl'] + 'templates/popups/popup-delete.html' },
+            edit:{ templateUrl:_baseModulesPath['templateUrl'] + 'templates/popups/popup-edit.html' },
+            tree:{ templateUrl:_baseModulesPath['templateUrl'] + 'templates/popups/popup-tree.html' }
+        },
+        'product-dashboard':{
+            tree:{ templateUrl:_baseModulesPath['templateUrl'] + 'product-dashboard/templates/popups/popup-tree.html' }
+        }
+    };
+
     var routeConfig = {
         home:{
             templateUrl: _baseModulesPath.templateUrl +'home.html',
@@ -19,8 +31,12 @@
             templateUrl: _baseModulesPath.templateUrl +'projects/projects.html',
             controller:draggablePanels
         },
-        apiTracker:{
-            templateUrl: _baseModulesPath.templateUrl +'projects/projects.html',
+        dashboard:{
+            templateUrl: _baseModulesPath.templateUrl +'templates/dashboard.html',
+            controller:ideViewController
+        },
+        details:{
+            templateUrl: _baseModulesPath.templateUrl +'templates/details.html',
             controller:ideViewController
         },
         admin:{
@@ -34,7 +50,9 @@
             .when('/home', routeConfig['home'])
             .when('/projects', routeConfig['projects'])
             .when('/admin', routeConfig['admin'])
-            .when('/api-tracker', routeConfig['apiTracker'])
+            .when('/dashboard', routeConfig['details'])
+            .when('/manage-client', routeConfig['dashboard'])
+            .when('/manage-db', routeConfig['dashboard'])
             .otherwise({redirectTo: '/'});//Handle all exceptions
     };
 
@@ -76,8 +94,118 @@
         };
     }
 
-    function ideController($scope){};
-    function ideViewController($scope){};
+    function ideDashboardController($scope, $compile, $timeout){
+
+    };
+
+    function ideController($scope){
+
+    };
+
+    function ideViewController($scope, dashboardService, $timeout, popupService){
+        $scope.form = {
+            collection:[],
+            actveOpt:''
+        };
+        dashboardService.getAllCollections().then(
+            function (resp, status, headers, config) {
+            $scope.form.collection = resp['data']['data'];
+            if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+                $scope.$apply();
+            }
+        },
+            function (data, status, headers, config) {}
+        );
+
+        $scope.selectAction = function() {
+            dashboardService.getActiveCollection($scope.form['actveOpt']).then(function (resp, status, headers, config) {
+                $scope.data = resp['data']['data'];
+
+                $scope.gridOptions.columnDefs = resp['data']['columns'];
+                $scope.gridOptions.columnDefs.unshift({name: 'Action', cellEditableCondition: true, cellTemplate:'<div actions data="row" perform-call-back="grid.appScope.actionCallBack"></div>'});
+                $timeout(function() { $scope.refresh = false; }, 0);
+            }, function (data, status, headers, config) {});
+        };
+
+        $scope.gridHeight =  $(window).height()-200 +"px";
+        $scope.gridOptions = {
+            infiniteScrollRowsFromEnd: 40,
+            infiniteScrollUp: true,
+            infiniteScrollDown: true,
+            onRegisterApi: function (gridApi) {
+                $scope.gridApi = gridApi;
+            },
+            data: 'data'
+        };
+        $scope.data = [];
+
+        var model = (function(data){
+            return {
+                model: {
+                    name:$scope.form['actveOpt']['name'],
+                    info:data
+                }
+            };
+        });
+
+        var ops = {
+            view:{
+                prePopupSvc:popupService['showPopup'],
+                template:popupView['dashboard']['view']['templateUrl'],
+                postPopupSvc: {
+                    serviceToCall: function(){},
+                    success: function(resp){},
+                    failure: function(resp){},
+                },
+                type: 'view',
+                name: 'View'
+            },
+            edit:{
+                prePopupSvc:popupService['showPopup'],
+                template:popupView['dashboard']['edit']['templateUrl'],
+                postPopupSvc: {
+                    serviceToCall: dashboardService.edit,
+                    success: function(resp){},
+                    failure: function(resp){},
+                },
+                type: 'edit',
+                name: 'Edit'
+            },
+            delete:{
+                prePopupSvc:popupService['showPopup'],
+                template:popupView['dashboard']['delete']['templateUrl'],
+                postPopupSvc: {
+                    serviceToCall: dashboardService.delete,
+                    success: function(resp){},
+                    failure: function(resp){},
+                },
+                type: 'delete',
+                name: 'Delete'
+            },
+            tree:{
+                prePopupSvc:popupService['showPopup'],
+                template:popupView['dashboard']['tree']['templateUrl'],
+                postPopupSvc: {
+                    serviceToCall:function(){},
+                    success: function(resp){},
+                    failure: function(resp){},
+                },
+                type: 'tree',
+                name: 'Tree'
+            },
+        };
+
+        $scope.actionCallBack = function(type, data) {
+                performOps(ops[type], new model(data));
+            };
+
+        function performOps(operation, _model){
+            operation.prePopupSvc(operation.template, _model).then(function(resp){
+                var svc = operation['postPopupSvc'];
+                svc['serviceToCall'](resp.model).then(svc['success'], svc['failure']);
+            }, function(err){});
+        }
+    };
 
     function landingScrollspy(){
         return {
@@ -90,6 +218,7 @@
             }
         }
     }
+
     function draggablePanels($scope, projectService) {
         var _controls = {
             grid: {key:'grid', name: 'Grid', panal: '<div ide-grid></div>'},
@@ -123,7 +252,7 @@
                 {type:'grid', id:3,},
                 {type: "item", id: 2},
                 {type: "textBox", id: 5},
-                {type: "container", id: 1, columns: [[], []]}
+                {type: "container", id: 1, columns: [[{ "type": "item", "id": "14" }], [{ "type": "item", "id": "14" }]]}
             ],
             dropzones: {
                 0: [
@@ -153,14 +282,6 @@
                     }
                 ],
                 1: [
-                   /* {
-                        "type": "item",
-                        "id": 7
-                    },
-                    {
-                        "type": "item",
-                        "id": "8"
-                    },*/
                     {
                         "type": "container",
                         "id": "2",
@@ -214,6 +335,7 @@
                 ]
             }
         };
+
 
 
         $scope.getZoneClass = function(_colLength){
@@ -321,20 +443,19 @@
         return {
             restrict: 'AE',
             templateUrl: _rootPath+'controls/grid.html',
-            link: function (scope, elem) {
-
-            },
+            link: function (scope, elem) {},
             controller:function($scope, $element){
+                var url = 'https://cdn.rawgit.com/angular-ui/ui-grid.info/gh-pages/data/10000_complex.json';
                 $scope.gridHeight =  $(window).height()-270 +"px";
                 $scope.gridOptions = {
                     infiniteScrollRowsFromEnd: 40,
                     infiniteScrollUp: true,
                     infiniteScrollDown: true,
-                    columnDefs: [
+                    /*columnDefs: [
                         { name:'id'},
                         { name:'name' },
                         { name:'age' }
-                    ],
+                    ],*/
                     data: 'data',
                     onRegisterApi: function(gridApi){
                         gridApi.infiniteScroll.on.needLoadMoreData($scope, $scope.getDataDown);
@@ -350,7 +471,7 @@
 
                 $scope.getFirstData = function() {
                     var promise = $q.defer();
-                    $http.get('https://cdn.rawgit.com/angular-ui/ui-grid.info/gh-pages/data/10000_complex.json')
+                    $http.get(url)
                         .success(function(data) {
                             var newData = $scope.getPage(data, $scope.lastPage);
                             $scope.data = $scope.data.concat(newData);
@@ -361,7 +482,7 @@
 
                 $scope.getDataDown = function() {
                     var promise = $q.defer();
-                    $http.get('https://cdn.rawgit.com/angular-ui/ui-grid.info/gh-pages/data/10000_complex.json')
+                    $http.get(url)
                         .success(function(data) {
                             $scope.lastPage++;
                             var newData = $scope.getPage(data, $scope.lastPage);
@@ -380,7 +501,7 @@
 
                 $scope.getDataUp = function() {
                     var promise = $q.defer();
-                    $http.get('https://cdn.rawgit.com/angular-ui/ui-grid.info/gh-pages/data/10000_complex.json')
+                    $http.get(url)
                         .success(function(data) {
                             $scope.firstPage--;
                             var newData = $scope.getPage(data, $scope.firstPage);
@@ -538,7 +659,6 @@
         };
     };
 
-
     function ideProjectService($http){
         var projectService = {
             submit:function(data){
@@ -548,14 +668,116 @@
                 }, function (error) {
                    alert("error"+error.message);
                 });
-            }
+            },
+            setup:function(data){
+                $http({method: 'post', url: '/apis/setup', data:data}).then(function (resp)
+                {
+                    alert("success");
+                }, function (error) {
+                    alert("error"+error.message);
+                });
+            },
         };
         return projectService;
     }
 
+    function dashboardService($http){
+        var projectService = {
+            getAllCollections: function(){
+                var _httpRequest = {method: 'GET', url: '/core/collections'};
+                return $http(_httpRequest);
+            },
+            getActiveCollection: function(collectionName){
+                var _httpRequest = {method: 'GET', url: '/core/collection/data', params:collectionName};
+                return $http(_httpRequest);
+            }
+        };
+        projectService.nodes = {
+            add: function (data) {
+                var _httpRequest = {method: 'POST', url: '/core/collection/item', data: data};
+                return $http(_httpRequest);
+            },
+            update: function (item) {
+                var _httpRequest = {method: 'PUT', url: '/core/collection/item', params: item};
+                return $http(_httpRequest);
+            },
+            delete: function (item) {
+                var _httpRequest = {method: 'DELETE', url: '/core/collection/item', params: item};
+                return $http(_httpRequest);
+            }
+        }
+        return projectService;
+    }
+
+    function goActions(){
+        return {
+            restrict: 'AE',
+            scope:{
+                data:'=?',
+                performCallBack:'&?'
+            },
+            template:'<div class="btn-group" style="height: 20px;"><button class="btn-white btn btn-xs view">View</button><button class="btn-white edit"><i class="fa fa-pencil"></i></button><button class="btn-white delete"><i class="fa fa-trash"></i> </button></div>',//<button class="btn-white tree">Tree</button>
+            controller: function($scope, $element){
+                $element.on('click', '.btn-white.btn.btn-xs.view', function(e){
+                    e.stopPropagation();
+                    $scope.performCallBack()('view', $scope.data.entity);
+                });
+                $element.on('click', '.btn-white.edit', function(e){
+                    e.stopPropagation();
+                    $scope.performCallBack()('edit', $scope.data.entity);
+                });
+                $element.on('click', '.btn-white.delete', function(e){
+                    e.stopPropagation();
+                    $scope.performCallBack()('delete', $scope.data.entity);
+                });
+            }
+        };
+    }
+
+    function multiPanal($compile, projectService){
+        return {
+            restrict: 'AE',
+            template:'<div class="col-lg-6">\
+            <div class="input-group createApp">\
+            <input type="text"  placeholder="Add new App.. " ng-model="appName" class="input input-sm form-control">\
+            <span class="input-group-btn">\
+            <button type="button" class="btn btn-sm btn-white" ng-click="createApp()"> <i class="fa fa-plus"></i> Create Project</button>\
+        </span>\
+        </div></div><div class="col-lg-6"><input type="text" class="form-control input-sm m-b-xs" placeholder="Search in Panals"></div>',
+            controller: function($scope, $element){
+                for(var i=1; i < 101; i++){
+                    $element.append($compile(angular.element('<div class="col-lg-4" panal></div>'))($scope));
+                }
+
+                $element.find('.createApp').on('click', 'button', function(e){
+                    projectService.setup({name:$scope.appName});
+
+                });
+            }
+        };
+    }
+
+    function Panal($compile){
+        return {
+            restrict: 'AE',
+            templateUrl:'./app/controls/panal.html'
+        };
+    }
+
+    function httpProvider($httpProvider) {
+        //$httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+        $httpProvider.defaults.useXDomain = true;
+        delete $httpProvider.defaults.headers.common['X-Requested-With'];
+        $httpProvider.defaults.headers.common["Accept"] = "*/*";
+        $httpProvider.interceptors.push('tokenInterceptor');
+        $httpProvider.defaults.cache = false;
+        $httpProvider.defaults.timeout = 600000;
+    };
+
     app
+        .config(['$httpProvider', httpProvider])
         .config(angularHelper)
-        .config(['$routeProvider', '$locationProvider', config])
+        .config(['$routeProvider', config])
         .directive('ideHeader', ['appMenu', 'appInfo','userInfo', ideHeader])
         .directive('ideGrid', ['$q', '$http','$timeout', ideGrid])
         .directive('landingScrollspy', landingScrollspy)
@@ -563,13 +785,18 @@
         .directive('skinConfigChanger',skinConfigChanger)
         .directive('minimalizaSidebar', minimalizaSidebar)
         .directive('ideSplitter', ideSplitter)
+        .directive('actions', goActions)
+        .directive('multiPanal',['$compile', 'projectService', multiPanal])
+        .directive('panal',['$compile', Panal])
         .controller('ideController', ideController)
         .controller('draggablePanels',['$scope', 'projectService', draggablePanels])
-        .controller('ideViewController', ideViewController)
+        .controller('ideDashboardController',['$scope', '$compile', '$timeout', ideDashboardController])
+        .controller('ideViewController',['$scope', 'dashboardService', '$timeout', 'popupService', ideViewController])
         .service('projectService', ['$http', ideProjectService])
+        .service('dashboardService', ['$http', dashboardService])
         .run(['$rootScope','authenticationFactory', function($rootScope, authenticationFactory) {
             $rootScope.$on("$routeChangeStart", function (event, nextRoute, currentRoute) {
-                $rootScope.isLoggedIn = authenticationFactory.isLoggedIn;
+                $rootScope.isLoggedIn = authenticationFactory.isAuthorized();
             });
             $rootScope.$on('$routeChangeSuccess', function (event, nextRoute, currentRoute) {});
             $rootScope.$on('$routeChangeError', function (event, current, previous, rejection) {});

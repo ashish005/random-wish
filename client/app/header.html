@@ -152,13 +152,13 @@
             <div id='cssmenu' style="margin: 10px">
                 <ul>
                     <li ng-repeat="items in menuInfo track by $index">
-                        <a ><span case="{{items['case']}}" key="{{items['key']}}">{{items["text"]}}</span></a>
+                        <a ng-href="{{items['routeTo']}}"><span case="{{items['case']}}" key="{{items['key']}}">{{items["text"]}}</span></a>
                         <ul ng-if="items['child'].length>0">
                             <li class='has-sub' ng-repeat="itemChilds in items['child'] track by $index">
-                                <a ><span case="{{itemChilds['case']}}" key="{{itemChilds['key']}}">{{itemChilds["text"]}}</span></a>
+                                <a ng-href="{{itemChilds['routeTo']}}"><span case="{{itemChilds['case']}}" key="{{itemChilds['key']}}">{{itemChilds["text"]}}</span></a>
                                 <ul ng-if="itemChilds['child'].length>0">
                                     <li class='has-sub' ng-repeat="childs in itemChilds['child'] track by $index">
-                                        <a><span case="{{childs['case']}}" key="{{childs['key']}}">{{childs["text"]}}</span></a>
+                                        <a ng-href="{{childs['routeTo']}}"><span case="{{childs['case']}}" key="{{childs['key']}}">{{childs["text"]}}</span></a>
                                     </li>
                                 </ul>
                             </li>

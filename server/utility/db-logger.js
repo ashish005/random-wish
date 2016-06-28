@@ -32,10 +32,12 @@ var dbLogger = function (req, res, consumedTime) {
             consumedTime :consumedTime
         };
 
-        var query = client.query("insert into apistracker (request, response, timeconsumed) values ('"+ JSON.stringify(info.req) +"', '"+ JSON.stringify(info.resp) +"', '"+info.consumedTime+"')");
-        query.on("end", function (result) {
+        var _queryText = "insert into apistracker (request, response, timeconsumed) values ('"+ JSON.stringify(info.req) +"', '"+ JSON.stringify(info.resp) +"', '"+info.consumedTime+"')";
+        client.query(_queryText, function(err, result) {
+            if (err) {
+                console.log(err);
+            };
             client.end();
-            res.end();
         });
     });
 };

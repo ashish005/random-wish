@@ -38,7 +38,7 @@
                 mobile:'',
                 role: '',
                 pic:'',
-                isAuthenticated  : false,
+                isAuthenticated  : false
             },
             check: function () {
                 if ($window.localStorage.token && $window.localStorage.email)
@@ -101,16 +101,23 @@
             },
             getAuthToken: function () {
                 return 'Bearer ' + $window.localStorage.token;
+            },
+            isAuthorized: function () {
+                return $window.localStorage.isAuthenticated;
+            },
+            setAuthorized: function () {
+                $window.localStorage.isAuthenticated = true;
             }
         }
         return auth;
     }
 
-    function tokenInterceptor($q, $location, authenticationFactory) {
+    function tokenInterceptor($q, $location, authenticationFactory, appInfo) {
         return {
             request: function (config) {
                 config.headers = config.headers || {};
-                config.headers.Authorization = 'Bearer'+ authenticationFactory.getAuthToken();
+                config.headers.Authorization = authenticationFactory.getAuthToken();
+                config.headers.appid = appInfo['id'];
                 return config;
             },
             requestError: function (rejection) {
@@ -165,14 +172,16 @@
                 }, function(error){});
         };
         $scope.submitLoginForm = function() {
-            coreApis.login($scope.form).then(function(data, status, headers, config){
+            authenticationFactory.setAuthorized();
+            $location.path('/home');
+            /*coreApis.login($scope.form).then(function(data, status, headers, config){
                 authenticationFactory.setInfo(data['data']);
-                $location.path('/shop-all');
-            }, function(error){});
+                $location.path('/');
+            }, function(error){});*/
         };
     }
 
-    function routeProvider ($routeProvider, $locationProvider) {
+    function routeProvider ($routeProvider, $httpProvider) {
         $routeProvider
             .when('/', _viewOptions['login'])
             .when('/login', _viewOptions['login'])
@@ -215,10 +224,69 @@
         return apis;
     };
 
+    function popupService($q, modalService, $timeout) {
+        var modalDefaults = { backdrop: true, keyboard: true, modalFade: true, templateUrl: '', windowClass: 'default-popup' };
+        var _model = {};
+        _model.showPopup = function (template, model) {
+            modalDefaults.windowClass = 'default-popup';
+            modalDefaults.templateUrl = template;
+            return modalService.showModal(modalDefaults, model);
+        };
+        return _model;
+    }
+
+    function modalService($modal) {
+        var modalDefaults = {
+            backdrop: true,
+            keyboard: true,
+            modalFade: true,
+            templateUrl: '',
+            windowClass: ''
+        };
+        var modalOptions = {
+            closeButtonText: 'Close',
+            actionButtonText: 'OK',
+            headerText: 'Proceed?',
+            bodyText: 'Perform this action?'
+        };
+        this.showModal = function (customModalDefaults, customModalOptions) {
+            if (!customModalDefaults) customModalDefaults = {};
+            customModalDefaults.backdrop = 'static';
+            return this.show(customModalDefaults, customModalOptions);
+        };
+
+        this.show = function (customModalDefaults, customModalOptions) {
+            //Create temp objects to work with since we're in a singleton service
+            var tempModalDefaults = {};
+            var tempModalOptions = {};
+
+            //Map angular-ui modal custom defaults to modal defaults defined in service
+            angular.extend(tempModalDefaults, modalDefaults, customModalDefaults);
+
+            //Map modal.html $scope custom properties to defaults defined in service
+            angular.extend(tempModalOptions, modalOptions, customModalOptions);
+
+            if (!tempModalDefaults.controller) {
+                tempModalDefaults.controller = function ($scope, $modalInstance) {
+                    $scope.modalOptions = tempModalOptions;
+                    $scope.modalOptions.ok = function (result) {
+                        $modalInstance.close(result);
+                    };
+                    $scope.modalOptions.close = function (result) {
+                        $modalInstance.dismiss('cancel');
+                    };
+                }
+            }
+            return $modal.open(tempModalDefaults).result;
+        };
+    }
+
     core
         .factory('authenticationFactory', ["$window", authenticationFactory])
-        .factory('tokenInterceptor', ['$q', '$location', 'authenticationFactory', tokenInterceptor])
-        .config(['$routeProvider', '$locationProvider', routeProvider])
+        .factory('tokenInterceptor', ['$q', '$location', 'authenticationFactory', 'appInfo', tokenInterceptor])
+        .config(['$routeProvider', '$locationProvider', '$httpProvider', routeProvider])
+        .factory("popupService", ['$q', "modalService", '$timeout', popupService])
+        .service("modalService", ["$modal", modalService])
         .controller('authController', ['$scope', '$rootScope', '$http', '$location', 'authenticationFactory', 'coreApis', 'appInfo', authController])
         .service("coreApis", ["$http", '$rootScope', '$location', coreApis])
 })(window.define, window.angular);
