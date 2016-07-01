@@ -33,37 +33,33 @@
                     }
                 ]);
                 // SQL Query > Insert Data
-                var _query = " SELECT url from configureEnricher";
+                var _query = " SELECT url from config";
                 client.query(_query, function(err, urlResult) {
-                        done();
-                        var _max = 4001;
+                    done();
+                    var _max = 4001;
 
-                        for (var i = 0; i < urlResult.rows.length-1; i++) {
-                            var _val = urlResult.rows[i]['url'];
+                    urlResult.rows.forEach(function (item) {
+                        var _val = item['url'];
 
-                            if ( _val>0 &&  _val > _max) {
-                                _max = _val+1;
-                            }
-                        };
-
-                        server.listen(_max, function () {
-                            console.log('I am listening ' + _max);
-                            client.query("INSERT INTO configureEnricher(menu, owner, name, referer, url, pid) values($1, $2, $3, $4, $5 , $6)",
-                                [_defaultMenu, 'Ashish Chaturvedi', req.body['name'].toString(), req.headers['appid'].toString(), _max, process.pid],
-                                function(err, result) {
-                                    done();
-                                    if(err) {
-                                        return res.status(500).json({ success: false, data: err});
-                                    }
-                                    client.end();
-                                    /*server.listen(_max, function () {
-                                     console.log('I am listening ' + _max);
-                                     });*/
-
-                                    return res.json({ success: true, data: results});
-                                });
-                        });
+                        if ( _val>0 &&  _val >= _max) {
+                            _max = parseInt(_val)+1;
+                        }
                     });
+
+                    server.listen(_max, function () {
+                        console.log('I am listening ' + _max);
+                        client.query("INSERT INTO config(menu, owner, name, referer, url, pid) values($1, $2, $3, $4, $5 , $6)",
+                            [_defaultMenu, 'Ashish Chaturvedi', req.body['name'].toString(), req.headers['appid'].toString(), _max, process.pid],
+                            function(err, result) {
+                                done();
+                                if(err) {
+                                    return res.status(500).json({ success: false, data: err});
+                                }
+                                client.end();
+                                return res.json({ success: true, data: results});
+                            });
+                    });
+                });
             });
         });
         router.get('/setup', function(req, res) {
@@ -75,9 +71,9 @@
                     return res.status(500).json({ success: false, data: err});
                 }
 
-                return res.json({ success: true, data: []});
+                //return res.json({ success: true, data: []});
                 // SQL Query > Select Data
-                /*var query = client.query(" SELECT * from configureEnricher ce where ce.url = '"+req.headers['host'].split(':')[1]+"'");
+                var query = client.query(" SELECT * from config ce where ce.url = '"+req.headers['host'].split(':')[1]+"'");
 
                 query.on('row', function(row) {
                     results = {
@@ -96,7 +92,7 @@
                     done();
                     client.end();
                     return res.json({ success: true, data: results});
-                });*/
+                });
             });
         });
 

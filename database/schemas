@@ -1,14 +1,13 @@
 -----configureEnricher-----
-CREATE TABLE configureEnricher
+CREATE TABLE config
 (
-  appid bigint NOT NULL DEFAULT 0,
+  appid serial NOT NULL DEFAULT 0,
   owner text,
-  id integer NOT NULL DEFAULT nextval('"configureEnricher_id_seq"'::regclass),
   logo text,
   menu json,
   url text,
   name text,
-  CONSTRAINT "configureEnricher_pkey" PRIMARY KEY (id)
+  CONSTRAINT appid PRIMARY KEY (appid)
 )
 
 -----apis Tracker-----

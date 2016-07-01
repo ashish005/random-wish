@@ -1,4 +1,4 @@
-<div ng-controller="ideDashboardController">
+<div ng-controller="ideDashboardController" ng-init="getInfo()">
     <div class="row wrapper border-bottom white-bg page-heading">
         <div class="col-lg-10">
             <h2>Static Tables</h2>
@@ -29,7 +29,7 @@
                         </div>
                     </div>
                     <div class="ibox-content">
-                        <div class="row" multi-panal></div>
+                        <div class="row" multi-panal data="dashboard"></div>
                     </div>
                 </div>
             </div>

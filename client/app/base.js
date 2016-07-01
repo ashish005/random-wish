@@ -17,9 +17,6 @@
             delete:{ templateUrl:_baseModulesPath['templateUrl'] + 'templates/popups/popup-delete.html' },
             edit:{ templateUrl:_baseModulesPath['templateUrl'] + 'templates/popups/popup-edit.html' },
             tree:{ templateUrl:_baseModulesPath['templateUrl'] + 'templates/popups/popup-tree.html' }
-        },
-        'product-dashboard':{
-            tree:{ templateUrl:_baseModulesPath['templateUrl'] + 'product-dashboard/templates/popups/popup-tree.html' }
         }
     };
 
@@ -28,7 +25,7 @@
             templateUrl: _baseModulesPath.templateUrl +'home.html',
         },
         projects:{
-            templateUrl: _baseModulesPath.templateUrl +'projects/projects.html',
+            templateUrl: _baseModulesPath.templateUrl +'templates/projects.html',
             controller:draggablePanels
         },
         dashboard:{
@@ -48,7 +45,7 @@
     function config($routeProvider) {
         $routeProvider
             .when('/home', routeConfig['home'])
-            .when('/projects', routeConfig['projects'])
+            .when('/projects/:id', routeConfig['projects'])
             .when('/admin', routeConfig['admin'])
             .when('/dashboard', routeConfig['details'])
             .when('/manage-client', routeConfig['dashboard'])
@@ -107,15 +104,29 @@
             collection:[],
             actveOpt:''
         };
-        dashboardService.getAllCollections().then(
-            function (resp, status, headers, config) {
-            $scope.form.collection = resp['data']['data'];
-            if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
-                $scope.$apply();
-            }
-        },
-            function (data, status, headers, config) {}
-        );
+
+        $scope.getInfo = function(key){
+            dashboardService.getInfo().then(
+                function (resp, status, headers, config) {
+                    $scope.$broadcast('updatePanal', resp['data']['data']);
+                },
+                function (data, status, headers, config) {
+                    console.log('failed to load dashboardService.getInfo()');
+                }
+            );
+        };
+        $scope.getAllCollections = function() {
+            dashboardService.getAllCollections().then(
+                function (resp, status, headers, config) {
+                    $scope.form.collection = resp['data']['data'];
+                    if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+                        $scope.$apply();
+                    }
+                },
+                function (data, status, headers, config) {
+                }
+            );
+        }
 
         $scope.selectAction = function() {
             dashboardService.getActiveCollection($scope.form['actveOpt']).then(function (resp, status, headers, config) {
@@ -127,7 +138,7 @@
             }, function (data, status, headers, config) {});
         };
 
-        $scope.gridHeight =  $(window).height()-200 +"px";
+        $scope.gridHeight =  $(window).height()-250 +"px";
         $scope.gridOptions = {
             infiniteScrollRowsFromEnd: 40,
             infiniteScrollUp: true,
@@ -255,7 +266,7 @@
                 {type: "container", id: 1, columns: [[{ "type": "item", "id": "14" }], [{ "type": "item", "id": "14" }]]}
             ],
             dropzones: {
-                0: [
+                /*0: [
                     {
                         "type": "container",
                         "id": 1,
@@ -327,11 +338,12 @@
                                 },
                             ]
                         ]
-                    },
-                    /*{
-                        "type": "item",
-                        "id": 16
-                    }*/
+                    }
+                ],*/
+                0: [
+                    {
+                        "type": "container", "id": "2", "columns": [{ "type": "item", "id": "13" }]
+                    }
                 ]
             }
         };
@@ -445,7 +457,8 @@
             templateUrl: _rootPath+'controls/grid.html',
             link: function (scope, elem) {},
             controller:function($scope, $element){
-                var url = 'https://cdn.rawgit.com/angular-ui/ui-grid.info/gh-pages/data/10000_complex.json';
+                //var url = 'https://cdn.rawgit.com/angular-ui/ui-grid.info/gh-pages/data/10000_complex.json';
+                var url = './data/10000_complex.json';
                 $scope.gridHeight =  $(window).height()-270 +"px";
                 $scope.gridOptions = {
                     infiniteScrollRowsFromEnd: 40,
@@ -683,6 +696,10 @@
 
     function dashboardService($http){
         var projectService = {
+            getInfo: function(){
+                var _httpRequest = {method: 'GET', url: '/core/collection/info'};
+                return $http(_httpRequest);
+            },
             getAllCollections: function(){
                 var _httpRequest = {method: 'GET', url: '/core/collections'};
                 return $http(_httpRequest);
@@ -706,6 +723,7 @@
                 return $http(_httpRequest);
             }
         }
+
         return projectService;
     }
 
@@ -737,6 +755,10 @@
     function multiPanal($compile, projectService){
         return {
             restrict: 'AE',
+            scope:{
+                data:'=',
+                invoke:'='
+            },
             template:'<div class="col-lg-6">\
             <div class="input-group createApp">\
             <input type="text"  placeholder="Add new App.. " ng-model="appName" class="input input-sm form-control">\
@@ -745,13 +767,23 @@
         </span>\
         </div></div><div class="col-lg-6"><input type="text" class="form-control input-sm m-b-xs" placeholder="Search in Panals"></div>',
             controller: function($scope, $element){
-                for(var i=1; i < 101; i++){
-                    $element.append($compile(angular.element('<div class="col-lg-4" panal></div>'))($scope));
-                }
+
+                $scope.$on('updatePanal', function(e, data){
+                    /*for(var i=0; i < data.length; i++){
+                        $element.append($compile(angular.element('<div class="col-lg-4" panal data="data[$index]"></div>'))($scope))
+                    }*/
+                    var html = '';
+                    $scope.item = [];
+                    angular.forEach(data, function(item, index) {
+                        $scope.item[index]=item;
+                        html += '<div class="col-lg-3" panal data="item" index="'+index+'"></div>';
+                    });
+                    $element.append($compile(angular.element(html))($scope))
+                    //$element.append($compile(angular.element(html)))($scope);
+                });
 
                 $element.find('.createApp').on('click', 'button', function(e){
                     projectService.setup({name:$scope.appName});
-
                 });
             }
         };
@@ -760,6 +792,10 @@
     function Panal($compile){
         return {
             restrict: 'AE',
+            scope:{
+                data:'=',
+                index:'@'
+            },
             templateUrl:'./app/controls/panal.html'
         };
     }
@@ -796,11 +832,13 @@
         .service('dashboardService', ['$http', dashboardService])
         .run(['$rootScope','authenticationFactory', function($rootScope, authenticationFactory) {
             $rootScope.$on("$routeChangeStart", function (event, nextRoute, currentRoute) {
+            });
+            $rootScope.$on('$routeChangeSuccess', function (event, nextRoute, currentRoute) {
+            });
+            $rootScope.$on('$routeChangeError', function (event, current, previous, rejection) {});
+            $rootScope.$on('$viewContentLoaded', function () {
                 $rootScope.isLoggedIn = authenticationFactory.isAuthorized();
             });
-            $rootScope.$on('$routeChangeSuccess', function (event, nextRoute, currentRoute) {});
-            $rootScope.$on('$routeChangeError', function (event, current, previous, rejection) {});
-            $rootScope.$on('$viewContentLoaded', function () {});
         }]);
 
     angular.element(document).ready(function () {

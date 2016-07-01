@@ -1,9 +1,17 @@
-<div class="panel panel-default">
+<div class="panel panel-default" ng-init="item = data[index]">
     <div class="panel-heading">
-        Default Panel
+        <a href="#/projects/{{item.id}}"><b> {{item.name}} </b></a>
+
+        <div class="btn-group pull-right">
+            <button class="btn-white"> Process ID : {{item.pid}} </button>
+            <button class="btn-white delete"><i class="fa fa-trash"></i> </button>
+        </div>
+
     </div>
     <div class="panel-body">
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum tincidunt est vitae ultrices accumsan. Aliquam ornare lacus adipiscing, posuere lectus et, fringilla augue.</p>
+        <ul class="category-list m-b-md" style="padding: 0">
+            <li> Port : {{item.url}}</li>
+            <li> owner : {{item.owner}}</li>
+        </ul>
     </div>
-
 </div>

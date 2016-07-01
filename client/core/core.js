@@ -103,10 +103,10 @@
                 return 'Bearer ' + $window.localStorage.token;
             },
             isAuthorized: function () {
-                return $window.localStorage.isAuthenticated;
+                return ($window.localStorage.isAuthenticated == "true");
             },
-            setAuthorized: function () {
-                $window.localStorage.isAuthenticated = true;
+            setAuthorized: function (flag) {
+                $window.localStorage.isAuthenticated = flag;
             }
         }
         return auth;
@@ -151,12 +151,15 @@
 
 
         $scope.initLoginForm = function() {
+            debugger;
+            authenticationFactory.setAuthorized(false);
             $scope.form = {
                 email: 'me.ashish005@gmail.com',
                 password: '123456'
             }
         };
         $scope.initRegisterForm = function() {
+            authenticationFactory.setAuthorized(false);
             $scope.form = {
                 name: 'Ashish Chaturvedi',
                 mobile:'9873210774',
@@ -172,7 +175,7 @@
                 }, function(error){});
         };
         $scope.submitLoginForm = function() {
-            authenticationFactory.setAuthorized();
+            authenticationFactory.setAuthorized(true);
             $location.path('/home');
             /*coreApis.login($scope.form).then(function(data, status, headers, config){
                 authenticationFactory.setInfo(data['data']);

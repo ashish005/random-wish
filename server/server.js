@@ -28,7 +28,7 @@ module.exports = function() {
     //server.use(livereload({port: livereloadport}));
     //============================================================================
     server.listen(server.get('port'), function () {
-        console.log('I am listening to' + server.get('port'));
+        console.log('I am listening to ' + server.get('port'));
 
     });
 

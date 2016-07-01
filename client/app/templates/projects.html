@@ -1,35 +1,50 @@
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="row">
-        <div class="col-lg-2">
-            <div class="ibox ">
-                <div class="ibox-content" style="background-color: transparent;">
-                    <h4> CONTROLS </h4>
-                    <ul class="folder-list" style="padding: 0">
-                        <li style="border: 1px solid red;" ng-repeat="item in models.templates" dnd-draggable="item" dnd-effect-allowed="copy" dnd-copied="item.id = item.id + 1">
-                            {{item.type}}
-                        </li>
-                    </ul>
-                    <div ng-if="models.selected" class="box box-grey box-padding">
-                        <h3>Selected</h3>
-                        <strong>Type: </strong> {{models.selected.type}}<br>
-                        <input type="text" ng-model="models.selected.id" class="form-control" style="margin-top: 5px" />
+        <div class="col-lg-2 ibox">
+            <div class="ibox-content" style="background-color: transparent;">
+                <form role="form" class="ng-pristine ng-valid">
+                    <div class="row">
+                        <select class="form-control" name="account">
+                            <option value="option 1">option 1</option>
+                            <option value="option 2">option 2</option>
+                            <option value="option 3">option 3</option>
+                            <option value="option 4">option 4</option>
+                        </select>
                     </div>
-                    <div class="clearfix"></div>
+                </form>
+            </div>
+            <div class="ibox-content" style="background-color: transparent;">
+                <h4> CONTROLS </h4>
+                <ul class="folder-list" style="padding: 0">
+                    <li style="border-bottom: 1px solid #ffffff;" ng-repeat="item in models.templates" dnd-draggable="item" dnd-effect-allowed="copy" dnd-copied="item.id = item.id + 1">
+                        {{item.type}}
+                    </li>
+                </ul>
+                <div ng-if="models.selected" class="box box-grey box-padding">
+                    <h3>Selected</h3>
+                    <strong>Type: </strong> {{models.selected.type}}<br>
+                    <input type="text" ng-model="models.selected.id" class="form-control" style="margin-top: 5px" />
                 </div>
+                <div class="clearfix"></div>
             </div>
         </div>
-        <div class="col-lg-10" style="border-left: 1px solid #FFF; background-color: transparent;">
+        <div class="col-lg-10" style="background-color: transparent;">
             <div class="row">
                 <div class="col-lg-4">
-                    <div class="btn-group">
-                        <span class="input-group-btn">
-                            <button type="button" class="btn btn-primary" ng-click="createDropzone()">Create a DropZone</button>
-                        </span>
-                    </div>
+                    <form role="form" class="ng-pristine ng-valid">
+                        <div class="row col-lg-12">
+                            <div class="btn-group m-b">
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-primary" ng-click="createDropzone()"> Create a DropZone </button>
+                                </span>
+                            </div>
+                        </div>
+                    </form>
                 </div>
                 <div class="col-lg-4">
                     <form role="form" class="ng-pristine ng-valid">
-                        <div class="input-group">
+                        <div class="input-group  m-b">
+                            <span class="input-group-addon">#/</span>
                             <input type="text" placeholder="Provide a View Name.." class="input-sm form-control"> <span class="input-group-btn"><button type="button" class="btn btn-sm btn-primary"  ng-click="createView()"> Create View</button> </span>
                         </div>
                     </form>
@@ -95,8 +110,6 @@
         </div>
     </div>
 </script>
-
-
 <script type="text/ng-template" id="grid.html"><div ide-grid columnDef='columnDef' url="url"></div></script>
 <script type="text/ng-template" id="tabContainer.html"><div ng-include src="item.templateUrl"></div></script>
 <!--

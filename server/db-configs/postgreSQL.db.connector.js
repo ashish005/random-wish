@@ -10,8 +10,8 @@ module.exports = (function(){
         password : "password"
     };
 
-    pg.connectionString = "pg://"+serverConfig['userName']+':'+serverConfig['password']+'@'+serverConfig['serverName']+'/'+serverConfig['database'];
-    //var connectionString =  "pg://admin:guest@localhost:5432/Employees";
+    //pg.connectionString = "pg://"+serverConfig['userName']+':'+serverConfig['password']+'@'+serverConfig['serverName']+'/'+serverConfig['database'];
+    pg.connectionString =  "pg://postgres:password@127.0.0.1:5432/postgres";
     pg.on("connect", function (err, callback) {
          var client = new pg.Client(connectionString);
          client.connect();
