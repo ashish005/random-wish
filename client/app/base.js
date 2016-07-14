@@ -230,7 +230,88 @@
         }
     }
 
-    function draggablePanels($scope, projectService) {
+    var wrapper = function(){
+        this.getId = function(id){
+            return parseInt(id);
+        };
+
+        this.serializer = function(data, result){
+            if(typeof data == 'object' && data && Array === data.constructor) {
+                for (var i = 0; i < data.length; i++) {
+                    this.serializer(data[i], result);
+                };
+            } else if(data.columns){
+                var _arr = [this.getId(data.id), []];
+                for (var j = 0; j < data.columns.length; j++) {
+                    var newArr = [];
+                    this.serializer(data.columns[j], newArr);
+                    _arr[1].push(newArr)
+                };
+                result.push(_arr);
+            } else {
+                result.push(this.getId(data.id));
+            }
+        };
+
+        this.setTemplate = function(data){
+            if(typeof data === 'number') {
+                return this.templates[data];
+            }
+        }
+
+        this.deserializer = function(data, result){
+            for (var i = 0; i < data.length; i++) {
+                var arr = [], _iData = data[i];
+
+                if(typeof _iData == 'object' && _iData && Array === _iData.constructor) {
+                    this.deserializer(_iData, arr);
+                } else {
+                    var _templ = this.setTemplate(_iData);
+                    if(_iData == 1){ // Apply condition here
+                        var arr1 = [], columnData = data[i+1];
+                        this.deserializer(columnData, arr1);
+                        data.splice(i+1, 1);
+                        _templ.columns = arr1;
+                        result.push(_templ);
+                    }else{
+                        var _arrayInfo = [];
+                        _arrayInfo.push(_templ);
+                        result.push(_arrayInfo);
+                    }
+                }
+            };
+
+        }
+    };
+    wrapper.prototype.serialize = function(data){
+        var result = result || [];
+        this.serializer(data, result);
+        return result;
+    };
+    wrapper.prototype.deserialize = function(serializedData, templates){
+        var result = result || [];
+        this.templates = templates;
+        this.deserializer(serializedData, result);
+        return result;
+    };
+
+    function draggablePanels($scope, $routeParams, projectService) {
+        $scope.form = {
+            collection:[],
+            actveOpt:''
+        };
+
+        $scope.getProjectView = function(){
+            projectService.getViewInfo({ id: $routeParams.id }).then(
+                function(resp){
+                    $scope.form.collection = resp['data']['data'];
+                },
+                function(err){
+                    alert(err);
+                }
+            );
+        }
+
         var _controls = {
             grid: {key:'grid', name: 'Grid', panal: '<div ide-grid></div>'},
             dropdown: {key:'dropdown', name: 'Dropdown', panal: '<div ide-grid></div>'}
@@ -263,10 +344,16 @@
                 {type:'grid', id:3,},
                 {type: "item", id: 2},
                 {type: "textBox", id: 5},
-                {type: "container", id: 1, columns: [[{ "type": "item", "id": "14" }], [{ "type": "item", "id": "14" }]]}
+                {type: "container", id: 1,
+                    columns: [
+                        [{ "type": "item", "id": "2" }],
+                        [{ "type": "item", "id": "2" }]
+                    ]
+                }
             ],
-            dropzones: {
-                /*0: [
+            dropzones:[]
+            /*dropzones: {
+                0: [
                     {
                         "type": "container",
                         "id": 1,
@@ -339,16 +426,9 @@
                             ]
                         ]
                     }
-                ],*/
-                0: [
-                    {
-                        "type": "container", "id": "2", "columns": [{ "type": "item", "id": "13" }]
-                    }
-                ]
-            }
+                ],
+            }*/
         };
-
-
 
         $scope.getZoneClass = function(_colLength){
             var _classInfo = {
@@ -366,7 +446,7 @@
             [
                 {
                     "type": "item",
-                    "id": "1"
+                    "id": "2"
                 },
                 {
                     "type": "item",
@@ -376,7 +456,7 @@
             [
                 {
                     "type": "item",
-                    "id": "3"
+                    "id": "2"
                 }
             ]
         ];
@@ -384,7 +464,7 @@
             [
                 {
                     "type": "container",
-                    "id": "3",
+                    "id": "1",
                     "columns": [
                         [
                             {
@@ -397,10 +477,9 @@
             ]
         ];
         $scope.createDropzone = function() {
-
             var _info = $scope.models.dropzones;
-            var _keys = Object.keys(_info).length;
-            $scope.models.dropzones[_keys] = [
+            //var _keys = Object.keys(_info).length;
+            /* $scope.models.dropzones[_keys] = [
                 {
                     type: "container",
                     id: 2,
@@ -408,15 +487,48 @@
                 },
                 {
                     type: "container",
-                    id: 2,
+                    id: 1,
                     columns: _col
                 }
-            ];
-        }
+            ];*/
+            $scope.models.dropzones.push(
+                [
+                    { type: "container", id: 1, columns: _col }
+                ]
+            );
+        };
+
+        var _templates = {};
+        $scope.models.templates.forEach(function (item, index) {
+            _templates[item['id']] = item;
+        });
 
         $scope.createView = function(){
-            projectService.submit($scope.models.dropzones);
+            var info = new wrapper();
+            var _node =  info.serialize($scope.models.dropzones);
+            var _modelView = {
+                id: $routeParams.id,
+                name: $scope.viewName,
+                view: JSON.stringify(_node)
+            };
+
+            console.log(_modelView.view);
+            projectService.submit(_modelView).then(
+                function(resp){
+                    $scope.form.collection.push(_modelView);
+                },
+                function(err){
+                    alert(err);
+                }
+            );
         }
+
+        $scope.selectAction = function() {
+            var _data = $scope.form['actveOpt'];
+            var _rslt = new wrapper().deserialize(_data['view'], _templates);
+            console.log(_rslt);
+            $scope.models.dropzones = _rslt;
+        };
     };
 
     /**
@@ -675,20 +787,13 @@
     function ideProjectService($http){
         var projectService = {
             submit:function(data){
-                $http({method: 'post', url: '/apis/projectView', data:data}).then(function (resp)
-                {
-                    alert("success");
-                }, function (error) {
-                   alert("error"+error.message);
-                });
+                return $http({method: 'post', url: '/apis/projectView', data:data});
+            },
+            getViewInfo:function(data){
+                return $http({method: 'get', url: '/apis/projectView', params:data});
             },
             setup:function(data){
-                $http({method: 'post', url: '/apis/setup', data:data}).then(function (resp)
-                {
-                    alert("success");
-                }, function (error) {
-                    alert("error"+error.message);
-                });
+                return $http({method: 'post', url: '/apis/setup', data:data});
             },
         };
         return projectService;
@@ -825,13 +930,14 @@
         .directive('multiPanal',['$compile', 'projectService', multiPanal])
         .directive('panal',['$compile', Panal])
         .controller('ideController', ideController)
-        .controller('draggablePanels',['$scope', 'projectService', draggablePanels])
+        .controller('draggablePanels',['$scope', '$routeParams', 'projectService', draggablePanels])
         .controller('ideDashboardController',['$scope', '$compile', '$timeout', ideDashboardController])
         .controller('ideViewController',['$scope', 'dashboardService', '$timeout', 'popupService', ideViewController])
         .service('projectService', ['$http', ideProjectService])
         .service('dashboardService', ['$http', dashboardService])
         .run(['$rootScope','authenticationFactory', function($rootScope, authenticationFactory) {
             $rootScope.$on("$routeChangeStart", function (event, nextRoute, currentRoute) {
+
             });
             $rootScope.$on('$routeChangeSuccess', function (event, nextRoute, currentRoute) {
             });

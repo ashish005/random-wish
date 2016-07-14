@@ -1,14 +1,11 @@
-<div class="wrapper wrapper-content animated fadeInRight">
+<div class="wrapper wrapper-content animated fadeInRight" ng-init="getProjectView()">
     <div class="row">
         <div class="col-lg-2 ibox">
             <div class="ibox-content" style="background-color: transparent;">
                 <form role="form" class="ng-pristine ng-valid">
                     <div class="row">
-                        <select class="form-control" name="account">
-                            <option value="option 1">option 1</option>
-                            <option value="option 2">option 2</option>
-                            <option value="option 3">option 3</option>
-                            <option value="option 4">option 4</option>
+                        <select class="form-control" ng-model="form['actveOpt']" ng-change="selectAction()"
+                                ng-options="s.name for s in form.collection">
                         </select>
                     </div>
                 </form>
@@ -16,7 +13,7 @@
             <div class="ibox-content" style="background-color: transparent;">
                 <h4> CONTROLS </h4>
                 <ul class="folder-list" style="padding: 0">
-                    <li style="border-bottom: 1px solid #ffffff;" ng-repeat="item in models.templates" dnd-draggable="item" dnd-effect-allowed="copy" dnd-copied="item.id = item.id + 1">
+                    <li style="border-bottom: 1px solid #ffffff;" ng-repeat="item in models.templates track by $index" dnd-draggable="item" dnd-effect-allowed="copy" dnd-copied="item.id = item.id + 1">
                         {{item.type}}
                     </li>
                 </ul>
@@ -45,7 +42,7 @@
                     <form role="form" class="ng-pristine ng-valid">
                         <div class="input-group  m-b">
                             <span class="input-group-addon">#/</span>
-                            <input type="text" placeholder="Provide a View Name.." class="input-sm form-control"> <span class="input-group-btn"><button type="button" class="btn btn-sm btn-primary"  ng-click="createView()"> Create View</button> </span>
+                            <input type="text" ng-model="viewName" placeholder="Provide a View Name.." class="input-sm form-control"> <span class="input-group-btn"><button type="button" class="btn btn-sm btn-primary"  ng-click="createView()"> Create View</button> </span>
                         </div>
                     </form>
                 </div>
@@ -53,7 +50,7 @@
                 </div>
             </div>
             <div class="row">
-                <!--<div class="ibox">
+                <div class="ibox">
                     <div class="ibox-title">
                         <h5> Generated Model</h5>
                         <div class="pull-right">
@@ -63,8 +60,8 @@
                     <div class="ibox-content">
                         <pre>{{ models.dropzones | json }}</pre>
                     </div>
-                </div>-->
-                <div class="col-lg-12" ng-repeat="(zone, list) in models.dropzones"
+                </div>
+                <div class="col-lg-12" ng-repeat="(zone, list) in models.dropzones track by $index"
                      dnd-list="list"
                      ng-include="'responsiveColumns.html'">
                 </div>
@@ -73,7 +70,7 @@
     </div>
 </div>
 <script type="text/ng-template" id="responsiveColumns.html">
-    <div ng-repeat="item in list"
+    <div ng-repeat="item in list track by $index"
          dnd-draggable="item"
          dnd-effect-allowed="move"
          dnd-moved="list.splice($index, 1)"
@@ -91,7 +88,7 @@
         </div>
         <div class="ibox-content">
             <div class="row">
-                <div ng-repeat="list in item.columns" dnd-list="list" ng-include="'responsiveColumns.html'" ng-class="getZoneClass(item.columns.length)"></div>
+                <div ng-repeat="list in item.columns track by $index" dnd-list="list" ng-include="'responsiveColumns.html'" ng-class="getZoneClass(item.columns.length)"></div>
             </div>
          </div>
     </div>

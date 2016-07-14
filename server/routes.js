@@ -96,6 +96,51 @@
             });
         });
 
+        router.post('/projectView', function(req, res) {
+            var db = connector.postgreSql;var results = {};
+            db.connect(db.connectionString, function(err, client, done) {
+                if(err) {
+                    done();
+                    console.log(err);
+                    return res.status(500).json({ success: false, data: err});
+                }
+                // SQL Query > Insert Data
+                client.query("INSERT INTO views (appid, name, view) values($1, $2, $3)",
+                    [ req.body['id'], req.body['name'], req.body['view']],
+                    function(err, result) {
+                        done();
+                        if(err) {
+                            return res.status(500).json({ success: false, data: err});
+                        }
+                        client.end();
+                        return res.json({ success: true, data: null});
+                    });
+            });
+        });
+
+        router.get('/projectView', function(req, res) {
+            var db = connector.postgreSql;var results = {};
+            db.connect(db.connectionString, function(err, client, done) {
+                if(err) {
+                    done();
+                    console.log(err);
+                    return res.status(500).json({ success: false, data: err});
+                }
+                // SQL Query > select data
+                var _params = req.query;
+                var _query = " select * from views where appid = " + _params['id'];
+                client.query(_query,
+                    function(err, results) {
+                        done();
+                        if(err) {
+                            return res.status(500).json({ success: false, data: err});
+                        }
+                        client.end();
+                        return res.json({ success: true, data: results.rows});
+                    });
+            });
+        });
+
         return router;
     }
 
