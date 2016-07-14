@@ -283,11 +283,13 @@
 
         }
     };
+
     wrapper.prototype.serialize = function(data){
         var result = result || [];
         this.serializer(data, result);
         return result;
     };
+
     wrapper.prototype.deserialize = function(serializedData, templates){
         var result = result || [];
         this.templates = templates;
