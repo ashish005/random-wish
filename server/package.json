@@ -10,9 +10,11 @@
   "author": "Ashish Chaturvedi",
   "license": "ISC",
   "dependencies": {
+    "async": "^2.0.1",
     "body-parser": "^1.15.1",
     "cors": "^2.7.1",
     "http": "0.0.0",
+    "pg": "^6.0.3",
     "response-time": "^2.3.1"
   }
 }

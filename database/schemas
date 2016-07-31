@@ -1,13 +1,15 @@
 -----configureEnricher-----
-CREATE TABLE config
+CREATE TABLE public.config
 (
-  appid serial NOT NULL DEFAULT 0,
+  id serial NOT NULL,
   owner text,
   logo text,
   menu json,
   url text,
   name text,
-  CONSTRAINT appid PRIMARY KEY (appid)
+  pid numeric,
+  referer numeric,
+  CONSTRAINT appid PRIMARY KEY (id)
 )
 
 -----apis Tracker-----
@@ -18,4 +20,15 @@ CREATE TABLE apistracker
   timeconsumed text,
   id serial NOT NULL,
   CONSTRAINT id PRIMARY KEY (id)
+)
+
+---------views-------------
+
+CREATE TABLE public.views
+(
+  appid numeric,
+  name text,
+  view json,
+  id serial NOT NULL,
+  CONSTRAINT views_pkey PRIMARY KEY (id)
 )

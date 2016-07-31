@@ -23,7 +23,6 @@
             db.connect(db.connectionString, function(err, client, done) {
                 if(err) {
                     done();
-                    console.log(err);
                     return res.status(500).json({ success: false, data: err});
                 }
 
@@ -46,19 +45,17 @@
                         }
                     });
 
-                    server.listen(_max, function () {
-                        console.log('I am listening ' + _max);
-                        client.query("INSERT INTO config(menu, owner, name, referer, url, pid) values($1, $2, $3, $4, $5 , $6)",
-                            [_defaultMenu, 'Ashish Chaturvedi', req.body['name'].toString(), req.headers['appid'].toString(), _max, process.pid],
-                            function(err, result) {
-                                done();
-                                if(err) {
-                                    return res.status(500).json({ success: false, data: err});
-                                }
-                                client.end();
-                                return res.json({ success: true, data: results});
-                            });
-                    });
+                    var _query = {
+                        text: 'INSERT INTO config(menu, owner, name, referer, url, pid) values($1, $2, $3, $4, $5 , $6) RETURNING id, url, logo, name, owner, pid;',
+                        values: [_defaultMenu, 'Ashish Chaturvedi', req.body['name'].toString(), req.headers['appid'].toString(), _max, process.pid]
+                    };
+                    client.query(_query, function (err, result) {
+                            done();
+                            if (err) {
+                                return res.status(500).json({success: false, data: err});
+                            }
+                            return res.json({success: true, row: result.rows[0]});
+                        });
                 });
             });
         });
@@ -90,7 +87,6 @@
                 // After all data is returned, close connection and return results
                 query.on('end', function() {
                     done();
-                    client.end();
                     return res.json({ success: true, data: results});
                 });
             });
@@ -101,19 +97,20 @@
             db.connect(db.connectionString, function(err, client, done) {
                 if(err) {
                     done();
-                    console.log(err);
                     return res.status(500).json({ success: false, data: err});
                 }
                 // SQL Query > Insert Data
-                client.query("INSERT INTO views (appid, name, view) values($1, $2, $3)",
-                    [ req.body['id'], req.body['name'], req.body['view']],
+                var _query = {
+                    text: 'INSERT INTO views (appid, name, view) values($1, $2, $3) RETURNING *;',
+                    values: [req.body['id'], req.body['name'], req.body['view']]
+                };
+                client.query(_query,
                     function(err, result) {
                         done();
                         if(err) {
                             return res.status(500).json({ success: false, data: err});
                         }
-                        client.end();
-                        return res.json({ success: true, data: null});
+                        return res.json({ success: true, rows: result.rows[0]});
                     });
             });
         });
@@ -128,15 +125,14 @@
                 }
                 // SQL Query > select data
                 var _params = req.query;
-                var _query = " select * from views where appid = " + _params['id'];
+                var _query = "select views.*, config.url from views left join config on config.id= views.appid where appid =" + _params['id'];
                 client.query(_query,
                     function(err, results) {
                         done();
-                        if(err) {
-                            return res.status(500).json({ success: false, data: err});
+                        if (err) {
+                            return res.status(500).json({success: false, data: err});
                         }
-                        client.end();
-                        return res.json({ success: true, data: results.rows});
+                        return res.json({success: true, data: results.rows});
                     });
             });
         });

@@ -20,7 +20,7 @@ module.exports = function() {
     server.use('/apis', require('./routes')(express, server));
     server.use('/core', require('./core')(express));
 
-    var port = process.env.PORT || 4000;        // set our port
+    var port = process.env.PORT || 4010;        // set our port
     server.set('port', port);
     server.set('views', __dirname + '/views');
     server.set('view engine', 'jade');
@@ -31,9 +31,6 @@ module.exports = function() {
         console.log('I am listening to ' + server.get('port'));
 
     });
-
-
-    //var shopAllRouters = require('./routes/routes')(server, express, connector);//Define All routes here
 
     return {
         server:server,

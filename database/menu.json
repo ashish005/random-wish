@@ -298,29 +298,26 @@
     },
     "menu":[
       {
-        "id": 1, "text":"Home", "order":1, "routeTo":"#/", "child": []
+        "id": 1, "text":"Home", "order":1, "routeTo":"#/home", "child": []
       },
       {
-        "id": 2, "text":"Front End", "order":1, "routeTo":"#/manage-client",
+        "id": 2, "text":"Front End", "order":1, "routeTo":null,
         "child": [
           {
-            "id": 1, "text":"... coming Soon", "order":1, "child":[]
+            "id": 2, "text":"Dashboard", "order":1, "routeTo":"#/client-dashboard", "child": []
           }
         ]
       },
       {
-        "id": 2, "text":"Manage Database", "order":1, "routeTo":"#/manage-db",
+        "id": 2, "text":"Manage Database", "order":1, "routeTo":null,
         "child": [
           {
-            "id": 2, "text":"Dashboard", "order":1, "routeTo":"#/dashboard", "child": []
+            "id": 2, "text":"Dashboard", "order":1, "routeTo":"#/db-dashboard", "child": []
           }
         ]
       },
       {
-        "id": 3, "text":"Projects", "order":1, "routeTo":"#/projects", "child": []
-      },
-      {
-        "id": 4, "text":"Admin", "order":1, "routeTo":"#/admin", "child": []
+        "id": 3, "text":"Admin", "order":1, "routeTo":"#/admin", "child": []
       }
     ]
   }

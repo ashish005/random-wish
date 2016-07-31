@@ -10,7 +10,7 @@ var dbLogger = function (req, res, consumedTime) {
     db.connect(db.connectionString, function(err, client, done) {
         if(err) {
             done();
-            return res.status(500).json({ success: false, data: err});
+            //return res.status(500).json({ success: false, data: err});
         }
 
         /*var query = client.query( "CREATE TABLE apistracker"+
@@ -37,7 +37,8 @@ var dbLogger = function (req, res, consumedTime) {
             if (err) {
                 console.log(err);
             };
-            client.end();
+            done();
+            //client.end();
         });
     });
 };

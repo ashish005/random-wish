@@ -53,8 +53,12 @@
                 var rows = [], columns =[];
 
                 var _referer = req.headers['appid'];
-                var _query =' SELECT * FROM ' + collection['name'];
-                //var _query =" SELECT id, logo, name, owner, pid FROM config ce where ce.referer = '" +_referer +"'";
+                var _query = ' SELECT * FROM ' + collection['name'];
+
+                if('config' == collection['name']){
+                     _query +=" ce where ce.referer = " +_referer;
+                }
+
                 client.query(_query, function(err, result) {
                     done();
                     if(err) {
@@ -86,7 +90,6 @@
                     if(err) {
                         return res.status(500).json({ success: false, data: err});
                     }
-                    client.end();
                     return res.json({ success: true, data: result.rows});
                 });
 

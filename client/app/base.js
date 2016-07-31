@@ -47,9 +47,8 @@
             .when('/home', routeConfig['home'])
             .when('/projects/:id', routeConfig['projects'])
             .when('/admin', routeConfig['admin'])
-            .when('/dashboard', routeConfig['details'])
-            .when('/manage-client', routeConfig['dashboard'])
-            .when('/manage-db', routeConfig['dashboard'])
+            .when('/client-dashboard', routeConfig['dashboard'])
+            .when('/db-dashboard', routeConfig['details'])
             .otherwise({redirectTo: '/'});//Handle all exceptions
     };
 
@@ -273,6 +272,9 @@
                         data.splice(i+1, 1);
                         _templ.columns = arr1;
                         result.push(_templ);
+                        /*var _arrayInfo = [];
+                        _arrayInfo.push(_templ);
+                        result.push(_arrayInfo);*/
                     }else{
                         var _arrayInfo = [];
                         _arrayInfo.push(_templ);
@@ -348,8 +350,8 @@
                 {type: "textBox", id: 5},
                 {type: "container", id: 1,
                     columns: [
-                        [{ "type": "item", "id": "2" }],
-                        [{ "type": "item", "id": "2" }]
+                        /*[{ "type": "item", "id": "2" }],
+                        [{ "type": "item", "id": "2" }]*/
                     ]
                 }
             ],
@@ -517,7 +519,7 @@
             console.log(_modelView.view);
             projectService.submit(_modelView).then(
                 function(resp){
-                    $scope.form.collection.push(_modelView);
+                    $scope.form.collection.push(resp.data.rows);
                 },
                 function(err){
                     alert(err);
@@ -874,23 +876,31 @@
         </span>\
         </div></div><div class="col-lg-6"><input type="text" class="form-control input-sm m-b-xs" placeholder="Search in Panals"></div>',
             controller: function($scope, $element){
-
+                $scope.items = [];
                 $scope.$on('updatePanal', function(e, data){
-                    /*for(var i=0; i < data.length; i++){
-                        $element.append($compile(angular.element('<div class="col-lg-4" panal data="data[$index]"></div>'))($scope))
-                    }*/
-                    var html = '';
-                    $scope.item = [];
-                    angular.forEach(data, function(item, index) {
-                        $scope.item[index]=item;
-                        html += '<div class="col-lg-3" panal data="item" index="'+index+'"></div>';
-                    });
-                    $element.append($compile(angular.element(html))($scope))
-                    //$element.append($compile(angular.element(html)))($scope);
+                    $scope.info = data;
+                    createPanals(data);
                 });
 
+                function createPanals(data){
+                    data.forEach(function(item, index) {
+                        createPanal(item, index);
+                    });
+                }
+
+                function createPanal(item, index) {
+                    $scope.items[index]=item;
+                    var html = '<div class="col-lg-3" panal data="items" index="'+index+'"></div>';
+                    $element.append($compile(angular.element(html))($scope));
+                };
+
                 $element.find('.createApp').on('click', 'button', function(e){
-                    projectService.setup({name:$scope.appName});
+                    projectService.setup({name:$scope.appName}).then(function(resp){
+                        $scope.info.push(resp.data.row);
+                       new createPanal(resp.data.row, $scope.info.length-1);
+                    }, function(){
+                        console.log('data creation issue');
+                    });
                 });
             }
         };
