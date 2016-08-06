@@ -5,40 +5,40 @@
     var appName = 'goLive';
     window['name'] = appName;
 
-    var app = angular.module(appName, ['ngRoute', appName+'.core', 'ui.bootstrap', 'ui.grid', 'ui.grid.infiniteScroll','dndLists']);
+    var app = angular.module(appName, ['ngRoute', appName + '.core', 'ui.bootstrap', 'ui.grid', 'ui.grid.infiniteScroll', 'dndLists']);
     var _rootPath = './app/';
     var _baseModulesPath = {
-        templateUrl:'./app/'
+        templateUrl: './app/'
     };
 
     var popupView = {
-        dashboard:{
-            view:{ templateUrl:_baseModulesPath['templateUrl'] + 'templates/popups/popup-view.html' },
-            delete:{ templateUrl:_baseModulesPath['templateUrl'] + 'templates/popups/popup-delete.html' },
-            edit:{ templateUrl:_baseModulesPath['templateUrl'] + 'templates/popups/popup-edit.html' },
-            tree:{ templateUrl:_baseModulesPath['templateUrl'] + 'templates/popups/popup-tree.html' }
+        dashboard: {
+            view: {templateUrl: _baseModulesPath['templateUrl'] + 'templates/popups/popup-view.html'},
+            delete: {templateUrl: _baseModulesPath['templateUrl'] + 'templates/popups/popup-delete.html'},
+            edit: {templateUrl: _baseModulesPath['templateUrl'] + 'templates/popups/popup-edit.html'},
+            tree: {templateUrl: _baseModulesPath['templateUrl'] + 'templates/popups/popup-tree.html'}
         }
     };
 
     var routeConfig = {
-        home:{
-            templateUrl: _baseModulesPath.templateUrl +'home.html',
+        home: {
+            templateUrl: _baseModulesPath.templateUrl + 'home.html',
         },
-        projects:{
-            templateUrl: _baseModulesPath.templateUrl +'templates/projects.html',
-            controller:draggablePanels
+        projects: {
+            templateUrl: _baseModulesPath.templateUrl + 'templates/projects.html',
+            controller: draggablePanels
         },
-        dashboard:{
-            templateUrl: _baseModulesPath.templateUrl +'templates/dashboard.html',
-            controller:ideViewController
+        dashboard: {
+            templateUrl: _baseModulesPath.templateUrl + 'templates/dashboard.html',
+            controller: ideViewController
         },
-        details:{
-            templateUrl: _baseModulesPath.templateUrl +'templates/details.html',
-            controller:ideViewController
+        details: {
+            templateUrl: _baseModulesPath.templateUrl + 'templates/details.html',
+            controller: ideViewController
         },
-        admin:{
-            templateUrl: _baseModulesPath.templateUrl +'admin/dashboard.html',
-            controller:draggablePanels
+        admin: {
+            templateUrl: _baseModulesPath.templateUrl + 'admin/dashboard.html',
+            controller: draggablePanels
         }
     };
 
@@ -52,7 +52,7 @@
             .otherwise({redirectTo: '/'});//Handle all exceptions
     };
 
-    function angularHelper( $controllerProvider, $provide, $compileProvider ) {
+    function angularHelper($controllerProvider, $provide, $compileProvider) {
         // Let's keep the older references.
         app._controller = app.controller;
         app._service = app.service;
@@ -61,50 +61,50 @@
         app._directive = app.directive;
 
         // Provider-based controller.
-        app.controller = function( name, constructor ) {
-            $controllerProvider.register( name, constructor );
-            return(this);
+        app.controller = function (name, constructor) {
+            $controllerProvider.register(name, constructor);
+            return (this);
         };
 
         // Provider-based service.
-        app.service = function( name, constructor ) {
-            $provide.service( name, constructor );
-            return(this);
+        app.service = function (name, constructor) {
+            $provide.service(name, constructor);
+            return (this);
         };
 
         // Provider-based factory.
-        app.factory = function( name, factory ) {
-            $provide.factory( name, factory );
-            return(this);
+        app.factory = function (name, factory) {
+            $provide.factory(name, factory);
+            return (this);
         };
 
         // Provider-based value.
-        app.value = function( name, value ) {
-            $provide.value( name, value );
-            return(this);
+        app.value = function (name, value) {
+            $provide.value(name, value);
+            return (this);
         };
         // Provider-based directive.
-        app.directive = function( name, factory ) {
-            $compileProvider.directive( name, factory );
-            return(this);
+        app.directive = function (name, factory) {
+            $compileProvider.directive(name, factory);
+            return (this);
         };
     }
 
-    function ideDashboardController($scope, $compile, $timeout){
+    function ideDashboardController($scope, $compile, $timeout) {
 
     };
 
-    function ideController($scope){
+    function ideController($scope) {
 
     };
 
-    function ideViewController($scope, dashboardService, $timeout, popupService){
+    function ideViewController($scope, dashboardService, $timeout, popupService) {
         $scope.form = {
-            collection:[],
-            actveOpt:''
+            collection: [],
+            actveOpt: ''
         };
 
-        $scope.getInfo = function(key){
+        $scope.getInfo = function (key) {
             dashboardService.getInfo().then(
                 function (resp, status, headers, config) {
                     $scope.$broadcast('updatePanal', resp['data']['data']);
@@ -114,7 +114,7 @@
                 }
             );
         };
-        $scope.getAllCollections = function() {
+        $scope.getAllCollections = function () {
             dashboardService.getAllCollections().then(
                 function (resp, status, headers, config) {
                     $scope.form.collection = resp['data']['data'];
@@ -127,17 +127,24 @@
             );
         }
 
-        $scope.selectAction = function() {
+        $scope.selectAction = function () {
             dashboardService.getActiveCollection($scope.form['actveOpt']).then(function (resp, status, headers, config) {
                 $scope.data = resp['data']['data'];
 
                 $scope.gridOptions.columnDefs = resp['data']['columns'];
-                $scope.gridOptions.columnDefs.unshift({name: 'Action', cellEditableCondition: true, cellTemplate:'<div actions data="row" perform-call-back="grid.appScope.actionCallBack"></div>'});
-                $timeout(function() { $scope.refresh = false; }, 0);
-            }, function (data, status, headers, config) {});
+                $scope.gridOptions.columnDefs.unshift({
+                    name: 'Action',
+                    cellEditableCondition: true,
+                    cellTemplate: '<div actions data="row" perform-call-back="grid.appScope.actionCallBack"></div>'
+                });
+                $timeout(function () {
+                    $scope.refresh = false;
+                }, 0);
+            }, function (data, status, headers, config) {
+            });
         };
 
-        $scope.gridHeight =  $(window).height()-250 +"px";
+        $scope.gridHeight = $(window).height() - 250 + "px";
         $scope.gridOptions = {
             infiniteScrollRowsFromEnd: 40,
             infiniteScrollUp: true,
@@ -149,292 +156,275 @@
         };
         $scope.data = [];
 
-        var model = (function(data){
+        var model = (function (data) {
             return {
                 model: {
-                    name:$scope.form['actveOpt']['name'],
-                    info:data
+                    name: $scope.form['actveOpt']['name'],
+                    info: data
                 }
             };
         });
 
         var ops = {
-            view:{
-                prePopupSvc:popupService['showPopup'],
-                template:popupView['dashboard']['view']['templateUrl'],
+            view: {
+                prePopupSvc: popupService['showPopup'],
+                template: popupView['dashboard']['view']['templateUrl'],
                 postPopupSvc: {
-                    serviceToCall: function(){},
-                    success: function(resp){},
-                    failure: function(resp){},
+                    serviceToCall: function () {
+                    },
+                    success: function (resp) {
+                    },
+                    failure: function (resp) {
+                    },
                 },
                 type: 'view',
                 name: 'View'
             },
-            edit:{
-                prePopupSvc:popupService['showPopup'],
-                template:popupView['dashboard']['edit']['templateUrl'],
+            edit: {
+                prePopupSvc: popupService['showPopup'],
+                template: popupView['dashboard']['edit']['templateUrl'],
                 postPopupSvc: {
                     serviceToCall: dashboardService.edit,
-                    success: function(resp){},
-                    failure: function(resp){},
+                    success: function (resp) {
+                    },
+                    failure: function (resp) {
+                    },
                 },
                 type: 'edit',
                 name: 'Edit'
             },
-            delete:{
-                prePopupSvc:popupService['showPopup'],
-                template:popupView['dashboard']['delete']['templateUrl'],
+            delete: {
+                prePopupSvc: popupService['showPopup'],
+                template: popupView['dashboard']['delete']['templateUrl'],
                 postPopupSvc: {
                     serviceToCall: dashboardService.delete,
-                    success: function(resp){},
-                    failure: function(resp){},
+                    success: function (resp) {
+                    },
+                    failure: function (resp) {
+                    },
                 },
                 type: 'delete',
                 name: 'Delete'
             },
-            tree:{
-                prePopupSvc:popupService['showPopup'],
-                template:popupView['dashboard']['tree']['templateUrl'],
+            tree: {
+                prePopupSvc: popupService['showPopup'],
+                template: popupView['dashboard']['tree']['templateUrl'],
                 postPopupSvc: {
-                    serviceToCall:function(){},
-                    success: function(resp){},
-                    failure: function(resp){},
+                    serviceToCall: function () {
+                    },
+                    success: function (resp) {
+                    },
+                    failure: function (resp) {
+                    },
                 },
                 type: 'tree',
                 name: 'Tree'
             },
         };
 
-        $scope.actionCallBack = function(type, data) {
-                performOps(ops[type], new model(data));
-            };
+        $scope.actionCallBack = function (type, data) {
+            performOps(ops[type], new model(data));
+        };
 
-        function performOps(operation, _model){
-            operation.prePopupSvc(operation.template, _model).then(function(resp){
+        function performOps(operation, _model) {
+            operation.prePopupSvc(operation.template, _model).then(function (resp) {
                 var svc = operation['postPopupSvc'];
                 svc['serviceToCall'](resp.model).then(svc['success'], svc['failure']);
-            }, function(err){});
+            }, function (err) {
+            });
         }
     };
 
-    function landingScrollspy(){
+    function landingScrollspy() {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
                 /*element.scrollspy({
-                    target: '.navbar-fixed-top',
-                    offset: 80
-                });*/
+                 target: '.navbar-fixed-top',
+                 offset: 80
+                 });*/
             }
         }
     }
 
-    var wrapper = function(){
-        this.getId = function(id){
+    /*var wrapper = function () {
+        this.getTemplates = function(data){
+            if (typeof data === 'number') {
+                var tmplt = {
+                    4: {type: 'tabContainer', key: 4, id: 4, templateUrl: 'app/controls/tab-container.html'},
+                    3: {type: 'grid', key: 3, id: 3,},
+                    2: {type: "item", key: 2, id: 2},
+                    5: {type: "textBox", key: 5, id: 5},
+                    1: {
+                        type: "container", key: 1, id: 1,
+                        columns: []
+                    }
+                };
+                return tmplt[data];
+            };
+        };
+        this.getId = function (id) {
             return parseInt(id);
         };
 
-        this.serializer = function(data, result){
-            if(typeof data == 'object' && data && Array === data.constructor) {
+        this.serializer = function (data, result) {
+            if (typeof data == 'object' && data && Array === data.constructor) {
                 for (var i = 0; i < data.length; i++) {
                     this.serializer(data[i], result);
-                };
-            } else if(data.columns){
-                var _arr = [this.getId(data.id), []];
+                }
+                ;
+            } else if (data.columns) {
+                var _arr = [this.getId(data.key), []];
                 for (var j = 0; j < data.columns.length; j++) {
                     var newArr = [];
                     this.serializer(data.columns[j], newArr);
                     _arr[1].push(newArr)
-                };
+                }
+                ;
                 result.push(_arr);
             } else {
-                result.push(this.getId(data.id));
+                result.push(this.getId(data.key));
             }
         };
 
-        this.setTemplate = function(data){
-            if(typeof data === 'number') {
-                return this.templates[data];
+        this.setTemplate = function (data) {
+            if (typeof data === 'number') {
+                return this.templates(data);
             }
         }
 
-        this.deserializer = function(data, result){
+        this.deserializer = function (data, result) {
             for (var i = 0; i < data.length; i++) {
                 var arr = [], _iData = data[i];
 
-                if(typeof _iData == 'object' && _iData && Array === _iData.constructor) {
+                if (typeof _iData == 'object' && _iData && Array === _iData.constructor) {
                     this.deserializer(_iData, arr);
                 } else {
                     var _templ = this.setTemplate(_iData);
-                    if(_iData == 1){ // Apply condition here
-                        var arr1 = [], columnData = data[i+1];
+                    if (_iData == 1) { // Apply condition here
+                        var arr1 = [], columnData = data[i + 1];
                         this.deserializer(columnData, arr1);
-                        data.splice(i+1, 1);
+                        data.splice(i + 1, 1);
                         _templ.columns = arr1;
                         result.push(_templ);
-                        /*var _arrayInfo = [];
-                        _arrayInfo.push(_templ);
-                        result.push(_arrayInfo);*/
-                    }else{
+                    } else {
                         var _arrayInfo = [];
                         _arrayInfo.push(_templ);
                         result.push(_arrayInfo);
                     }
                 }
-            };
+            }
+            ;
 
         }
     };
-
-    wrapper.prototype.serialize = function(data){
+    wrapper.prototype.serialize = function (data) {
         var result = result || [];
         this.serializer(data, result);
         return result;
     };
+    wrapper.prototype.deserialize = function deserialize(pattern, done, options) {
 
-    wrapper.prototype.deserialize = function(serializedData, templates){
-        var result = result || [];
-        this.templates = templates;
-        this.deserializer(serializedData, result);
-        return result;
-    };
+        var response = options ? options.response : [];
+        var sourceKey = options ? options.sourceKey : undefined;
+        var sourcePattern = options ? options.sourcePattern : undefined;
+        var specialCase = options ? options.specialCase : false;
+        var that = this;
+        for (var key in pattern) {
+            if (key != "length") {
+                (function (value, key, arr, options) {
 
+                    if (typeof(value) == "number") {
+                        var _item = that.getTemplates(value);
+                        if (specialCase || (_item && _item.columns && 'object' == typeof(_item.columns))) {
+                            response.push(_item);
+                        } else {
+                            response.push([_item]);
+                        }
+                        //response.push([_item]);
+                    } else if (Array.isArray(value)) {
+                        console.log("Array : ", value);
+                        (function (value, keyVal, arr, options) {
+                            var _specialCondition = (response[0] && response[0] && response[0].columns && 'object' == typeof(response[0].columns)) ? true : false;
+                            if (!_specialCondition) {
+                                response.push([]);
+                            } else {
+                                specialCase = true;
+                            }
+
+                            /!*if(specialCase && value.length == options.sourcePattern[key].length)
+                             {
+                                specialCase = false
+                             };*!/
+
+                            that.deserialize(value, done, {
+                                response: (_specialCondition) ? response[0].columns : response[response.length - 1],
+                                sourceKey: options.sourceKey,
+                                sourcePattern: options.sourcePattern,
+                                specialCase: specialCase
+                            });
+
+                        })(value, key, arr, options);
+                    }
+
+                    if (!sourceKey) {
+                        if (key == arr.length - 1) {
+                            done({response: response, options: options});
+                            console.log(JSON.stringify(response));
+                        }
+                    }
+                })(pattern[key], key, pattern, {
+                    response: response,
+                    sourceKey: sourceKey || key,
+                    sourcePattern: sourcePattern || pattern,
+                    specialCase: false
+                });
+            }
+        }
+    }*/
     function draggablePanels($scope, $routeParams, projectService) {
+        var wrapper = window.wrapper;
         $scope.form = {
-            collection:[],
-            actveOpt:''
+            collection: [],
+            actveOpt: ''
         };
 
-        $scope.getProjectView = function(){
-            projectService.getViewInfo({ id: $routeParams.id }).then(
-                function(resp){
+        $scope.getProjectView = function () {
+            projectService.getViewInfo({id: $routeParams.id}).then(
+                function (resp) {
                     $scope.form.collection = resp['data']['data'];
                 },
-                function(err){
+                function (err) {
                     alert(err);
                 }
             );
         }
 
         var _controls = {
-            grid: {key:'grid', name: 'Grid', panal: '<div ide-grid></div>'},
-            dropdown: {key:'dropdown', name: 'Dropdown', panal: '<div ide-grid></div>'}
+            grid: {key: 'grid', name: 'Grid', panal: '<div ide-grid></div>'},
+            dropdown: {key: 'dropdown', name: 'Dropdown', panal: '<div ide-grid></div>'}
         };
         $scope.controls = _controls;
         /*************/
-        var _rows = [
-            [
-                {
-                    "type": "item",
-                    "id": "1"
-                },
-                {
-                    "type": "item",
-                    "id": "2"
-                }
-            ],
-            [
-                {
-                    "type": "item",
-                    "id": "3"
-                }
-            ]
-        ];
-
         $scope.models = {
             selected: null,
             templates: [
-                {type:'tabContainer', id:4, templateUrl:'app/controls/tab-container.html'},
-                {type:'grid', id:3,},
-                {type: "item", id: 2},
-                {type: "textBox", id: 5},
-                {type: "container", id: 1,
+                {type: 'tabContainer', key:4, id: 4, templateUrl: 'app/controls/tab-container.html'},
+                {type: 'grid', key:3,id: 3,},
+                {type: "item", key:2,id: 2},
+                {type: "textBox", key:5,id: 5},
+                {
+                    type: "container", key:1, id: 1,
                     columns: [
                         /*[{ "type": "item", "id": "2" }],
-                        [{ "type": "item", "id": "2" }]*/
+                         [{ "type": "item", "id": "2" }]*/
                     ]
                 }
             ],
-            dropzones:[]
-            /*dropzones: {
-                0: [
-                    {
-                        "type": "container",
-                        "id": 1,
-                        "columns": [
-                            [
-                                {
-                                    "type": "grid",
-                                    "id": "3"
-                                },
-                                {type:'tabContainer', id:4, templateUrl:'app/controls/tab-container.html'},
-                            ],
-                            [
-                                {type:'tabContainer', id:4, templateUrl:'app/controls/tab-container.html'},
-                            ]
-                        ]
-                    },
-                    {
-                        "type": "item",
-                        "id": "4"
-                    },
-                    {
-                        "type": "item",
-                        "id": "5"
-                    }
-                ],
-                1: [
-                    {
-                        "type": "container",
-                        "id": "2",
-                        "columns": [
-                            [
-                                {
-                                    "type": "container",
-                                    "id": "3",
-                                    "columns": [
-                                        [
-                                            {
-                                                "type": "item",
-                                                "id": "13"
-                                            }
-                                        ],
-                                        [
-                                            {
-                                                "type": "item",
-                                                "id": "14"
-                                            }
-                                        ]
-                                    ]
-                                },
-                            ],
-                            [
-                                {
-                                    "type": "container",
-                                    "id": "3",
-                                    "columns": [
-                                        [
-                                            {
-                                                "type": "item",
-                                                "id": "13"
-                                            }
-                                        ],
-                                        [
-                                            {
-                                                "type": "item",
-                                                "id": "14"
-                                            }
-                                        ]
-                                    ]
-                                },
-                            ]
-                        ]
-                    }
-                ],
-            }*/
+            dropzones: []
         };
 
-        $scope.getZoneClass = function(_colLength){
+        $scope.getZoneClass = function (_colLength) {
             var _classInfo = {
                 1: 'col-md-12',
                 2: 'col-md-6',
@@ -450,16 +440,19 @@
             [
                 {
                     "type": "item",
+                    key:2,
                     "id": "2"
                 },
                 {
                     "type": "item",
+                    key:2,
                     "id": "2"
                 }
             ],
             [
                 {
                     "type": "item",
+                    key:2,
                     "id": "2"
                 }
             ]
@@ -468,11 +461,13 @@
             [
                 {
                     "type": "container",
+                    key:1,
                     "id": "1",
                     "columns": [
                         [
                             {
                                 "type": "grid",
+                                 key:3,
                                 "id": "3"
                             }
                         ]
@@ -480,58 +475,43 @@
                 }
             ]
         ];
-        $scope.createDropzone = function() {
+        $scope.createDropzone = function () {
             var _info = $scope.models.dropzones;
-            //var _keys = Object.keys(_info).length;
-            /* $scope.models.dropzones[_keys] = [
-                {
-                    type: "container",
-                    id: 2,
-                    columns: col1
-                },
-                {
-                    type: "container",
-                    id: 1,
-                    columns: _col
-                }
-            ];*/
             $scope.models.dropzones.push(
                 [
-                    { type: "container", id: 1, columns: _col }
+                    {type: "container", key:1, id: 1, columns: _col}
                 ]
             );
         };
 
         var _templates = {};
         $scope.models.templates.forEach(function (item, index) {
-            _templates[item['id']] = item;
+            _templates[item['key']] = item;
         });
 
-        $scope.createView = function(){
-            var info = new wrapper();
-            var _node =  info.serialize($scope.models.dropzones);
+        $scope.createView = function () {
+            var _node = new wrapper().serialize($scope.models.dropzones);
             var _modelView = {
                 id: $routeParams.id,
                 name: $scope.viewName,
                 view: JSON.stringify(_node)
             };
-
-            console.log(_modelView.view);
             projectService.submit(_modelView).then(
-                function(resp){
+                function (resp) {
                     $scope.form.collection.push(resp.data.rows);
                 },
-                function(err){
+                function (err) {
                     alert(err);
                 }
             );
         }
 
-        $scope.selectAction = function() {
+        $scope.selectAction = function () {
             var _data = $scope.form['actveOpt'];
-            var _rslt = new wrapper().deserialize(_data['view'], _templates);
-            console.log(_rslt);
-            $scope.models.dropzones = _rslt;
+            var _rslt = new wrapper().deserialize(_data['view'], function (res) {
+                console.log(res);
+                $scope.models.dropzones = res.response;
+            });
         };
     };
 
@@ -542,7 +522,7 @@
         return {
             restrict: 'A',
             scope: true,
-            templateUrl: _rootPath+'controls/ibox_tools.html',
+            templateUrl: _rootPath + 'controls/ibox_tools.html',
             controller: function ($scope, $element) {
                 // Function for collapse ibox
                 $scope.showhide = function () {
@@ -570,23 +550,24 @@
     function ideGrid($q, $http, $timeout) {
         return {
             restrict: 'AE',
-            templateUrl: _rootPath+'controls/grid.html',
-            link: function (scope, elem) {},
-            controller:function($scope, $element){
+            templateUrl: _rootPath + 'controls/grid.html',
+            link: function (scope, elem) {
+            },
+            controller: function ($scope, $element) {
                 //var url = 'https://cdn.rawgit.com/angular-ui/ui-grid.info/gh-pages/data/10000_complex.json';
                 var url = './data/10000_complex.json';
-                $scope.gridHeight =  $(window).height()-270 +"px";
+                $scope.gridHeight = $(window).height() - 270 + "px";
                 $scope.gridOptions = {
                     infiniteScrollRowsFromEnd: 40,
                     infiniteScrollUp: true,
                     infiniteScrollDown: true,
                     /*columnDefs: [
-                        { name:'id'},
-                        { name:'name' },
-                        { name:'age' }
-                    ],*/
+                     { name:'id'},
+                     { name:'name' },
+                     { name:'age' }
+                     ],*/
                     data: 'data',
-                    onRegisterApi: function(gridApi){
+                    onRegisterApi: function (gridApi) {
                         gridApi.infiniteScroll.on.needLoadMoreData($scope, $scope.getDataDown);
                         gridApi.infiniteScroll.on.needLoadMoreDataTop($scope, $scope.getDataUp);
                         $scope.gridApi = gridApi;
@@ -598,10 +579,10 @@
                 $scope.firstPage = 2;
                 $scope.lastPage = 2;
 
-                $scope.getFirstData = function() {
+                $scope.getFirstData = function () {
                     var promise = $q.defer();
                     $http.get(url)
-                        .success(function(data) {
+                        .success(function (data) {
                             var newData = $scope.getPage(data, $scope.lastPage);
                             $scope.data = $scope.data.concat(newData);
                             promise.resolve();
@@ -609,38 +590,42 @@
                     return promise.promise;
                 };
 
-                $scope.getDataDown = function() {
+                $scope.getDataDown = function () {
                     var promise = $q.defer();
                     $http.get(url)
-                        .success(function(data) {
+                        .success(function (data) {
                             $scope.lastPage++;
                             var newData = $scope.getPage(data, $scope.lastPage);
                             $scope.gridApi.infiniteScroll.saveScrollPercentage();
                             $scope.data = $scope.data.concat(newData);
-                            $scope.gridApi.infiniteScroll.dataLoaded($scope.firstPage > 0, $scope.lastPage < 4).then(function() {$scope.checkDataLength('up');}).then(function() {
+                            $scope.gridApi.infiniteScroll.dataLoaded($scope.firstPage > 0, $scope.lastPage < 4).then(function () {
+                                $scope.checkDataLength('up');
+                            }).then(function () {
                                 promise.resolve();
                             });
                         })
-                        .error(function(error) {
+                        .error(function (error) {
                             $scope.gridApi.infiniteScroll.dataLoaded();
                             promise.reject();
                         });
                     return promise.promise;
                 };
 
-                $scope.getDataUp = function() {
+                $scope.getDataUp = function () {
                     var promise = $q.defer();
                     $http.get(url)
-                        .success(function(data) {
+                        .success(function (data) {
                             $scope.firstPage--;
                             var newData = $scope.getPage(data, $scope.firstPage);
                             $scope.gridApi.infiniteScroll.saveScrollPercentage();
                             $scope.data = newData.concat($scope.data);
-                            $scope.gridApi.infiniteScroll.dataLoaded($scope.firstPage > 0, $scope.lastPage < 4).then(function() {$scope.checkDataLength('down');}).then(function() {
+                            $scope.gridApi.infiniteScroll.dataLoaded($scope.firstPage > 0, $scope.lastPage < 4).then(function () {
+                                $scope.checkDataLength('down');
+                            }).then(function () {
                                 promise.resolve();
                             });
                         })
-                        .error(function(error) {
+                        .error(function (error) {
                             $scope.gridApi.infiniteScroll.dataLoaded();
                             promise.reject();
                         });
@@ -648,7 +633,7 @@
                 };
 
 
-                $scope.getPage = function(data, page) {
+                $scope.getPage = function (data, page) {
                     var res = [];
                     for (var i = (page * 100); i < (page + 1) * 100 && i < data.length; ++i) {
                         res.push(data[i]);
@@ -656,23 +641,23 @@
                     return res;
                 };
 
-                $scope.checkDataLength = function( discardDirection) {
+                $scope.checkDataLength = function (discardDirection) {
                     // work out whether we need to discard a page, if so discard from the direction passed in
-                    if( $scope.lastPage - $scope.firstPage > 3 ){
+                    if ($scope.lastPage - $scope.firstPage > 3) {
                         // we want to remove a page
                         $scope.gridApi.infiniteScroll.saveScrollPercentage();
 
-                        if( discardDirection === 'up' ){
+                        if (discardDirection === 'up') {
                             $scope.data = $scope.data.slice(100);
                             $scope.firstPage++;
-                            $timeout(function() {
+                            $timeout(function () {
                                 // wait for grid to ingest data changes
                                 $scope.gridApi.infiniteScroll.dataRemovedTop($scope.firstPage > 0, $scope.lastPage < 4);
                             });
                         } else {
                             $scope.data = $scope.data.slice(0, 400);
                             $scope.lastPage--;
-                            $timeout(function() {
+                            $timeout(function () {
                                 // wait for grid to ingest data changes
                                 $scope.gridApi.infiniteScroll.dataRemovedBottom($scope.firstPage > 0, $scope.lastPage < 4);
                             });
@@ -680,28 +665,28 @@
                     }
                 };
 
-                $scope.reset = function() {
+                $scope.reset = function () {
                     $scope.firstPage = 2;
                     $scope.lastPage = 2;
 
                     // turn off the infinite scroll handling up and down - hopefully this won't be needed after @swalters scrolling changes
-                    $scope.gridApi.infiniteScroll.setScrollDirections( false, false );
+                    $scope.gridApi.infiniteScroll.setScrollDirections(false, false);
                     $scope.data = [];
 
-                    $scope.getFirstData().then(function(){
-                        $timeout(function() {
+                    $scope.getFirstData().then(function () {
+                        $timeout(function () {
                             // timeout needed to allow digest cycle to complete,and grid to finish ingesting the data
-                            $scope.gridApi.infiniteScroll.resetScroll( $scope.firstPage > 0, $scope.lastPage < 4 );
+                            $scope.gridApi.infiniteScroll.resetScroll($scope.firstPage > 0, $scope.lastPage < 4);
                         });
                     });
                 };
 
-                $scope.getFirstData().then(function(){
-                    $timeout(function() {
+                $scope.getFirstData().then(function () {
+                    $timeout(function () {
                         // timeout needed to allow digest cycle to complete,and grid to finish ingesting the data
                         // you need to call resetData once you've loaded your data if you want to enable scroll up,
                         // it adjusts the scroll position down one pixel so that we can generate scroll up events
-                        $scope.gridApi.infiniteScroll.resetScroll( $scope.firstPage > 0, $scope.lastPage < 4 );
+                        $scope.gridApi.infiniteScroll.resetScroll($scope.firstPage > 0, $scope.lastPage < 4);
                     });
                 });
             }
@@ -711,9 +696,10 @@
     function ideHeader(appMenu, appInfo, userInfo) {
         return {
             restrict: 'AE',
-            templateUrl: _rootPath+'header.html',
-            link: function (scope, elem) {},
-            controller:function($scope){
+            templateUrl: _rootPath + 'header.html',
+            link: function (scope, elem) {
+            },
+            controller: function ($scope) {
                 $scope.menuInfo = appMenu;
                 $scope.appInfo = appInfo;
                 $scope.userInfo = userInfo;
@@ -721,24 +707,25 @@
         };
     }
 
-    function ideSplitter(){
+    function ideSplitter() {
         return {
             restrict: 'AE',
             link: function (scope, elem, attrs) {
                 var outerSplitter = elem.ideSplitter({
                     orientation: "horizontal",
-                    resize: function(e){
+                    resize: function (e) {
                         var h = elem.find(".k-pane")[0].scrollHeight;
                         $('.k-pane').height(h);
                         $('.k-splitbar').height(h);
                     },
                     panes: [
-                        { collapsible: true, resizable: true, size: "20%" },
-                        { collapsible: true, resizable: true },
-                        { collapsible: true, resizable: true, size: "20%" }
+                        {collapsible: true, resizable: true, size: "20%"},
+                        {collapsible: true, resizable: true},
+                        {collapsible: true, resizable: true, size: "20%"}
                     ]
                 }).data('kendoSplitter');
                 var pageHeight = $("#page-wrapper").height();
+
                 function resizeSplitter() {
                     elem.height(pageHeight);
                     elem.resize();
@@ -747,14 +734,15 @@
                 resizeSplitter();
                 //browserWindow.resize(resizeSplitter);
             },
-            controller:function($scope){}
+            controller: function ($scope) {
+            }
         };
     }
 
-    function skinConfigChanger(){
+    function skinConfigChanger() {
         return {
             restrict: 'AE',
-            templateUrl:  _rootPath+'controls/skin-config.html'
+            templateUrl: _rootPath + 'controls/skin-config.html'
         };
     }
 
@@ -773,7 +761,7 @@
                             function () {
                                 $('#side-menu').fadeIn(500);
                             }, 100);
-                    } else if ($('body').hasClass('fixed-sidebar')){
+                    } else if ($('body').hasClass('fixed-sidebar')) {
                         $('#side-menu').hide();
                         setTimeout(
                             function () {
@@ -788,33 +776,33 @@
         };
     };
 
-    function ideProjectService($http){
+    function ideProjectService($http) {
         var projectService = {
-            submit:function(data){
-                return $http({method: 'post', url: '/apis/projectView', data:data});
+            submit: function (data) {
+                return $http({method: 'post', url: '/apis/projectView', data: data});
             },
-            getViewInfo:function(data){
-                return $http({method: 'get', url: '/apis/projectView', params:data});
+            getViewInfo: function (data) {
+                return $http({method: 'get', url: '/apis/projectView', params: data});
             },
-            setup:function(data){
-                return $http({method: 'post', url: '/apis/setup', data:data});
+            setup: function (data) {
+                return $http({method: 'post', url: '/apis/setup', data: data});
             },
         };
         return projectService;
     }
 
-    function dashboardService($http){
+    function dashboardService($http) {
         var projectService = {
-            getInfo: function(){
+            getInfo: function () {
                 var _httpRequest = {method: 'GET', url: '/core/collection/info'};
                 return $http(_httpRequest);
             },
-            getAllCollections: function(){
+            getAllCollections: function () {
                 var _httpRequest = {method: 'GET', url: '/core/collections'};
                 return $http(_httpRequest);
             },
-            getActiveCollection: function(collectionName){
-                var _httpRequest = {method: 'GET', url: '/core/collection/data', params:collectionName};
+            getActiveCollection: function (collectionName) {
+                var _httpRequest = {method: 'GET', url: '/core/collection/data', params: collectionName};
                 return $http(_httpRequest);
             }
         };
@@ -836,24 +824,24 @@
         return projectService;
     }
 
-    function goActions(){
+    function goActions() {
         return {
             restrict: 'AE',
-            scope:{
-                data:'=?',
-                performCallBack:'&?'
+            scope: {
+                data: '=?',
+                performCallBack: '&?'
             },
-            template:'<div class="btn-group" style="height: 20px;"><button class="btn-white btn btn-xs view">View</button><button class="btn-white edit"><i class="fa fa-pencil"></i></button><button class="btn-white delete"><i class="fa fa-trash"></i> </button></div>',//<button class="btn-white tree">Tree</button>
-            controller: function($scope, $element){
-                $element.on('click', '.btn-white.btn.btn-xs.view', function(e){
+            template: '<div class="btn-group" style="height: 20px;"><button class="btn-white btn btn-xs view">View</button><button class="btn-white edit"><i class="fa fa-pencil"></i></button><button class="btn-white delete"><i class="fa fa-trash"></i> </button></div>',//<button class="btn-white tree">Tree</button>
+            controller: function ($scope, $element) {
+                $element.on('click', '.btn-white.btn.btn-xs.view', function (e) {
                     e.stopPropagation();
                     $scope.performCallBack()('view', $scope.data.entity);
                 });
-                $element.on('click', '.btn-white.edit', function(e){
+                $element.on('click', '.btn-white.edit', function (e) {
                     e.stopPropagation();
                     $scope.performCallBack()('edit', $scope.data.entity);
                 });
-                $element.on('click', '.btn-white.delete', function(e){
+                $element.on('click', '.btn-white.delete', function (e) {
                     e.stopPropagation();
                     $scope.performCallBack()('delete', $scope.data.entity);
                 });
@@ -861,44 +849,44 @@
         };
     }
 
-    function multiPanal($compile, projectService){
+    function multiPanal($compile, projectService) {
         return {
             restrict: 'AE',
-            scope:{
-                data:'=',
-                invoke:'='
+            scope: {
+                data: '=',
+                invoke: '='
             },
-            template:'<div class="col-lg-6">\
+            template: '<div class="col-lg-6">\
             <div class="input-group createApp">\
             <input type="text"  placeholder="Add new App.. " ng-model="appName" class="input input-sm form-control">\
             <span class="input-group-btn">\
             <button type="button" class="btn btn-sm btn-white" ng-click="createApp()"> <i class="fa fa-plus"></i> Create Project</button>\
         </span>\
         </div></div><div class="col-lg-6"><input type="text" class="form-control input-sm m-b-xs" placeholder="Search in Panals"></div>',
-            controller: function($scope, $element){
+            controller: function ($scope, $element) {
                 $scope.items = [];
-                $scope.$on('updatePanal', function(e, data){
+                $scope.$on('updatePanal', function (e, data) {
                     $scope.info = data;
                     createPanals(data);
                 });
 
-                function createPanals(data){
-                    data.forEach(function(item, index) {
+                function createPanals(data) {
+                    data.forEach(function (item, index) {
                         createPanal(item, index);
                     });
                 }
 
                 function createPanal(item, index) {
-                    $scope.items[index]=item;
-                    var html = '<div class="col-lg-3" panal data="items" index="'+index+'"></div>';
+                    $scope.items[index] = item;
+                    var html = '<div class="col-lg-3" panal data="items" index="' + index + '"></div>';
                     $element.append($compile(angular.element(html))($scope));
                 };
 
-                $element.find('.createApp').on('click', 'button', function(e){
-                    projectService.setup({name:$scope.appName}).then(function(resp){
+                $element.find('.createApp').on('click', 'button', function (e) {
+                    projectService.setup({name: $scope.appName}).then(function (resp) {
                         $scope.info.push(resp.data.row);
-                       new createPanal(resp.data.row, $scope.info.length-1);
-                    }, function(){
+                        new createPanal(resp.data.row, $scope.info.length - 1);
+                    }, function () {
                         console.log('data creation issue');
                     });
                 });
@@ -906,14 +894,14 @@
         };
     }
 
-    function Panal($compile){
+    function Panal($compile) {
         return {
             restrict: 'AE',
-            scope:{
-                data:'=',
-                index:'@'
+            scope: {
+                data: '=',
+                index: '@'
             },
-            templateUrl:'./app/controls/panal.html'
+            templateUrl: './app/controls/panal.html'
         };
     }
 
@@ -931,29 +919,30 @@
         .config(['$httpProvider', httpProvider])
         .config(angularHelper)
         .config(['$routeProvider', config])
-        .directive('ideHeader', ['appMenu', 'appInfo','userInfo', ideHeader])
-        .directive('ideGrid', ['$q', '$http','$timeout', ideGrid])
+        .directive('ideHeader', ['appMenu', 'appInfo', 'userInfo', ideHeader])
+        .directive('ideGrid', ['$q', '$http', '$timeout', ideGrid])
         .directive('landingScrollspy', landingScrollspy)
-        .directive('iboxTools',['$timeout', iboxTools])
-        .directive('skinConfigChanger',skinConfigChanger)
+        .directive('iboxTools', ['$timeout', iboxTools])
+        .directive('skinConfigChanger', skinConfigChanger)
         .directive('minimalizaSidebar', minimalizaSidebar)
         .directive('ideSplitter', ideSplitter)
         .directive('actions', goActions)
-        .directive('multiPanal',['$compile', 'projectService', multiPanal])
-        .directive('panal',['$compile', Panal])
+        .directive('multiPanal', ['$compile', 'projectService', multiPanal])
+        .directive('panal', ['$compile', Panal])
         .controller('ideController', ideController)
-        .controller('draggablePanels',['$scope', '$routeParams', 'projectService', draggablePanels])
-        .controller('ideDashboardController',['$scope', '$compile', '$timeout', ideDashboardController])
-        .controller('ideViewController',['$scope', 'dashboardService', '$timeout', 'popupService', ideViewController])
+        .controller('draggablePanels', ['$scope', '$routeParams', 'projectService', draggablePanels])
+        .controller('ideDashboardController', ['$scope', '$compile', '$timeout', ideDashboardController])
+        .controller('ideViewController', ['$scope', 'dashboardService', '$timeout', 'popupService', ideViewController])
         .service('projectService', ['$http', ideProjectService])
         .service('dashboardService', ['$http', dashboardService])
-        .run(['$rootScope','authenticationFactory', function($rootScope, authenticationFactory) {
+        .run(['$rootScope', 'authenticationFactory', function ($rootScope, authenticationFactory) {
             $rootScope.$on("$routeChangeStart", function (event, nextRoute, currentRoute) {
 
             });
             $rootScope.$on('$routeChangeSuccess', function (event, nextRoute, currentRoute) {
             });
-            $rootScope.$on('$routeChangeError', function (event, current, previous, rejection) {});
+            $rootScope.$on('$routeChangeError', function (event, current, previous, rejection) {
+            });
             $rootScope.$on('$viewContentLoaded', function () {
                 $rootScope.isLoggedIn = authenticationFactory.isAuthorized();
             });
@@ -962,13 +951,12 @@
     angular.element(document).ready(function () {
         var initInjector = angular.injector(["ng"]);
         var $http = initInjector.get("$http");
-        $http({method: 'GET', url: '/apis/setup'}).then(function (resp)
-        {
+        $http({method: 'GET', url: '/apis/setup'}).then(function (resp) {
             var _info = resp['data'];
             app.constant('appMenu', _info['data']['menu']);
             app.constant('appInfo', _info['data']['app']);
             app.constant('userInfo', _info['data']['user']);
-            document.body.innerHTML='<div ng-controller="ideController as main" landing-scrollspy id="page-top"><div id="wrapper"><div ide-header ng-if="isLoggedIn"></div><div ng-view></div></div><div skin-config-changer></div></div>';
+            document.body.innerHTML = '<div ng-controller="ideController as main" landing-scrollspy id="page-top"><div id="wrapper"><div ide-header ng-if="isLoggedIn"></div><div ng-view></div></div><div skin-config-changer></div></div>';
             angular.bootstrap(document, [appName]);
         }, function (error) {
             throw new Error('Config file has error : ' + error.statusText);

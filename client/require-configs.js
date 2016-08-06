@@ -21,7 +21,8 @@ require.config({
         "app-core":"core/core",
         "ui-grid":_basePath.libs+"ui-grid/ui-grid-unstable",
         "ui-sortable":_basePath.libs+'ui-sortable/sortable',
-        "dndLists":_basePath.app+'controls/drag-drop.helper'
+        "dndLists":_basePath.app+'controls/drag-drop.helper',
+        'dynamic-ui.plugin':_basePath.app+'controls/dynamic-ui.plugin',
     },
     // angular does not support AMD out of the box, put it in a shim
     shim: {
@@ -43,7 +44,7 @@ require.config({
         },
         "ui-sortable":{deps: ['angular','jQuery-ui']},
         app:{
-            deps: ["app-core",'bootstrap', 'ngRoute', 'ui-bootstrap',"ui-grid", "dndLists"]
+            deps: ["app-core",'bootstrap', 'ngRoute', 'ui-bootstrap',"ui-grid", "dndLists", 'dynamic-ui.plugin']
         }
     },
     // kick start application
