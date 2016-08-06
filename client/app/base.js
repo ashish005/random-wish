@@ -508,6 +508,7 @@
 
         $scope.selectAction = function () {
             var _data = $scope.form['actveOpt'];
+            console.log(_data['view'])
             var _rslt = new wrapper().deserialize(_data['view'], function (res) {
                 console.log(res);
                 $scope.models.dropzones = res.response;

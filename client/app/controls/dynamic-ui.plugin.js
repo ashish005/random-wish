@@ -94,24 +94,36 @@
                 (function (value, key, arr, options) {
                     if (typeof(value) == "number") {
                         var _item = that.getTemplates(value), isSpecialCase = that.isSpecialCondition(_item);
-                        if (isSpecialCase) {
-                            response.push(_item);
-                        } else if (specialCase) {
+                        if (isSpecialCase || specialCase) {
                             response.push(_item);
                         } else {
                             response.push([_item]);
                         }
                     } else if (Array.isArray(value)) {
-                        console.log("Array : ", value);
+                        /*console.log("Array : ", value);*/
+
                         (function (value, keyVal, arr, options) {
                             var resp = null; isSpecialCase = that.isSpecialCondition(response[0]);
+                            /*var _convertArrayToObj = false, tempResp = null;
+                            value.forEach(function(item, index){
+                                var _getType = typeof item;
+                                if(_getType == 'object' && 1 == item[0]){
+                                    _convertArrayToObj = true;
+                                    debugger;
+                                    tempResp = [1, [], 2];
+                                    console.log(_convertArrayToObj);
+                                }
+                            });
+                            if(_convertArrayToObj){
+                                resp = tempResp;
+                            }
+                           else*/
                             if (!isSpecialCase) {
                                 response.push([]);
                                 resp = response[response.length - 1];
                             } else {
-                                resp = (specialCase) ? response[0]:response[0].columns;
+                                resp = response[0].columns;
                                 specialCase = true;
-
                             };
                             that.deserialize(value, done, {
                                 response: resp,

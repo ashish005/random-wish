@@ -70,11 +70,17 @@
     </div>
 </div>
 <script type="text/ng-template" id="responsiveColumns.html">
-    <div ng-repeat="item in list track by $index"
-         dnd-draggable="item"
+    <div ng-repeat="item in list track by $index">
+       <div dnd-draggable="item"
          dnd-effect-allowed="move"
-         dnd-moved="list.splice($index, 1)"
+         dnd-moved="list.splice($index, 1)" ng-if="item.type"
          ng-include="item.type + '.html'">
+       </div>
+        <div dnd-draggable="item" ng-if="item.length>0"
+             dnd-effect-allowed="move"
+             dnd-moved="list.splice($index, 1)"
+             ng-include="'container.html'">
+        </div>
     </div>
 </script>
 <!-- This template is responsible for rendering a container element. It uses the above list template to render each container column -->
