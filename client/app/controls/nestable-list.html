@@ -1,0 +1,27 @@
+<div>
+    <h4> CONTROLS </h4>
+    <script type="text/ng-template" id="nodes_renderer.html">
+        <div> {{node.name}} </div>
+        <ul ng-model="node.children" style="padding-left: 20px;">
+            <li ng-repeat="node in node.children track by $index" ng-include="'nodes_renderer.html'"
+                dnd-draggable="node" dnd-effect-allowed="copy" dnd-copied="node.id = node.id + 1">
+            </li>
+        </ul>
+    </script>
+    <div>
+        <ul ng-model="data.templates" class="folder-list" style="padding: 0">
+            <li style="border:none;"
+                ng-repeat="node in data.templates" ng-if="node.children.length>0"
+                ng-include="'nodes_renderer.html'"></li>
+            <li ng-if="node.children.length == 0" style="border:none;"
+                ng-repeat="node in data.templates" ng-include="'nodes_renderer.html'"
+                dnd-draggable="node" dnd-effect-allowed="copy" dnd-copied="node.id = node.id + 1"></li>
+        </ul>
+    </div>
+    <div ng-if="data.selected" class="box box-grey box-padding">
+        <h3>Selected</h3>
+        <strong>Type: </strong> {{data.selected.type}}<br>
+        <input type="text" ng-model="data.selected.id" class="form-control" style="margin-top: 5px" />
+    </div>
+    <div class="clearfix"></div>
+</div>

@@ -1,6 +1,3 @@
-/**
- * Created by wiznidev on 5/21/16.
- */
 (function () {
     var appName = 'goLive';
     window['name'] = appName;
@@ -247,141 +244,6 @@
         }
     }
 
-    /*var wrapper = function () {
-        this.getTemplates = function(data){
-            if (typeof data === 'number') {
-                var tmplt = {
-                    4: {type: 'tabContainer', key: 4, id: 4, templateUrl: 'app/controls/tab-container.html'},
-                    3: {type: 'grid', key: 3, id: 3,},
-                    2: {type: "item", key: 2, id: 2},
-                    5: {type: "textBox", key: 5, id: 5},
-                    1: {
-                        type: "container", key: 1, id: 1,
-                        columns: []
-                    }
-                };
-                return tmplt[data];
-            };
-        };
-        this.getId = function (id) {
-            return parseInt(id);
-        };
-
-        this.serializer = function (data, result) {
-            if (typeof data == 'object' && data && Array === data.constructor) {
-                for (var i = 0; i < data.length; i++) {
-                    this.serializer(data[i], result);
-                }
-                ;
-            } else if (data.columns) {
-                var _arr = [this.getId(data.key), []];
-                for (var j = 0; j < data.columns.length; j++) {
-                    var newArr = [];
-                    this.serializer(data.columns[j], newArr);
-                    _arr[1].push(newArr)
-                }
-                ;
-                result.push(_arr);
-            } else {
-                result.push(this.getId(data.key));
-            }
-        };
-
-        this.setTemplate = function (data) {
-            if (typeof data === 'number') {
-                return this.templates(data);
-            }
-        }
-
-        this.deserializer = function (data, result) {
-            for (var i = 0; i < data.length; i++) {
-                var arr = [], _iData = data[i];
-
-                if (typeof _iData == 'object' && _iData && Array === _iData.constructor) {
-                    this.deserializer(_iData, arr);
-                } else {
-                    var _templ = this.setTemplate(_iData);
-                    if (_iData == 1) { // Apply condition here
-                        var arr1 = [], columnData = data[i + 1];
-                        this.deserializer(columnData, arr1);
-                        data.splice(i + 1, 1);
-                        _templ.columns = arr1;
-                        result.push(_templ);
-                    } else {
-                        var _arrayInfo = [];
-                        _arrayInfo.push(_templ);
-                        result.push(_arrayInfo);
-                    }
-                }
-            }
-            ;
-
-        }
-    };
-    wrapper.prototype.serialize = function (data) {
-        var result = result || [];
-        this.serializer(data, result);
-        return result;
-    };
-    wrapper.prototype.deserialize = function deserialize(pattern, done, options) {
-
-        var response = options ? options.response : [];
-        var sourceKey = options ? options.sourceKey : undefined;
-        var sourcePattern = options ? options.sourcePattern : undefined;
-        var specialCase = options ? options.specialCase : false;
-        var that = this;
-        for (var key in pattern) {
-            if (key != "length") {
-                (function (value, key, arr, options) {
-
-                    if (typeof(value) == "number") {
-                        var _item = that.getTemplates(value);
-                        if (specialCase || (_item && _item.columns && 'object' == typeof(_item.columns))) {
-                            response.push(_item);
-                        } else {
-                            response.push([_item]);
-                        }
-                        //response.push([_item]);
-                    } else if (Array.isArray(value)) {
-                        console.log("Array : ", value);
-                        (function (value, keyVal, arr, options) {
-                            var _specialCondition = (response[0] && response[0] && response[0].columns && 'object' == typeof(response[0].columns)) ? true : false;
-                            if (!_specialCondition) {
-                                response.push([]);
-                            } else {
-                                specialCase = true;
-                            }
-
-                            /!*if(specialCase && value.length == options.sourcePattern[key].length)
-                             {
-                                specialCase = false
-                             };*!/
-
-                            that.deserialize(value, done, {
-                                response: (_specialCondition) ? response[0].columns : response[response.length - 1],
-                                sourceKey: options.sourceKey,
-                                sourcePattern: options.sourcePattern,
-                                specialCase: specialCase
-                            });
-
-                        })(value, key, arr, options);
-                    }
-
-                    if (!sourceKey) {
-                        if (key == arr.length - 1) {
-                            done({response: response, options: options});
-                            console.log(JSON.stringify(response));
-                        }
-                    }
-                })(pattern[key], key, pattern, {
-                    response: response,
-                    sourceKey: sourceKey || key,
-                    sourcePattern: sourcePattern || pattern,
-                    specialCase: false
-                });
-            }
-        }
-    }*/
     function draggablePanels($scope, $routeParams, projectService) {
         var wrapper = window.wrapper;
         $scope.form = {
@@ -398,29 +260,11 @@
                     alert(err);
                 }
             );
-        }
-
-        var _controls = {
-            grid: {key: 'grid', name: 'Grid', panal: '<div ide-grid></div>'},
-            dropdown: {key: 'dropdown', name: 'Dropdown', panal: '<div ide-grid></div>'}
         };
-        $scope.controls = _controls;
-        /*************/
+
         $scope.models = {
             selected: null,
-            templates: [
-                {type: 'tabContainer', key:4, id: 4, templateUrl: 'app/controls/tab-container.html'},
-                {type: 'grid', key:3,id: 3,},
-                {type: "item", key:2,id: 2},
-                {type: "textBox", key:5,id: 5},
-                {
-                    type: "container", key:1, id: 1,
-                    columns: [
-                        /*[{ "type": "item", "id": "2" }],
-                         [{ "type": "item", "id": "2" }]*/
-                    ]
-                }
-            ],
+            templates: new wrapper().getAllComponents(),
             dropzones: []
         };
 
@@ -435,43 +279,26 @@
                 12: 'col-md-1'
             };
             return _classInfo[_colLength];
-        }
+        };
+
         var _col = [
             [
                 {
                     "type": "item",
-                    key:2,
-                    "id": "2"
+                    key: 2,
+                    id: 2
                 },
                 {
                     "type": "item",
-                    key:2,
-                    "id": "2"
+                    key: 2,
+                    id: 2
                 }
             ],
             [
                 {
                     "type": "item",
-                    key:2,
-                    "id": "2"
-                }
-            ]
-        ];
-        var col1 = [
-            [
-                {
-                    "type": "container",
-                    key:1,
-                    "id": "1",
-                    "columns": [
-                        [
-                            {
-                                "type": "grid",
-                                 key:3,
-                                "id": "3"
-                            }
-                        ]
-                    ]
+                    key: 2,
+                    id: 2
                 }
             ]
         ];
@@ -479,39 +306,33 @@
             var _info = $scope.models.dropzones;
             $scope.models.dropzones.push(
                 [
-                    {type: "container", key:1, id: 1, columns: _col}
+                    {type: "container", key: 1, id: 1, columns: _col}
                 ]
             );
         };
 
-        var _templates = {};
-        $scope.models.templates.forEach(function (item, index) {
-            _templates[item['key']] = item;
-        });
-
         $scope.createView = function () {
-            var _node = new wrapper().serialize($scope.models.dropzones);
-            var _modelView = {
-                id: $routeParams.id,
-                name: $scope.viewName,
-                view: JSON.stringify(_node)
-            };
-            projectService.submit(_modelView).then(
-                function (resp) {
-                    $scope.form.collection.push(resp.data.rows);
-                },
-                function (err) {
-                    alert(err);
-                }
-            );
-        }
+            new wrapper().serialize($scope.models.dropzones, function (res) {
+                var _modelView = {
+                    id: $routeParams.id,
+                    name: $scope.viewName,
+                    view: JSON.stringify(res['response'])
+                };
+                projectService.submit(_modelView).then(
+                    function (resp) {
+                        $scope.form.collection.push(resp.data.rows);
+                    },
+                    function (err) {
+                        alert(err);
+                    }
+                );
+            });
+        };
 
         $scope.selectAction = function () {
             var _data = $scope.form['actveOpt'];
-            console.log(_data['view'])
-            var _rslt = new wrapper().deserialize(_data['view'], function (res) {
-                console.log(res);
-                $scope.models.dropzones = res.response;
+            new wrapper().deserialize(_data['view'], function (res) {
+                $scope.models.dropzones = res['response'];
             });
         };
     };
@@ -904,7 +725,17 @@
             },
             templateUrl: './app/controls/panal.html'
         };
-    }
+    };
+
+    function nestedList() {
+        return {
+            restrict: 'AE',
+            scope: {
+                data: '='
+            },
+            templateUrl: './app/controls/nestable-list.html'
+        };
+    };
 
     function httpProvider($httpProvider) {
         //$httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
@@ -930,6 +761,7 @@
         .directive('actions', goActions)
         .directive('multiPanal', ['$compile', 'projectService', multiPanal])
         .directive('panal', ['$compile', Panal])
+        .directive('nestedList', nestedList)
         .controller('ideController', ideController)
         .controller('draggablePanels', ['$scope', '$routeParams', 'projectService', draggablePanels])
         .controller('ideDashboardController', ['$scope', '$compile', '$timeout', ideDashboardController])

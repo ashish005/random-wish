@@ -11,18 +11,7 @@
                 </form>
             </div>
             <div class="ibox-content" style="background-color: transparent;">
-                <h4> CONTROLS </h4>
-                <ul class="folder-list" style="padding: 0">
-                    <li style="border-bottom: 1px solid #ffffff;" ng-repeat="item in models.templates track by $index" dnd-draggable="item" dnd-effect-allowed="copy" dnd-copied="item.id = item.id + 1">
-                        {{item.type}}
-                    </li>
-                </ul>
-                <div ng-if="models.selected" class="box box-grey box-padding">
-                    <h3>Selected</h3>
-                    <strong>Type: </strong> {{models.selected.type}}<br>
-                    <input type="text" ng-model="models.selected.id" class="form-control" style="margin-top: 5px" />
-                </div>
-                <div class="clearfix"></div>
+                <div nested-list data="models"></div>
             </div>
         </div>
         <div class="col-lg-10" style="background-color: transparent;">
@@ -70,17 +59,10 @@
     </div>
 </div>
 <script type="text/ng-template" id="responsiveColumns.html">
-    <div ng-repeat="item in list track by $index">
-       <div dnd-draggable="item"
+    <div ng-repeat="item in list track by $index" dnd-draggable="item"
          dnd-effect-allowed="move"
-         dnd-moved="list.splice($index, 1)" ng-if="item.type"
+         dnd-moved="list.splice($index, 1)"
          ng-include="item.type + '.html'">
-       </div>
-        <div dnd-draggable="item" ng-if="item.length>0"
-             dnd-effect-allowed="move"
-             dnd-moved="list.splice($index, 1)"
-             ng-include="'container.html'">
-        </div>
     </div>
 </script>
 <!-- This template is responsible for rendering a container element. It uses the above list template to render each container column -->
