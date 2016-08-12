@@ -5,15 +5,19 @@
     var app = angular.module(appName, ['ngRoute', appName + '.core', 'ui.bootstrap', 'ui.grid', 'ui.grid.infiniteScroll', 'dndLists']);
     var _rootPath = './app/';
     var _baseModulesPath = {
-        templateUrl: './app/'
+        templateUrl: _rootPath,
+        popupBaseTemplateUrl: _rootPath +'templates/popups/'
     };
 
     var popupView = {
         dashboard: {
-            view: {templateUrl: _baseModulesPath['templateUrl'] + 'templates/popups/popup-view.html'},
-            delete: {templateUrl: _baseModulesPath['templateUrl'] + 'templates/popups/popup-delete.html'},
-            edit: {templateUrl: _baseModulesPath['templateUrl'] + 'templates/popups/popup-edit.html'},
-            tree: {templateUrl: _baseModulesPath['templateUrl'] + 'templates/popups/popup-tree.html'}
+            view: {templateUrl: _baseModulesPath['popupBaseTemplateUrl'] + 'popup-view.html'},
+            delete: {templateUrl: _baseModulesPath['popupBaseTemplateUrl'] + 'popup-delete.html'},
+            edit: {templateUrl: _baseModulesPath['popupBaseTemplateUrl'] + 'popup-edit.html'},
+            tree: {templateUrl: _baseModulesPath['popupBaseTemplateUrl'] + 'popup-tree.html'}
+        },
+        project: {
+            createPage: {templateUrl: _baseModulesPath['popupBaseTemplateUrl'] + 'project/create-page.html'}
         }
     };
 
@@ -244,14 +248,14 @@
         }
     }
 
-    function draggablePanels($scope, $routeParams, projectService) {
-        var wrapper = window.wrapper;
+    function draggablePanels($scope, $routeParams, projectService, popupService) {
         $scope.form = {
             collection: [],
             actveOpt: ''
         };
 
         $scope.getProjectView = function () {
+            $('#projectView').css("min-height", $(window).height() - 100 + "px");
             projectService.getViewInfo({id: $routeParams.id}).then(
                 function (resp) {
                     $scope.form.collection = resp['data']['data'];
@@ -329,12 +333,58 @@
             });
         };
 
-        $scope.selectAction = function () {
-            var _data = $scope.form['actveOpt'];
-            new wrapper().deserialize(_data['view'], function (res) {
-                $scope.models.dropzones = res['response'];
-            });
+        var model = function (modalInfo, data) {
+            return {
+                model: {
+                    name: modalInfo['name'],
+                    info: data
+                }
+            };
         };
+
+        $scope.SavePageAs = function(type){
+            var ops = {
+                add: {
+                    reqModel:{},
+                    prePopupSvc: popupService['showPopup'],
+                    template: popupView['project']['createPage']['templateUrl'],
+                    postPopupSvc: {
+                        serviceToCall: projectService.submit,
+                        success: function (resp) {
+                            var _data = resp.data;
+                            new wrapper().deserialize(_data['view'], function (res) {
+                                $scope.models.dropzones = res['response'];
+                            });
+                            $scope.form.collection.push(_data.rows);
+                        },
+                        failure: function (resp) { alert(err); },
+                    },
+                    type: 'view',
+                    name: 'Create Page'
+                }
+            };
+            var data = {
+                name:''
+            };
+            performOps(ops[type], new model(ops[type], data));
+        }
+
+        function performOps(operation, _model) {
+            operation.prePopupSvc(operation.template, _model).then(function (resp) {
+                debugger;
+                new wrapper().serialize($scope.models.dropzones, function (res) {
+                    operation['reqModel'] = {
+                        id: $routeParams.id,
+                        name: resp.model.info.name,
+                        view: JSON.stringify(res['response'])
+                    };
+
+                });
+                var svc = operation['postPopupSvc'];
+                svc['serviceToCall'](operation['reqModel']).then(svc['success'], svc['failure']);
+            }, function (err) {});
+        }
+
     };
 
     /**
@@ -737,6 +787,26 @@
         };
     };
 
+    function pageToolkit() {
+        return {
+            restrict: 'AE',
+            scope: {
+                data: '=',
+                filter:'='
+            },
+            templateUrl: './app/controls/page-controls-view.html',
+            controller: function ($scope, $element) {
+                var wrapper = window.wrapper;
+                $scope.selectAction = function () {
+                    var _data = $scope.filter['actveOpt'];
+                    new wrapper().deserialize(_data['view'], function (res) {
+                        $scope.data.dropzones = res['response'];
+                    });
+                };
+            }
+        };
+    };
+
     function httpProvider($httpProvider) {
         //$httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
         $httpProvider.defaults.useXDomain = true;
@@ -762,8 +832,9 @@
         .directive('multiPanal', ['$compile', 'projectService', multiPanal])
         .directive('panal', ['$compile', Panal])
         .directive('nestedList', nestedList)
+        .directive('pageToolkit', pageToolkit)
         .controller('ideController', ideController)
-        .controller('draggablePanels', ['$scope', '$routeParams', 'projectService', draggablePanels])
+        .controller('draggablePanels', ['$scope', '$routeParams', 'projectService', 'popupService', draggablePanels])
         .controller('ideDashboardController', ['$scope', '$compile', '$timeout', ideDashboardController])
         .controller('ideViewController', ['$scope', 'dashboardService', '$timeout', 'popupService', ideViewController])
         .service('projectService', ['$http', ideProjectService])
