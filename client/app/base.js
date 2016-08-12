@@ -272,19 +272,6 @@
             dropzones: []
         };
 
-        $scope.getZoneClass = function (_colLength) {
-            var _classInfo = {
-                1: 'col-md-12',
-                2: 'col-md-6',
-                3: 'col-md-4',
-                4: 'col-md-3',
-                5: 'col-md-15 col-sm-3',
-                6: 'col-md-2',
-                12: 'col-md-1'
-            };
-            return _classInfo[_colLength];
-        };
-
         var _col = [
             [
                 {
@@ -315,7 +302,7 @@
             );
         };
 
-        $scope.createView = function () {
+        /*$scope.createView = function () {
             new wrapper().serialize($scope.models.dropzones, function (res) {
                 var _modelView = {
                     id: $routeParams.id,
@@ -331,8 +318,7 @@
                     }
                 );
             });
-        };
-
+        };*/
         var model = function (modalInfo, data) {
             return {
                 model: {
@@ -371,7 +357,6 @@
 
         function performOps(operation, _model) {
             operation.prePopupSvc(operation.template, _model).then(function (resp) {
-                debugger;
                 new wrapper().serialize($scope.models.dropzones, function (res) {
                     operation['reqModel'] = {
                         id: $routeParams.id,
@@ -384,7 +369,6 @@
                 svc['serviceToCall'](operation['reqModel']).then(svc['success'], svc['failure']);
             }, function (err) {});
         }
-
     };
 
     /**
@@ -807,6 +791,32 @@
         };
     };
 
+    function viewDecisionMaker(){
+        return {
+            restrict: 'AE',
+            replace: true,
+            scope: {
+                dropzone: '='
+            },
+            templateUrl: './app/controls/view-decision-maker.html',
+            controller: function ($scope, $element) {
+                $scope.responsiveClassSetter = function (_colLength) {
+                    var _classInfo = {
+                        1: 'col-md-12',
+                        2: 'col-md-6',
+                        3: 'col-md-4',
+                        4: 'col-md-3',
+                        5: 'col-md-15 col-sm-3',
+                        6: 'col-md-2',
+                        12: 'col-md-1'
+                    };
+                    return _classInfo[_colLength];
+                };
+            }
+        };
+    };
+
+
     function httpProvider($httpProvider) {
         //$httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
         $httpProvider.defaults.useXDomain = true;
@@ -833,6 +843,7 @@
         .directive('panal', ['$compile', Panal])
         .directive('nestedList', nestedList)
         .directive('pageToolkit', pageToolkit)
+        .directive('viewDecisionMaker', viewDecisionMaker)
         .controller('ideController', ideController)
         .controller('draggablePanels', ['$scope', '$routeParams', 'projectService', 'popupService', draggablePanels])
         .controller('ideDashboardController', ['$scope', '$compile', '$timeout', ideDashboardController])

@@ -1,0 +1,49 @@
+<div>
+    <div ng-repeat="(zone, list) in dropzone track by $index"
+         dnd-list="list"
+         ng-include="'responsiveColumns.html'">
+    </div>
+    <script type="text/ng-template" id="responsiveColumns.html">
+        <div ng-repeat="item in list track by $index" dnd-draggable="item"
+             dnd-effect-allowed="move"
+             dnd-moved="list.splice($index, 1)"
+             ng-include="item.type + '.html'">
+        </div>
+    </script>
+    <!-- This template is responsible for rendering a container element. It uses the above list template to render each container column -->
+    <script type="text/ng-template" id="container.html">
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>Container {{item.id}}</h5>
+                <div class="pull-right">
+                    <div ibox-tools></div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div ng-repeat="list in item.columns track by $index" dnd-list="list"
+                         ng-include="'responsiveColumns.html'" ng-class="responsiveClassSetter(item.columns.length)"></div>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </script>
+    <!-- Template for a normal list item -->
+    <script type="text/ng-template" id="item.html">
+        <div class="item">Item {{item.id}}</div>
+    </script>
+    <script type="text/ng-template" id="textBox.html">
+        <div class="form-group">
+            <label class="col-lg-2 control-label">Email</label>
+            <div class="col-lg-10">
+                <input type="email" placeholder="Email" class="form-control">
+            </div>
+        </div>
+    </script>
+    <script type="text/ng-template" id="grid.html">
+        <div ide-grid columnDef='columnDef' url="url"></div>
+    </script>
+    <script type="text/ng-template" id="tabContainer.html">
+        <div ng-include src="item.templateUrl"></div>
+    </script>
+</div>

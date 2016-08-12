@@ -9,8 +9,12 @@
             <div class="ibox">
                 <div class="ibox-title">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-xs btn-white active" data-ng-click="createDropzone()">Create a DropZone</button>
-                        <button type="button" class="btn btn-xs btn-white" data-ng-click="SavePageAs('add')">Save Page as</button>
+                        <button type="button" class="btn btn-xs btn-white active" data-ng-click="createDropzone()">
+                            Create a DropZone
+                        </button>
+                        <button type="button" class="btn btn-xs btn-white" data-ng-click="SavePageAs('add')">Save Page
+                            as
+                        </button>
                     </div>
                     <div class="pull-right">
                         <div ibox-tools></div>
@@ -20,121 +24,10 @@
                     <pre>{{ models.dropzones | json }}</pre>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <div ng-repeat="(zone, list) in models.dropzones track by $index"
-                         dnd-list="list"
-                         ng-include="'responsiveColumns.html'">
-                    </div>
-                </div>
-            </div>
+            <div view-decision-maker dropzone="models.dropzones"></div>
         </div>
     </div>
 </div>
-
-
-<!--<div class="animated fadeInRight" ng-init="getProjectView()">
-    <div class="row">
-        <div class="col-lg-2" id="projectView" style="border-right: 1px solid white;">
-            <page-toolkit data="models" filter="form"></page-toolkit>
-            &lt;!&ndash;<div class="ibox-content" style="background-color: transparent;">
-                <form role="form" class="ng-pristine ng-valid">
-                    <div class="row">
-                        <select class="form-control" ng-model="form['actveOpt']" ng-change="selectAction()"
-                                ng-options="s.name for s in form.collection">
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="ibox-content" style="background-color: transparent;">
-                <div nested-list data="models"></div>
-            </div>&ndash;&gt;
-        </div>
-        <div class="col-lg-10" style="background-color: transparent;">
-            <div>
-                <div class="col-lg-4">
-                    <form role="form" class="ng-pristine ng-valid">
-                        <div class="row col-lg-12">
-                            <div class="btn-group m-b">
-                                <span class="input-group-btn">
-                                    <button type="button" class="btn btn-primary" ng-click="createDropzone()"> Create a DropZone </button>
-                                </span>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="col-lg-4">
-                    <form role="form" class="ng-pristine ng-valid">
-                        <div class="input-group  m-b">
-                            <span class="input-group-addon">#/</span>
-                            <input type="text" ng-model="viewName" placeholder="Provide a View Name.." class="input-sm form-control"> <span class="input-group-btn"><button type="button" class="btn btn-sm btn-primary"  ng-click="createView()"> Create View</button> </span>
-                        </div>
-                    </form>
-                </div>
-                <div class="col-lg-4">
-                </div>
-            </div>
-            <div>
-                <div class="col-lg-12">
-                    <div class="ibox">
-                        <div class="ibox-title">
-                            <h5> Generated Model</h5>
-                            <div class="pull-right">
-                                <div ibox-tools></div>
-                            </div>
-                        </div>
-                        <div class="ibox-content">
-                            <pre>{{ models.dropzones | json }}</pre>
-                        </div>
-                    </div>
-                    <div ng-repeat="(zone, list) in models.dropzones track by $index"
-                         dnd-list="list"
-                         ng-include="'responsiveColumns.html'">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>-->
-<script type="text/ng-template" id="responsiveColumns.html">
-    <div ng-repeat="item in list track by $index" dnd-draggable="item"
-         dnd-effect-allowed="move"
-         dnd-moved="list.splice($index, 1)"
-         ng-include="item.type + '.html'">
-    </div>
-</script>
-<!-- This template is responsible for rendering a container element. It uses the above list template to render each container column -->
-<script type="text/ng-template" id="container.html">
-    <div class="ibox">
-        <div class="ibox-title">
-            <h5>Container {{item.id}}</h5>
-            <div class="pull-right">
-                <div ibox-tools></div>
-            </div>
-        </div>
-        <div class="ibox-content">
-            <div class="row">
-                <div ng-repeat="list in item.columns track by $index" dnd-list="list" ng-include="'responsiveColumns.html'" ng-class="getZoneClass(item.columns.length)"></div>
-            </div>
-         </div>
-    </div>
-    <div class="clearfix"></div>
-</script>
-<!-- Template for a normal list item -->
-<script type="text/ng-template" id="item.html">
-    <div class="item">Item {{item.id}}</div>
-</script>
-
-<script type="text/ng-template" id="textBox.html">
-    <div class="form-group">
-        <label class="col-lg-2 control-label">Email</label>
-        <div class="col-lg-10">
-            <input type="email" placeholder="Email" class="form-control">
-        </div>
-    </div>
-</script>
-<script type="text/ng-template" id="grid.html"><div ide-grid columnDef='columnDef' url="url"></div></script>
-<script type="text/ng-template" id="tabContainer.html"><div ng-include src="item.templateUrl"></div></script>
 <!--
 <script type="text/ng-template" id="responsiveColumns.html">
     <div ng-repeat="item in list"
