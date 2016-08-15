@@ -5,7 +5,7 @@
     'use strict';
     var logger = require('./utility/db-logger');
     var connector = require('./db-configs/db.connector');
-    function routes(express, server){
+    function routes(express, server, http){
         var router = express.Router();// get an instance of the express Router
         // a middleware function with no mount path. This code is executed for every request to the router
         router.use(function (req, res, next) {
@@ -59,8 +59,27 @@
                 });
             });
         });
+
+        function createMultipleListenrServers (client, callback){
+            var query = client.query(" SELECT ce.url from config ce where ce.referer >0");
+            var ports = [];
+            query.on('row', function(row) {
+                ports.push(parseInt(row.url));
+            });
+            query.on('end', function() {
+                ports.forEach(function(port) {
+                    server.listen(port);
+                });
+                callback();
+            });
+            function reqHandler(req, res) {
+
+            }
+
+        }
+
         router.get('/setup', function(req, res) {
-            var db = connector.postgreSql;var results = {};
+            var db = connector.postgreSql;var results = {}, createServer = false;
             db.connect(db.connectionString, function(err, client, done) {
                 if(err) {
                     done();
@@ -73,6 +92,9 @@
                 var query = client.query(" SELECT * from config ce where ce.url = '"+req.headers['host'].split(':')[1]+"'");
 
                 query.on('row', function(row) {
+                    if(row['pid'] == null){
+                        createServer = true;
+                    }
                     results = {
                         app:{
                             name: row['name'],
@@ -86,8 +108,17 @@
 
                 // After all data is returned, close connection and return results
                 query.on('end', function() {
-                    done();
-                    return res.json({ success: true, data: results});
+
+                    if(createServer) {
+                        createMultipleListenrServers(client, function () {
+                            done();
+                            return res.json({success: true, data: results});
+                        });
+
+                    }else {
+                        done();
+                        return res.json({success: true, data: results});
+                    }
                 });
             });
         });
@@ -126,6 +157,9 @@
                 // SQL Query > select data
                 var _params = req.query;
                 var _query = "select views.*, config.url from views left join config on config.id= views.appid where appid =" + _params['id'];
+                if(_params['view']){
+                    _query += " and views.name = '"+ _params['view'] +"'";
+                }
                 client.query(_query,
                     function(err, results) {
                         done();

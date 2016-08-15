@@ -40,7 +40,11 @@
         admin: {
             templateUrl: _baseModulesPath.templateUrl + 'admin/dashboard.html',
             controller: draggablePanels
-        }
+        },
+        dynamicAppView: {
+            templateUrl: _baseModulesPath.templateUrl + 'templates/dynamic-app.view.html',
+            controller: draggablePanels
+        },
     };
 
     function config($routeProvider) {
@@ -50,6 +54,7 @@
             .when('/admin', routeConfig['admin'])
             .when('/client-dashboard', routeConfig['dashboard'])
             .when('/db-dashboard', routeConfig['details'])
+            .when('/:view', routeConfig['dynamicAppView'])
             .otherwise({redirectTo: '/'});//Handle all exceptions
     };
 
@@ -248,15 +253,27 @@
         }
     }
 
-    function draggablePanels($scope, $routeParams, projectService, popupService) {
+    function draggablePanels($scope, $routeParams, projectService, popupService, appInfo) {
         $scope.form = {
             collection: [],
             actveOpt: ''
         };
 
+        $scope.getAppView = function () {
+            getViewDetails({id: appInfo.id, view: $routeParams.view}).then(
+                function (resp) {
+                    var _data = resp['data']['data'][0];
+                    new wrapper().deserialize(_data['view'], function (res) {
+                        $scope.models.dropzones = res['response'];
+                    });
+                },
+                function (err) {
+                    alert(err);
+                }
+            );
+        }
         $scope.getProjectView = function () {
-            $('#projectView').css("min-height", $(window).height() - 100 + "px");
-            projectService.getViewInfo({id: $routeParams.id}).then(
+            getViewDetails({id: $routeParams.id}).then(
                 function (resp) {
                     $scope.form.collection = resp['data']['data'];
                 },
@@ -266,19 +283,13 @@
             );
         };
 
-        $scope.models = {
-            selected: null,
-            templates: new wrapper().getAllComponents(),
-            dropzones: []
-        };
+        function getViewDetails(param) {
+            $('#projectView').css("min-height", $(window).height() - 100 + "px");
+           return projectService.getViewInfo(param);
+        }
 
         var _col = [
             [
-                {
-                    "type": "item",
-                    key: 2,
-                    id: 2
-                },
                 {
                     "type": "item",
                     key: 2,
@@ -293,32 +304,18 @@
                 }
             ]
         ];
-        $scope.createDropzone = function () {
-            var _info = $scope.models.dropzones;
-            $scope.models.dropzones.push(
-                [
-                    {type: "container", key: 1, id: 1, columns: _col}
-                ]
-            );
+        var _defaultZone = [ {type: "container", key: 1, id: 1, columns: _col} ];
+        $scope.models = {
+            selected: null,
+            templates: new wrapper().getAllComponents(),
+            dropzones: [_defaultZone]
         };
 
-        /*$scope.createView = function () {
-            new wrapper().serialize($scope.models.dropzones, function (res) {
-                var _modelView = {
-                    id: $routeParams.id,
-                    name: $scope.viewName,
-                    view: JSON.stringify(res['response'])
-                };
-                projectService.submit(_modelView).then(
-                    function (resp) {
-                        $scope.form.collection.push(resp.data.rows);
-                    },
-                    function (err) {
-                        alert(err);
-                    }
-                );
-            });
-        };*/
+        $scope.createDropzone = function () {
+            var _info = $scope.models.dropzones;
+            $scope.models.dropzones.push(_defaultZone);
+        };
+
         var model = function (modalInfo, data) {
             return {
                 model: {
@@ -845,7 +842,7 @@
         .directive('pageToolkit', pageToolkit)
         .directive('viewDecisionMaker', viewDecisionMaker)
         .controller('ideController', ideController)
-        .controller('draggablePanels', ['$scope', '$routeParams', 'projectService', 'popupService', draggablePanels])
+        .controller('draggablePanels', ['$scope', '$routeParams', 'projectService', 'popupService', 'appInfo', draggablePanels])
         .controller('ideDashboardController', ['$scope', '$compile', '$timeout', ideDashboardController])
         .controller('ideViewController', ['$scope', 'dashboardService', '$timeout', 'popupService', ideViewController])
         .service('projectService', ['$http', ideProjectService])

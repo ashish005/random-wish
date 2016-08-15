@@ -21,6 +21,15 @@
                         {type: "textBox", name: 'TextBox', key:5,id: 5},
                         { name: 'Label', type: "item", key:2,id: 2}
                     ]
+                },
+                {
+                    name: 'Panels', id:1,
+                    children:[
+                        { name: 'col-lg-3', type: 'floatingContainer', key:6, id: 6, templateUrl: 'app/controls/panels/col-lg-3.html' },
+                        { name: 'col-lg-4', type: 'floatingContainer', key:7, id: 7, templateUrl: 'app/controls/panels/col-lg-4.html' },
+                        { name: 'col-lg-8', type: 'floatingContainer', key:8, id: 8, templateUrl: 'app/controls/panels/col-lg-8.html' },
+                        { name: 'col-lg-12', type: 'floatingContainer', key:8, id: 8, templateUrl: 'app/controls/panels/col-lg-12.html' },
+                    ]
                 }
             ];
         };

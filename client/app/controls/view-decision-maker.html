@@ -1,4 +1,5 @@
 <div>
+    <!--<div ng-include="'app/controls/master-pages/master-page-1.html'"></div>-->
     <div ng-repeat="(zone, list) in dropzone track by $index"
          dnd-list="list"
          ng-include="'responsiveColumns.html'">
@@ -44,6 +45,23 @@
         <div ide-grid columnDef='columnDef' url="url"></div>
     </script>
     <script type="text/ng-template" id="tabContainer.html">
+        <div ng-include src="item.templateUrl"></div>
+    </script>
+    <script type="text/ng-template" id="floatingContainer.html">
+        <!--<div class="ibox">
+            <div class="ibox-title">
+                <h5>Container {{item.id}}</h5>
+                <div class="pull-right">
+                    <div ibox-tools></div>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div ng-repeat="list in item.columns track by $index" dnd-list="list"
+                         ng-include src="item.templateUrl" ng-class="responsiveClassSetter(item.columns.length)"></div>
+                </div>
+            </div>
+        </div>-->
         <div ng-include src="item.templateUrl"></div>
     </script>
 </div>

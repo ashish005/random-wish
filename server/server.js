@@ -17,7 +17,7 @@ module.exports = function() {
     server.use(bodyParser.json());
     server.use(cors());
 
-    server.use('/apis', require('./routes')(express, server));
+    server.use('/apis', require('./routes')(express, server, http));
     server.use('/core', require('./core')(express));
 
     var port = process.env.PORT || 4010;        // set our port
