@@ -109,16 +109,15 @@
                 // After all data is returned, close connection and return results
                 query.on('end', function() {
 
-                    if(createServer) {
+                    /*if(createServer) {
                         createMultipleListenrServers(client, function () {
                             done();
                             return res.json({success: true, data: results});
                         });
 
-                    }else {
-                        done();
-                        return res.json({success: true, data: results});
-                    }
+                    }*/
+                    done();
+                    return res.json({success: true, data: results});
                 });
             });
         });

@@ -3,7 +3,8 @@
  */
 var _basePath = {
     libs:'assets/libs/',
-    app:'app/'
+    app:'app/',
+    controls:'app/controls/',
 };
 
 require.config({
@@ -21,8 +22,9 @@ require.config({
         "app-core":"core/core",
         "ui-grid":_basePath.libs+"ui-grid/ui-grid-unstable",
         "ui-sortable":_basePath.libs+'ui-sortable/sortable',
-        "dndLists":_basePath.app+'controls/drag-drop.helper',
-        'dynamic-ui.plugin':_basePath.app+'controls/dynamic-ui.plugin',
+        "dndLists":_basePath.controls+'drag-drop.helper',
+        'dynamic-ui.plugin':_basePath.controls +'dynamic-ui.plugin',
+        'controls-config-provider':_basePath.controls+'control-configs/controls-config-provider',
     },
     // angular does not support AMD out of the box, put it in a shim
     shim: {

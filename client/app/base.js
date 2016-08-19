@@ -17,7 +17,8 @@
             tree: {templateUrl: _baseModulesPath['popupBaseTemplateUrl'] + 'popup-tree.html'}
         },
         project: {
-            createPage: {templateUrl: _baseModulesPath['popupBaseTemplateUrl'] + 'project/create-page.html'}
+            createPage: {templateUrl: _baseModulesPath['popupBaseTemplateUrl'] + 'project/create-page.html'},
+            settings: {templateUrl: _baseModulesPath['popupBaseTemplateUrl'] + 'project/tools-config-settings.html'}
         }
     };
 
@@ -788,6 +789,57 @@
         };
     };
 
+
+    function toolsConfigOptions(popupService, projectService) {
+        return {
+            restrict: 'AE',
+            scope: {
+                type: '@?'
+            },
+            template: '<li ><a href>Config options</a></li>',
+            controller: function ($scope, $element) {
+                $element.on('click', 'li>a', function (item) {
+                    var ops = {
+                        'ui-grid': {
+                            reqModel:{},
+                            prePopupSvc: popupService['showPopup'],
+                            template: popupView['project']['settings']['templateUrl'],
+                            postPopupSvc: {
+                                serviceToCall: projectService.submit,
+                                success: function (resp) {
+                                },
+                                failure: function (resp) { alert(err); },
+                            },
+                            type: 'view',
+                            name: 'Config Settings'
+                        }
+                    };
+                    var type = 'ui-grid';
+                    
+                    require(['controls-config-provider'], function (configLoader) {
+                        new configLoader().loadClass(type, function(data){
+                            performOps(ops[type], new model(ops[type], data));
+                        });
+                    });
+                });
+                var model = function (modalInfo, data) {
+                    return {
+                        model: {
+                            name: modalInfo['name'],
+                            info: data
+                        }
+                    };
+                };
+                function performOps(operation, _model) {
+                    operation.prePopupSvc(operation.template, _model).then(function (resp) {
+                        /*var svc = operation['postPopupSvc'];
+                        svc['serviceToCall'](operation['reqModel']).then(svc['success'], svc['failure']);*/
+                    }, function (err) {});
+                }
+            }
+        };
+    };
+
     function viewDecisionMaker(){
         return {
             restrict: 'AE',
@@ -836,6 +888,7 @@
         .directive('minimalizaSidebar', minimalizaSidebar)
         .directive('ideSplitter', ideSplitter)
         .directive('actions', goActions)
+        .directive('toolsConfigOptions', ['popupService', 'projectService', toolsConfigOptions])
         .directive('multiPanal', ['$compile', 'projectService', multiPanal])
         .directive('panal', ['$compile', Panal])
         .directive('nestedList', nestedList)
