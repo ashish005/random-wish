@@ -7,7 +7,7 @@ app.server.get('/', function (req, res) {
     console.log('I am listening ' + 4002);
 });*/
 app.server.use('/database', app.express.static(__dirname + '/database'));
-
+app.server.use('/data', app.express.static(__dirname + '/data'));
 //app.server.use('/images', app.express.static(__dirname + '/images'));
 //app.server.use('/assets', app.express.static(__dirname + '/assets'));
 

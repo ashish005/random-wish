@@ -1,8 +1,7 @@
 (function () {
     var appName = 'goLive';
     window['name'] = appName;
-
-    var app = angular.module(appName, ['ngRoute', appName + '.core', 'ui.bootstrap', 'ui.grid', 'ui.grid.infiniteScroll', 'dndLists']);
+    var app = angular.module(appName, ['ngRoute', appName + '.core', 'ui.bootstrap', 'dndLists']);//'ui.grid', 'ui.grid.infiniteScroll',
     var _rootPath = './app/';
     var _baseModulesPath = {
         templateUrl: _rootPath,
@@ -401,25 +400,36 @@
         };
     };
 
-    function ideGrid($q, $http, $timeout) {
+    function ideGrid($q, $http, $timeout, $compile) {
         return {
             restrict: 'AE',
             templateUrl: _rootPath + 'controls/grid.html',
+            compile: function () {
+                return {
+                    pre: function ($scope, $elm, $attrs, uiGridCtrl, uiGridFeatureService) {
+                        //register your feature cols and row processors with uiGridCtrl.grid
+                        //do anything else you can safely do here
+                        //!! of course, don't stomp on core grid logic or data
+                        //namespace any properties you need on grid
+                        //a good pattern is to have a service initializeGrid function
+                        //uiGridFeatureService.initializeGrid(uiGridCtrl.grid);
+                        debugger;
+                    }
+                };
+            },
             link: function (scope, elem) {
             },
             controller: function ($scope, $element) {
-                //var url = 'https://cdn.rawgit.com/angular-ui/ui-grid.info/gh-pages/data/10000_complex.json';
+               /* var html = $element.find('.gridInfo');
+                var elem = angular.element(html);
+                $compile(elem)($scope);  // compile and link*/
+                //$scope.$digest();
                 var url = './data/10000_complex.json';
                 $scope.gridHeight = $(window).height() - 270 + "px";
                 $scope.gridOptions = {
                     infiniteScrollRowsFromEnd: 40,
                     infiniteScrollUp: true,
                     infiniteScrollDown: true,
-                    /*columnDefs: [
-                     { name:'id'},
-                     { name:'name' },
-                     { name:'age' }
-                     ],*/
                     data: 'data',
                     onRegisterApi: function (gridApi) {
                         gridApi.infiniteScroll.on.needLoadMoreData($scope, $scope.getDataDown);
@@ -540,7 +550,7 @@
                         // timeout needed to allow digest cycle to complete,and grid to finish ingesting the data
                         // you need to call resetData once you've loaded your data if you want to enable scroll up,
                         // it adjusts the scroll position down one pixel so that we can generate scroll up events
-                        $scope.gridApi.infiniteScroll.resetScroll($scope.firstPage > 0, $scope.lastPage < 4);
+                        //$scope.gridApi.infiniteScroll.resetScroll($scope.firstPage > 0, $scope.lastPage < 4);
                     });
                 });
             }
@@ -789,8 +799,7 @@
         };
     };
 
-
-    function toolsConfigOptions(popupService, projectService) {
+    function toolsConfigOptions($rootScope, popupService, projectService) {
         return {
             restrict: 'AE',
             scope: {
@@ -865,6 +874,60 @@
         };
     };
 
+    function checkDataType($compile){
+        return {
+            restrict: 'AE',
+            replace: true,
+            scope:{
+                key:'@?',
+                val:'=?'
+            },
+            controller: function ($scope, $element) {
+                var checkbox ='<div class="checkbox" ng-if="true === val || false === val">\
+                    <label class="checkbox" for="closeButton"><input id="closeButton" type="checkbox" ng-model="val" class="input-mini"> {{key}} </label>\
+                </div>';
+                var textBox ='<div class="form-group">\
+                    <label for="title">{{key}}</label>\
+                    <input type="text" ng-model="val" class="form-control">\
+                    </div>';
+                var NumberBox ='<div class="form-group">\
+                    <label for="title">{{key}}</label>\
+                    <input type="number" ng-model="val" class="form-control">\
+                    </div>';
+                var objectType ='<div class="form-group"><label for="message">{{key}}</label>\
+                    <textarea class="form-control" rows="4" ng-model="val"></textarea>\
+                    </div>';
+
+                var _noneType = '<div class="form-group"><label for="message">{{key}}</label>\
+                    <div class="well"> <div class="row diff-wrapper"> {{val}}</div></div>\
+                    </div>';
+                var _jsonType = '<div class="form-group"><label for="message">{{key}}</label>\
+                    <div class="well"> <div class="row diff-wrapper"> {{val | json}}</div></div>\
+                    </div>';
+
+                switch(typeof $scope.val){
+                    case 'boolean':
+                        html = checkbox;
+                        break;
+                    case 'number':
+                        html = NumberBox;
+                        break;
+                    case 'string':
+                        html = textBox;
+                        break;
+                    case 'function':
+                        html = objectType;
+                        break;
+                    case 'object':
+                        html = _jsonType;
+                        break;
+                    default:
+                        html = _noneType;
+                }
+                $element.append($compile(angular.element(html))($scope));
+            }
+        };
+    };
 
     function httpProvider($httpProvider) {
         //$httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
@@ -881,19 +944,20 @@
         .config(angularHelper)
         .config(['$routeProvider', config])
         .directive('ideHeader', ['appMenu', 'appInfo', 'userInfo', ideHeader])
-        .directive('ideGrid', ['$q', '$http', '$timeout', ideGrid])
+        .directive('ideGrid', ['$q', '$http', '$timeout', '$compile', ideGrid])
         .directive('landingScrollspy', landingScrollspy)
         .directive('iboxTools', ['$timeout', iboxTools])
         .directive('skinConfigChanger', skinConfigChanger)
         .directive('minimalizaSidebar', minimalizaSidebar)
         .directive('ideSplitter', ideSplitter)
         .directive('actions', goActions)
-        .directive('toolsConfigOptions', ['popupService', 'projectService', toolsConfigOptions])
+        .directive('toolsConfigOptions', ['$rootScope', 'popupService', 'projectService', toolsConfigOptions])
         .directive('multiPanal', ['$compile', 'projectService', multiPanal])
         .directive('panal', ['$compile', Panal])
         .directive('nestedList', nestedList)
         .directive('pageToolkit', pageToolkit)
         .directive('viewDecisionMaker', viewDecisionMaker)
+        .directive('checkDataType', ['$compile', checkDataType])
         .controller('ideController', ideController)
         .controller('draggablePanels', ['$scope', '$routeParams', 'projectService', 'popupService', 'appInfo', draggablePanels])
         .controller('ideDashboardController', ['$scope', '$compile', '$timeout', ideDashboardController])
