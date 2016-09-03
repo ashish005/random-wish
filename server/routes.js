@@ -170,6 +170,50 @@
             });
         });
 
+        router.post('/projectView/config', function(req, res) {
+            var db = connector.postgreSql;var results = {};
+            db.connect(db.connectionString, function(err, client, done) {
+                if(err) {
+                    done();
+                    return res.status(500).json({ success: false, data: err});
+                }
+                var _query = {
+                    text: 'INSERT INTO viewconfig (appid, viewid, referrerid, config) values($1, $2, $3, $4) RETURNING *;',
+                    values: [req.body['appId'], req.body['viewId'], req.body['referrerId'], req.body['config']]
+                };
+                client.query(_query,
+                    function(err, result) {
+                        done();
+                        if(err) {
+                            return res.status(500).json({ success: false, data: err});
+                        }
+                        return res.json({ success: true, rows: result.rows[0]});
+                    });
+            });
+        });
+
+        router.get('/projectView/config', function(req, res) {
+            var db = connector.postgreSql;var results = {};
+            db.connect(db.connectionString, function(err, client, done) {
+                if(err) {
+                    done();
+                    console.log(err);
+                    return res.status(500).json({ success: false, data: err});
+                }
+                // SQL Query > select data
+                var _params = req.query;
+                var _query = "select * from viewconfig where appid =" + _params['appid'] +" and viewid = "+ _params['viewid'];
+                client.query(_query,
+                    function(err, results) {
+                        done();
+                        if (err) {
+                            return res.status(500).json({success: false, data: err});
+                        }
+                        return res.json({success: true, data: results.rows});
+                    });
+            });
+        });
+
         return router;
     }
 

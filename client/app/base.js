@@ -1,7 +1,8 @@
 (function () {
     var appName = 'goLive';
     window['name'] = appName;
-    var app = angular.module(appName, ['ngRoute', appName + '.core', 'ui.bootstrap', 'dndLists']);//'ui.grid', 'ui.grid.infiniteScroll',
+
+    var app = angular.module(appName, ['ngRoute', appName + '.core', 'ui.bootstrap', 'dndLists', 'ui.grid']);//, 'ui.grid.infiniteScroll',
     var _rootPath = './app/';
     var _baseModulesPath = {
         templateUrl: _rootPath,
@@ -288,31 +289,30 @@
            return projectService.getViewInfo(param);
         }
 
-        var _col = [
-            [
-                {
-                    "type": "item",
-                    key: 2,
-                    id: 2
-                }
-            ],
-            [
-                {
-                    "type": "item",
-                    key: 2,
-                    id: 2
-                }
-            ]
-        ];
-        var _defaultZone = [ {type: "container", key: 1, id: 1, columns: _col} ];
         $scope.models = {
             selected: null,
             templates: new wrapper().getAllComponents(),
-            dropzones: [_defaultZone]
+            dropzones: []
         };
 
         $scope.createDropzone = function () {
-            var _info = $scope.models.dropzones;
+            var _col = [
+                [
+                    {
+                        "type": "item",
+                        key: 2,
+                        id: Date.now()
+                    }
+                ],
+                [
+                    {
+                        "type": "item",
+                        key: 2,
+                        id: Date.now()
+                    }
+                ]
+            ];
+            var _defaultZone = [ {type: "container", key: 1, columns: _col} ];
             $scope.models.dropzones.push(_defaultZone);
         };
 
@@ -335,7 +335,7 @@
                         serviceToCall: projectService.submit,
                         success: function (resp) {
                             var _data = resp.data;
-                            new wrapper().deserialize(_data['view'], function (res) {
+                            new wrapper().deserialize(_data.rows['view'], function (res) {
                                 $scope.models.dropzones = res['response'];
                             });
                             $scope.form.collection.push(_data.rows);
@@ -374,7 +374,10 @@
     function iboxTools($timeout) {
         return {
             restrict: 'A',
-            scope: true,
+            scope: {
+                type:'@?',
+                referrerId:'@?'
+            },
             templateUrl: _rootPath + 'controls/ibox_tools.html',
             controller: function ($scope, $element) {
                 // Function for collapse ibox
@@ -413,7 +416,6 @@
                         //namespace any properties you need on grid
                         //a good pattern is to have a service initializeGrid function
                         //uiGridFeatureService.initializeGrid(uiGridCtrl.grid);
-                        debugger;
                     }
                 };
             },
@@ -423,6 +425,9 @@
                /* var html = $element.find('.gridInfo');
                 var elem = angular.element(html);
                 $compile(elem)($scope);  // compile and link*/
+
+
+
                 //$scope.$digest();
                 var url = './data/10000_complex.json';
                 $scope.gridHeight = $(window).height() - 270 + "px";
@@ -432,8 +437,8 @@
                     infiniteScrollDown: true,
                     data: 'data',
                     onRegisterApi: function (gridApi) {
-                        gridApi.infiniteScroll.on.needLoadMoreData($scope, $scope.getDataDown);
-                        gridApi.infiniteScroll.on.needLoadMoreDataTop($scope, $scope.getDataUp);
+                        /*gridApi.infiniteScroll.on.needLoadMoreData($scope, $scope.getDataDown);
+                        gridApi.infiniteScroll.on.needLoadMoreDataTop($scope, $scope.getDataUp);*/
                         $scope.gridApi = gridApi;
                     }
                 };
@@ -651,6 +656,12 @@
             setup: function (data) {
                 return $http({method: 'post', url: '/apis/setup', data: data});
             },
+            viewConfig: function (data) {
+                return $http({method: 'post', url: '/apis/projectView/config', data: data});
+            },
+            getViewConfigs: function (req) {
+                return $http({method: 'get', url: '/apis/projectView/config', params: req});
+            },
         };
         return projectService;
     }
@@ -779,7 +790,7 @@
         };
     };
 
-    function pageToolkit() {
+    function pageToolkit(appInfoFactory, ideProjectService) {
         return {
             restrict: 'AE',
             scope: {
@@ -789,21 +800,30 @@
             templateUrl: './app/controls/page-controls-view.html',
             controller: function ($scope, $element) {
                 var wrapper = window.wrapper;
+                $scope.createId = function (node) {
+                    node.id = Date.now();
+                };
+
                 $scope.selectAction = function () {
                     var _data = $scope.filter['actveOpt'];
-                    new wrapper().deserialize(_data['view'], function (res) {
-                        $scope.data.dropzones = res['response'];
-                    });
+                    appInfoFactory.setAppInfo(_data);
+                    var reqModel = {appid:_data.appid, viewid:_data.id}
+                    ideProjectService.getViewConfigs(reqModel).then(function (resp, status, headers, config) {
+                        new wrapper().deserialize(_data['view'], function (res) {
+                            $scope.data.dropzones = res['response'];
+                        });
+                    },function (error) {});
                 };
             }
         };
     };
 
-    function toolsConfigOptions($rootScope, popupService, projectService) {
+    function toolsConfigOptions($rootScope, popupService, projectService, appInfoFactory) {
         return {
             restrict: 'AE',
             scope: {
-                type: '@?'
+                type: '@?',
+                referrerId: '@?'
             },
             template: '<li ><a href>Config options</a></li>',
             controller: function ($scope, $element) {
@@ -814,7 +834,7 @@
                             prePopupSvc: popupService['showPopup'],
                             template: popupView['project']['settings']['templateUrl'],
                             postPopupSvc: {
-                                serviceToCall: projectService.submit,
+                                serviceToCall: projectService.viewConfig,
                                 success: function (resp) {
                                 },
                                 failure: function (resp) { alert(err); },
@@ -823,13 +843,16 @@
                             name: 'Config Settings'
                         }
                     };
-                    var type = 'ui-grid';
-                    
-                    require(['controls-config-provider'], function (configLoader) {
-                        new configLoader().loadClass(type, function(data){
-                            performOps(ops[type], new model(ops[type], data));
+                    var type = $scope.type;
+                    var opsType = ops[type];
+
+                    if(opsType) {
+                        require(['controls-config-provider'], function (configLoader) {
+                            new configLoader().getConfig(type, function (data) {
+                                performOps(opsType, new model(opsType, data));
+                            });
                         });
-                    });
+                    }
                 });
                 var model = function (modalInfo, data) {
                     return {
@@ -841,8 +864,15 @@
                 };
                 function performOps(operation, _model) {
                     operation.prePopupSvc(operation.template, _model).then(function (resp) {
-                        /*var svc = operation['postPopupSvc'];
-                        svc['serviceToCall'](operation['reqModel']).then(svc['success'], svc['failure']);*/
+                        var _appInfo = appInfoFactory.getAppInfo();
+                        var svc = operation['postPopupSvc'];
+                        var reqModel = {
+                            appId: _appInfo.appid,
+                            viewId: _appInfo.id,
+                            referrerId: $scope.referrerId,
+                            config: resp.model.info
+                        };
+                        svc['serviceToCall'](reqModel).then(svc['success'], svc['failure']);
                     }, function (err) {});
                 }
             }
@@ -939,6 +969,22 @@
         $httpProvider.defaults.timeout = 600000;
     };
 
+    function appInfoFactory(){
+        this.appInfo = null;
+
+        this.$get = function(){
+            var that = this;
+            return {
+                getAppInfo :function(){
+                    return that.appInfo;
+                },
+                setAppInfo :function(appInfo){
+                    that.appInfo = appInfo;
+                }
+            };
+        }
+    }
+
     app
         .config(['$httpProvider', httpProvider])
         .config(angularHelper)
@@ -951,13 +997,14 @@
         .directive('minimalizaSidebar', minimalizaSidebar)
         .directive('ideSplitter', ideSplitter)
         .directive('actions', goActions)
-        .directive('toolsConfigOptions', ['$rootScope', 'popupService', 'projectService', toolsConfigOptions])
+        .directive('toolsConfigOptions', ['$rootScope', 'popupService', 'projectService', 'appInfoFactory', toolsConfigOptions])
         .directive('multiPanal', ['$compile', 'projectService', multiPanal])
         .directive('panal', ['$compile', Panal])
         .directive('nestedList', nestedList)
-        .directive('pageToolkit', pageToolkit)
+        .directive('pageToolkit', ['appInfoFactory', 'projectService', pageToolkit])
         .directive('viewDecisionMaker', viewDecisionMaker)
         .directive('checkDataType', ['$compile', checkDataType])
+        .provider('appInfoFactory', appInfoFactory)
         .controller('ideController', ideController)
         .controller('draggablePanels', ['$scope', '$routeParams', 'projectService', 'popupService', 'appInfo', draggablePanels])
         .controller('ideDashboardController', ['$scope', '$compile', '$timeout', ideDashboardController])

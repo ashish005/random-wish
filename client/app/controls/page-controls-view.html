@@ -51,7 +51,7 @@
                         <h5>{{node.name}}</h5>
                         <ul ng-model="node.children">
                             <li ng-repeat="node in node.children track by $index" ng-include="'nodes_renderer.html'"
-                                dnd-draggable="node" dnd-effect-allowed="copy" dnd-copied="node.id = node.id + 1">
+                                dnd-draggable="node" dnd-effect-allowed="copy" dnd-copied="node.id = node.id + 1" ng-init="createId(node)">
                             </li>
                         </ul>
                     </script>

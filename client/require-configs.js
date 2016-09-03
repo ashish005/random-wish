@@ -46,7 +46,7 @@ require.config({
         },
         "ui-sortable":{deps: ['angular','jQuery-ui']},
         app:{
-            deps: ["app-core",'bootstrap', 'ngRoute', 'ui-bootstrap', "dndLists", 'dynamic-ui.plugin']
+            deps: ["app-core",'bootstrap', 'ngRoute', 'ui-bootstrap', "dndLists", 'dynamic-ui.plugin', "ui-grid"]
         }
     },
     // kick start application
