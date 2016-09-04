@@ -1,8 +1,8 @@
 (function () {
     var appName = 'goLive';
     window['name'] = appName;
-
-    var app = angular.module(appName, ['ngRoute', appName + '.core', 'ui.bootstrap', 'dndLists', 'ui.grid']);//, 'ui.grid.infiniteScroll',
+    var uiGridDependencies  = ['ui.grid', 'ui.grid.pagination', 'ui.grid.infiniteScroll'];
+    var app = angular.module(appName, ['ngRoute', appName + '.core', 'ui.bootstrap', 'dndLists'].concat(uiGridDependencies));
     var _rootPath = './app/';
     var _baseModulesPath = {
         templateUrl: _rootPath,
@@ -403,161 +403,154 @@
         };
     };
 
-    function ideGrid($q, $http, $timeout, $compile) {
+    function ideGrid($q, $http, $timeout, $compile, appInfoFactory) {
         return {
             restrict: 'AE',
+            replace:true,
+            scope:{
+                gridId:'@'
+            },
             templateUrl: _rootPath + 'controls/grid.html',
-            compile: function () {
-                return {
-                    pre: function ($scope, $elm, $attrs, uiGridCtrl, uiGridFeatureService) {
-                        //register your feature cols and row processors with uiGridCtrl.grid
-                        //do anything else you can safely do here
-                        //!! of course, don't stomp on core grid logic or data
-                        //namespace any properties you need on grid
-                        //a good pattern is to have a service initializeGrid function
-                        //uiGridFeatureService.initializeGrid(uiGridCtrl.grid);
-                    }
-                };
-            },
-            link: function (scope, elem) {
-            },
+            link: function (scope, elem) {},
             controller: function ($scope, $element) {
-               /* var html = $element.find('.gridInfo');
-                var elem = angular.element(html);
-                $compile(elem)($scope);  // compile and link*/
+                var _decideAdditionaliFunctionalities = 'ui-grid-pagination ui-grid-infinite-scroll';
+                if(1473019687977 == $scope.gridId){
+                    _decideAdditionaliFunctionalities = '';
+                }
 
-
-
+                var gridConfigs = appInfoFactory.getViewConfigByReferrerId($scope.gridId);
                 //$scope.$digest();
                 var url = './data/10000_complex.json';
                 $scope.gridHeight = $(window).height() - 270 + "px";
-                $scope.gridOptions = {
-                    infiniteScrollRowsFromEnd: 40,
-                    infiniteScrollUp: true,
-                    infiniteScrollDown: true,
-                    data: 'data',
-                    onRegisterApi: function (gridApi) {
+                debugger;
+                $scope.gridOptions = {data:[]};
+                var appendHtml = $compile('<div id="{{gridId}}" class="row gridInfo" ui-grid="gridOptions" style="height: {{gridHeight}}" '+ _decideAdditionaliFunctionalities+'></div>')($scope);
+                //angular.element($element.find('.ui-grid')).html(appendHtml);
+                $element.find('.ui-grid').html(appendHtml);
+
+                if(gridConfigs) {
+                    $scope.gridOptions = gridConfigs.config;
+                    $scope.gridOptions.onRegisterApi = function (gridApi) {
                         /*gridApi.infiniteScroll.on.needLoadMoreData($scope, $scope.getDataDown);
-                        gridApi.infiniteScroll.on.needLoadMoreDataTop($scope, $scope.getDataUp);*/
+                         gridApi.infiniteScroll.on.needLoadMoreDataTop($scope, $scope.getDataUp);*/
                         $scope.gridApi = gridApi;
-                    }
-                };
+                    };
 
-                $scope.data = [];
-
-                $scope.firstPage = 2;
-                $scope.lastPage = 2;
-
-                $scope.getFirstData = function () {
-                    var promise = $q.defer();
-                    $http.get(url)
-                        .success(function (data) {
-                            var newData = $scope.getPage(data, $scope.lastPage);
-                            $scope.data = $scope.data.concat(newData);
-                            promise.resolve();
-                        });
-                    return promise.promise;
-                };
-
-                $scope.getDataDown = function () {
-                    var promise = $q.defer();
-                    $http.get(url)
-                        .success(function (data) {
-                            $scope.lastPage++;
-                            var newData = $scope.getPage(data, $scope.lastPage);
-                            $scope.gridApi.infiniteScroll.saveScrollPercentage();
-                            $scope.data = $scope.data.concat(newData);
-                            $scope.gridApi.infiniteScroll.dataLoaded($scope.firstPage > 0, $scope.lastPage < 4).then(function () {
-                                $scope.checkDataLength('up');
-                            }).then(function () {
-                                promise.resolve();
-                            });
-                        })
-                        .error(function (error) {
-                            $scope.gridApi.infiniteScroll.dataLoaded();
-                            promise.reject();
-                        });
-                    return promise.promise;
-                };
-
-                $scope.getDataUp = function () {
-                    var promise = $q.defer();
-                    $http.get(url)
-                        .success(function (data) {
-                            $scope.firstPage--;
-                            var newData = $scope.getPage(data, $scope.firstPage);
-                            $scope.gridApi.infiniteScroll.saveScrollPercentage();
-                            $scope.data = newData.concat($scope.data);
-                            $scope.gridApi.infiniteScroll.dataLoaded($scope.firstPage > 0, $scope.lastPage < 4).then(function () {
-                                $scope.checkDataLength('down');
-                            }).then(function () {
-                                promise.resolve();
-                            });
-                        })
-                        .error(function (error) {
-                            $scope.gridApi.infiniteScroll.dataLoaded();
-                            promise.reject();
-                        });
-                    return promise.promise;
-                };
-
-
-                $scope.getPage = function (data, page) {
-                    var res = [];
-                    for (var i = (page * 100); i < (page + 1) * 100 && i < data.length; ++i) {
-                        res.push(data[i]);
-                    }
-                    return res;
-                };
-
-                $scope.checkDataLength = function (discardDirection) {
-                    // work out whether we need to discard a page, if so discard from the direction passed in
-                    if ($scope.lastPage - $scope.firstPage > 3) {
-                        // we want to remove a page
-                        $scope.gridApi.infiniteScroll.saveScrollPercentage();
-
-                        if (discardDirection === 'up') {
-                            $scope.data = $scope.data.slice(100);
-                            $scope.firstPage++;
-                            $timeout(function () {
-                                // wait for grid to ingest data changes
-                                $scope.gridApi.infiniteScroll.dataRemovedTop($scope.firstPage > 0, $scope.lastPage < 4);
-                            });
-                        } else {
-                            $scope.data = $scope.data.slice(0, 400);
-                            $scope.lastPage--;
-                            $timeout(function () {
-                                // wait for grid to ingest data changes
-                                $scope.gridApi.infiniteScroll.dataRemovedBottom($scope.firstPage > 0, $scope.lastPage < 4);
-                            });
-                        }
-                    }
-                };
-
-                $scope.reset = function () {
                     $scope.firstPage = 2;
                     $scope.lastPage = 2;
 
-                    // turn off the infinite scroll handling up and down - hopefully this won't be needed after @swalters scrolling changes
-                    $scope.gridApi.infiniteScroll.setScrollDirections(false, false);
-                    $scope.data = [];
+                    $scope.getFirstData = function () {
+                        var promise = $q.defer();
+                        $http.get(url)
+                            .success(function (data) {
+                                debugger;
+                                var newData = $scope.getPage(data, $scope.lastPage);
+                                $scope.gridOptions.data = $scope.gridOptions.data.concat(newData);
+                                promise.resolve();
+                            });
+                        return promise.promise;
+                    };
+
+                    $scope.getDataDown = function () {
+                        var promise = $q.defer();
+                        $http.get(url)
+                            .success(function (data) {
+                                $scope.lastPage++;
+                                var newData = $scope.getPage(data, $scope.lastPage);
+                                $scope.gridApi.infiniteScroll.saveScrollPercentage();
+                                $scope.data = $scope.data.concat(newData);
+                                $scope.gridApi.infiniteScroll.dataLoaded($scope.firstPage > 0, $scope.lastPage < 4).then(function () {
+                                    $scope.checkDataLength('up');
+                                }).then(function () {
+                                    promise.resolve();
+                                });
+                            })
+                            .error(function (error) {
+                                $scope.gridApi.infiniteScroll.dataLoaded();
+                                promise.reject();
+                            });
+                        return promise.promise;
+                    };
+
+                    $scope.getDataUp = function () {
+                        var promise = $q.defer();
+                        $http.get(url)
+                            .success(function (data) {
+                                $scope.firstPage--;
+                                var newData = $scope.getPage(data, $scope.firstPage);
+                                $scope.gridApi.infiniteScroll.saveScrollPercentage();
+                                $scope.data = newData.concat($scope.data);
+                                $scope.gridApi.infiniteScroll.dataLoaded($scope.firstPage > 0, $scope.lastPage < 4).then(function () {
+                                    $scope.checkDataLength('down');
+                                }).then(function () {
+                                    promise.resolve();
+                                });
+                            })
+                            .error(function (error) {
+                                $scope.gridApi.infiniteScroll.dataLoaded();
+                                promise.reject();
+                            });
+                        return promise.promise;
+                    };
+
+
+                    $scope.getPage = function (data, page) {
+                        var res = [];
+                        for (var i = (page * 100); i < (page + 1) * 100 && i < data.length; ++i) {
+                            res.push(data[i]);
+                        }
+                        return res;
+                    };
+
+                    $scope.checkDataLength = function (discardDirection) {
+                        // work out whether we need to discard a page, if so discard from the direction passed in
+                        if ($scope.lastPage - $scope.firstPage > 3) {
+                            // we want to remove a page
+                            $scope.gridApi.infiniteScroll.saveScrollPercentage();
+
+                            if (discardDirection === 'up') {
+                                $scope.data = $scope.data.slice(100);
+                                $scope.firstPage++;
+                                $timeout(function () {
+                                    // wait for grid to ingest data changes
+                                    $scope.gridApi.infiniteScroll.dataRemovedTop($scope.firstPage > 0, $scope.lastPage < 4);
+                                });
+                            } else {
+                                $scope.data = $scope.data.slice(0, 400);
+                                $scope.lastPage--;
+                                $timeout(function () {
+                                    // wait for grid to ingest data changes
+                                    $scope.gridApi.infiniteScroll.dataRemovedBottom($scope.firstPage > 0, $scope.lastPage < 4);
+                                });
+                            }
+                        }
+                    };
+
+                    $scope.reset = function () {
+                        $scope.firstPage = 2;
+                        $scope.lastPage = 2;
+
+                        // turn off the infinite scroll handling up and down - hopefully this won't be needed after @swalters scrolling changes
+                        $scope.gridApi.infiniteScroll.setScrollDirections(false, false);
+                        $scope.data = [];
+
+                        $scope.getFirstData().then(function () {
+                            $timeout(function () {
+                                // timeout needed to allow digest cycle to complete,and grid to finish ingesting the data
+                                $scope.gridApi.infiniteScroll.resetScroll($scope.firstPage > 0, $scope.lastPage < 4);
+                            });
+                        });
+                    };
 
                     $scope.getFirstData().then(function () {
                         $timeout(function () {
                             // timeout needed to allow digest cycle to complete,and grid to finish ingesting the data
-                            $scope.gridApi.infiniteScroll.resetScroll($scope.firstPage > 0, $scope.lastPage < 4);
+                            // you need to call resetData once you've loaded your data if you want to enable scroll up,
+                            // it adjusts the scroll position down one pixel so that we can generate scroll up events
+                            //$scope.gridApi.infiniteScroll.resetScroll($scope.firstPage > 0, $scope.lastPage < 4);
                         });
                     });
-                };
-
-                $scope.getFirstData().then(function () {
-                    $timeout(function () {
-                        // timeout needed to allow digest cycle to complete,and grid to finish ingesting the data
-                        // you need to call resetData once you've loaded your data if you want to enable scroll up,
-                        // it adjusts the scroll position down one pixel so that we can generate scroll up events
-                        //$scope.gridApi.infiniteScroll.resetScroll($scope.firstPage > 0, $scope.lastPage < 4);
-                    });
-                });
+                }
             }
         };
     }
@@ -790,7 +783,7 @@
         };
     };
 
-    function pageToolkit(appInfoFactory, ideProjectService) {
+    function pageToolkit($compile, appInfoFactory, ideProjectService) {
         return {
             restrict: 'AE',
             scope: {
@@ -809,6 +802,8 @@
                     appInfoFactory.setAppInfo(_data);
                     var reqModel = {appid:_data.appid, viewid:_data.id}
                     ideProjectService.getViewConfigs(reqModel).then(function (resp, status, headers, config) {
+                        appInfoFactory.setViewConfigs(resp.data.data);
+                        $scope.data.dropzones = [];
                         new wrapper().deserialize(_data['view'], function (res) {
                             $scope.data.dropzones = res['response'];
                         });
@@ -828,6 +823,8 @@
             template: '<li ><a href>Config options</a></li>',
             controller: function ($scope, $element) {
                 $element.on('click', 'li>a', function (item) {
+                    var type = $scope.type;
+
                     var ops = {
                         'ui-grid': {
                             reqModel:{},
@@ -843,15 +840,19 @@
                             name: 'Config Settings'
                         }
                     };
-                    var type = $scope.type;
-                    var opsType = ops[type];
 
+                    var opsType = ops[type];
                     if(opsType) {
-                        require(['controls-config-provider'], function (configLoader) {
-                            new configLoader().getConfig(type, function (data) {
-                                performOps(opsType, new model(opsType, data));
+                        var existConfig = appInfoFactory.getViewConfigByReferrerId($scope.referrerId);
+                        if(existConfig){
+                            performOps(opsType, new model(opsType, existConfig.config));
+                        }else {
+                            require(['controls-config-provider'], function (configLoader) {
+                                new configLoader().getConfig(type, function (data) {
+                                    performOps(opsType, new model(opsType, data));
+                                });
                             });
-                        });
+                        }
                     }
                 });
                 var model = function (modalInfo, data) {
@@ -865,28 +866,32 @@
                 function performOps(operation, _model) {
                     operation.prePopupSvc(operation.template, _model).then(function (resp) {
                         var _appInfo = appInfoFactory.getAppInfo();
-                        var svc = operation['postPopupSvc'];
-                        var reqModel = {
-                            appId: _appInfo.appid,
-                            viewId: _appInfo.id,
-                            referrerId: $scope.referrerId,
-                            config: resp.model.info
-                        };
-                        svc['serviceToCall'](reqModel).then(svc['success'], svc['failure']);
+                        if(_appInfo) {
+                            var svc = operation['postPopupSvc'];
+                            var reqModel = {
+                                appId: _appInfo.appid,
+                                viewId: _appInfo.id,
+                                referrerId: $scope.referrerId,
+                                config: resp.model.info
+                            };
+                            if('ui-grid' == $scope.type){
+                                reqModel.config.data=[];
+                            }
+                            svc['serviceToCall'](reqModel).then(svc['success'], svc['failure']);
+                        }
                     }, function (err) {});
                 }
             }
         };
     };
 
-    function viewDecisionMaker(){
+    function viewDecisionMaker($compile){
         return {
             restrict: 'AE',
-            replace: true,
             scope: {
                 dropzone: '='
             },
-            templateUrl: './app/controls/view-decision-maker.html',
+            template: '<div view-maker></div>',
             controller: function ($scope, $element) {
                 $scope.responsiveClassSetter = function (_colLength) {
                     var _classInfo = {
@@ -900,7 +905,21 @@
                     };
                     return _classInfo[_colLength];
                 };
+
+                /*$scope.$watch('dropzone', function(newValue, oldValue){
+                    if(newValue && newValue != oldValue){
+                        $element.html($compile('<div view-maker></div>')($scope));
+                    }
+                });*/
             }
+        };
+    };
+
+    function viewMaker($compile){
+        return {
+            restrict: 'AE',
+            replace: true,
+            templateUrl: './app/controls/view-decision-maker.html'
         };
     };
 
@@ -913,7 +932,7 @@
                 val:'=?'
             },
             controller: function ($scope, $element) {
-                var checkbox ='<div class="checkbox" ng-if="true === val || false === val">\
+                var checkbox ='<div class="checkbox">\
                     <label class="checkbox" for="closeButton"><input id="closeButton" type="checkbox" ng-model="val" class="input-mini"> {{key}} </label>\
                 </div>';
                 var textBox ='<div class="form-group">\
@@ -959,6 +978,23 @@
         };
     };
 
+    function decideControls($compile){
+        return {
+            restrict: 'AE',
+            replace: true,
+            scope:{
+                item:'=?'
+            },
+            controller: function ($scope, $element, $attrs) {
+                var controls = {
+                    'grid':'<div ide-grid grid-id="{{item.id}}"></div>'
+                };
+               var html = controls[$scope.item.type];
+                $element.append($compile(angular.element(html))($scope));
+            }
+        };
+    };
+
     function httpProvider($httpProvider) {
         //$httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
         $httpProvider.defaults.useXDomain = true;
@@ -971,16 +1007,29 @@
 
     function appInfoFactory(){
         this.appInfo = null;
+        this.viewConfigs = {};
 
         this.$get = function(){
             var that = this;
             return {
+                setAppInfo :function(appInfo){
+                    that.appInfo = appInfo;
+                },
                 getAppInfo :function(){
                     return that.appInfo;
                 },
-                setAppInfo :function(appInfo){
-                    that.appInfo = appInfo;
-                }
+                setViewConfigs:function(data){
+                    this.viewConfigs = {};
+                    for(var i=0; i<data.length; i++){
+                        var _item = data[i];
+                        that.viewConfigs[_item.referrerid] = {
+                            config:_item.config
+                        };
+                    }
+                },
+                getViewConfigByReferrerId :function(referrerid){
+                    return that.viewConfigs[referrerid];
+                },
             };
         }
     }
@@ -990,7 +1039,7 @@
         .config(angularHelper)
         .config(['$routeProvider', config])
         .directive('ideHeader', ['appMenu', 'appInfo', 'userInfo', ideHeader])
-        .directive('ideGrid', ['$q', '$http', '$timeout', '$compile', ideGrid])
+        .directive('ideGrid', ['$q', '$http', '$timeout', '$compile', 'appInfoFactory', ideGrid])
         .directive('landingScrollspy', landingScrollspy)
         .directive('iboxTools', ['$timeout', iboxTools])
         .directive('skinConfigChanger', skinConfigChanger)
@@ -1001,9 +1050,11 @@
         .directive('multiPanal', ['$compile', 'projectService', multiPanal])
         .directive('panal', ['$compile', Panal])
         .directive('nestedList', nestedList)
-        .directive('pageToolkit', ['appInfoFactory', 'projectService', pageToolkit])
-        .directive('viewDecisionMaker', viewDecisionMaker)
-        .directive('checkDataType', ['$compile', checkDataType])
+        .directive('pageToolkit', ['$compile', 'appInfoFactory', 'projectService', pageToolkit])
+        .directive('viewDecisionMaker', ['$compile', viewDecisionMaker])
+        .directive('checkDataType', ['$compile', checkDataType])//decide-controls
+        .directive('viewMaker', ['$compile', viewMaker])
+        .directive('decideControls', ['$compile', decideControls])
         .provider('appInfoFactory', appInfoFactory)
         .controller('ideController', ideController)
         .controller('draggablePanels', ['$scope', '$routeParams', 'projectService', 'popupService', 'appInfo', draggablePanels])

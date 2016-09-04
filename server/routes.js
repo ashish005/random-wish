@@ -177,10 +177,14 @@
                     done();
                     return res.status(500).json({ success: false, data: err});
                 }
+
+                var _params = req.body;
                 var _query = {
-                    text: 'INSERT INTO viewconfig (appid, viewid, referrerid, config) values($1, $2, $3, $4) RETURNING *;',
-                    values: [req.body['appId'], req.body['viewId'], req.body['referrerId'], req.body['config']]
+                    text: 'INSERT INTO viewconfig (appid, viewid, referrerid, config, isactive) values($1, $2, $3, $4, $5) RETURNING *;',
+                    values: [_params['appId'], _params['viewId'], _params['referrerId'], _params['config'], true]
                 };
+                client.query("UPDATE viewconfig SET isactive=false WHERE appid=($1) and viewid=($2) and referrerid=($3)",
+                    [_params['appId'], _params['viewId'], _params['referrerId']]);
                 client.query(_query,
                     function(err, result) {
                         done();
@@ -202,7 +206,7 @@
                 }
                 // SQL Query > select data
                 var _params = req.query;
-                var _query = "select * from viewconfig where appid =" + _params['appid'] +" and viewid = "+ _params['viewid'];
+                var _query = "select * from viewconfig where isactive=true and appid =" + _params['appid'] +" and viewid = "+ _params['viewid'];
                 client.query(_query,
                     function(err, results) {
                         done();

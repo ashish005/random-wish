@@ -2,9 +2,9 @@
     <div class="row">
         <div class="ibox">
         <div class="ibox-title">
-            <h5>Grid {{item.id}}</h5>
+            <h5>Grid {{gridId}}</h5>
             <div class="pull-right">
-                <div ibox-tools type="ui-grid" referrer-id="{{item.id}}"></div>
+                <div ibox-tools type="ui-grid" referrer-id="{{gridId}}"></div>
             </div>
         </div>
         <div class="ibox-content">
@@ -26,7 +26,8 @@
                     </div>
                 </div>
             </div>
-            <div id="{{item.id}}" class="row gridInfo" ui-grid="gridOptions"  ui-grid-infinite-scroll style="height: {{gridHeight}}"></div>
+            <div class="ui-grid"></div>
+            <!--<div id="{{gridId}}" class="row gridInfo" ui-grid="gridOptions"  ui-grid-infinite-scroll style="height: {{gridHeight}}"></div>-->
         </div>
     </div>
     </div>

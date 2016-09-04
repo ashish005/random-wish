@@ -10,7 +10,6 @@
              ng-include="item.type + '.html'">
         </div>
     </script>
-    <!-- This template is responsible for rendering a container element. It uses the above list template to render each container column -->
     <script type="text/ng-template" id="container.html">
         <div class="ibox">
             <div class="ibox-title">
@@ -41,7 +40,7 @@
         </div>
     </script>
     <script type="text/ng-template" id="grid.html">
-        <div ide-grid columnDef='columnDef' url="url"></div>
+        <div ide-grid grid-id="{{item.id}}"></div>
     </script>
     <script type="text/ng-template" id="tabContainer.html">
         <div ng-include src="item.templateUrl"></div>
