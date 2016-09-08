@@ -1,5 +1,25 @@
 define(function () {
-    var _configOptions = {
+    var _options = {};
+    _options = {
+        'ui-grid-edit': false,
+        'ui-grid-validate':false,
+        'ui-grid-treeView':false,
+        'ui-grid-treeBase':false,
+        'ui-grid-selection':false,
+        'ui-grid-saveState':false,
+        'ui-grid-rowEdit':false,
+        'ui-grid-resizeColumns':false,
+        'ui-grid-pinning':false,
+        'ui-grid-pagination':false,
+        'ui-grid-moveColumns':false,
+        'ui-grid-infiniteScroll':false,
+        'ui-grid-importer':false,
+        'ui-grid-grouping':false,
+        'ui-grid-exporter':false,
+        'ui-grid-expandable':false,
+        'ui-grid-cellNav':false
+    };
+    /*_options.config = {
         //Define an aggregate template to customize the rows when grouped. See github wiki for more details.
         aggregateTemplate: undefined, // no more in v3.0.+
 
@@ -7,12 +27,12 @@ define(function () {
         afterSelectionChange: function () { // no more in v3.0.+
         },
 
-        /* Callback if you want to inspect something before selection,
+        /!* Callback if you want to inspect something before selection,
          return false if you want to cancel the selection. return true otherwise.
          If you need to wait for an async call to proceed with selection you can
          use rowItem.changeSelection(event) method after returning false initially.
          Note: when shift+ Selecting multiple items in the grid this will only get called
-         once and the rowItem will be an array of items that are queued to be selected. */
+         once and the rowItem will be an array of items that are queued to be selected. *!/
         beforeSelectionChange: function () {  // no more in v3.0.+
             return true;
         },
@@ -24,7 +44,7 @@ define(function () {
         //definitions of columns as an array [], if not defined columns are auto-generated. See github wiki for more details.
         columnDefs: undefined,
 
-        //*Data being displayed in the grid. Each item in the array is mapped to a row being displayed.
+        //!*Data being displayed in the grid. Each item in the array is mapped to a row being displayed.
         data: [],
 
         //Data updated callback, fires every time the data is modified from outside the grid.
@@ -34,9 +54,9 @@ define(function () {
         //Enables cell editing.
         enableCellEdit: false,
 
-        /* Controls when to use the edit template on a per-row basis using an angular expression
+        /!* Controls when to use the edit template on a per-row basis using an angular expression
          (enableCellEdit must also be true for editing).
-         This option can be overridden in a column definition. */
+         This option can be overridden in a column definition. *!/
         cellEditableCondition: 'true',
 
         //Enables cell selection.
@@ -69,10 +89,10 @@ define(function () {
         // string list of properties to exclude when auto-generating columns.
         excludeProperties: [],
 
-        /* filterOptions -
+        /!* filterOptions -
          filterText: The text bound to the built-in search box.
          useExternalFilter: Bypass internal filtering if you want to roll your own filtering mechanism but want to use builtin search box.
-         */
+         *!/
         filterOptions: {  // no more in v3.0.+
             filterText: "",
             useExternalFilter: false
@@ -90,8 +110,8 @@ define(function () {
         //Define a header row template for further customization. See github wiki for more details.
         headerRowTemplate: undefined, // no more in v3.0.+
 
-        /*Enables the use of jquery UI reaggable/droppable plugin. requires jqueryUI to work if enabled.
-         Useful if you want drag + drop but your users insist on crappy browsers. */
+        /!*Enables the use of jquery UI reaggable/droppable plugin. requires jqueryUI to work if enabled.
+         Useful if you want drag + drop but your users insist on crappy browsers. *!/
         jqueryUIDraggable: false,  // no more in v3.0.+
 
         //Enable the use jqueryUIThemes
@@ -100,8 +120,8 @@ define(function () {
         //Prevent unselections when in single selection mode.
         keepLastSelected: true,  // no more in v3.0.+
 
-        /*Maintains the column widths while resizing.
-         Defaults to true when using *'s or undefined widths. Can be ovverriden by setting to false.*/
+        /!*Maintains the column widths while resizing.
+         Defaults to true when using *'s or undefined widths. Can be ovverriden by setting to false.*!/
         maintainColumnRatios: undefined, // no more in v3.0.+
 
         //Set this to false if you only want one item selected at a time
@@ -138,12 +158,12 @@ define(function () {
         //Disable row selections by clicking on the row and only when the checkbox is clicked.
         selectWithCheckboxOnly: false, // no more in v3.0.+
 
-        /*Enables menu to choose which columns to display and group by.
-         If both showColumnMenu and showFilter are false the menu button will not display.*/
+        /!*Enables menu to choose which columns to display and group by.
+         If both showColumnMenu and showFilter are false the menu button will not display.*!/
         showColumnMenu: false,  // no more in v3.0.+
 
-        /*Enables display of the filterbox in the column menu.
-         If both showColumnMenu and showFilter are false the menu button will not display.*/
+        /!*Enables display of the filterbox in the column menu.
+         If both showColumnMenu and showFilter are false the menu button will not display.*!/
         showFilter: false, // no more in v3.0.+
 
         //Show or hide the footer alltogether the footer is enabled by default
@@ -155,18 +175,18 @@ define(function () {
         //Row selection check boxes appear as the first column.
         showSelectionCheckbox: false, // no more in v3.0.+
 
-        /*Define a sortInfo object to specify a default sorting state.
+        /!*Define a sortInfo object to specify a default sorting state.
          You can also observe this variable to utilize server-side sorting (see useExternalSorting).
-         Syntax is sortInfo: { fields: ['fieldName1', 'fieldName2'], directions: ['asc' || 'desc']}*/
+         Syntax is sortInfo: { fields: ['fieldName1', 'fieldName2'], directions: ['asc' || 'desc']}*!/
         sortInfo: undefined, // no more in v3.0.+
 
         //Set the tab index of the Viewport.
         tabIndex: -1, // no more in v3.0.+
-        /*Prevents the internal sorting from executing.
-         The sortInfo object will be updated with the sorting information so you can handle sorting (see sortInfo)*/
+        /!*Prevents the internal sorting from executing.
+         The sortInfo object will be updated with the sorting information so you can handle sorting (see sortInfo)*!/
         useExternalSorting: false,
 
-        /*i18n language support. choose from the installed or included languages, en, fr, sp, etc...*/
+        /!*i18n language support. choose from the installed or included languages, en, fr, sp, etc...*!/
         i18n: 'en', // no more in v3.0.+, use i18nservice
 
         //the threshold in rows to force virtualization on
@@ -177,6 +197,6 @@ define(function () {
 
         //Function that fires once the grid has initialized
         init: undefined // no more in v3.0.+, use onRegisterApi
-    };
-    return _configOptions;
+    };*/
+    return _options;
 });

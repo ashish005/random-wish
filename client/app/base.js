@@ -1,7 +1,10 @@
 (function () {
     var appName = 'goLive';
     window['name'] = appName;
-    var uiGridDependencies  = ['ui.grid', 'ui.grid.pagination', 'ui.grid.infiniteScroll'];
+    var uiGridDependencies  = ['ui.grid',
+        'ui.grid.edit', 'ui.grid.validate','ui.grid.treeView', 'ui.grid.treeBase', 'ui.grid.selection', 'ui.grid.saveState',
+        'ui.grid.rowEdit','ui.grid.resizeColumns','ui.grid.pinning','ui.grid.pagination','ui.grid.moveColumns', 'ui.grid.infiniteScroll',
+        'ui.grid.importer', 'ui.grid.grouping', 'ui.grid.exporter', 'ui.grid.expandable', 'ui.grid.edit', 'ui.grid.cellNav'];
     var app = angular.module(appName, ['ngRoute', appName + '.core', 'ui.bootstrap', 'dndLists'].concat(uiGridDependencies));
     var _rootPath = './app/';
     var _baseModulesPath = {
@@ -289,9 +292,11 @@
            return projectService.getViewInfo(param);
         }
 
+        var _controlInfo = new wrapper();
         $scope.models = {
             selected: null,
-            templates: new wrapper().getAllComponents(),
+            masterPages: _controlInfo.getAllMasterPages(),
+            templates: _controlInfo.getAllComponents(),
             dropzones: []
         };
 
@@ -368,9 +373,6 @@
         }
     };
 
-    /**
-     *   - Directive for iBox tools elements in right corner of ibox
-     */
     function iboxTools($timeout) {
         return {
             restrict: 'A',
@@ -413,16 +415,21 @@
             templateUrl: _rootPath + 'controls/grid.html',
             link: function (scope, elem) {},
             controller: function ($scope, $element) {
-                var _decideAdditionaliFunctionalities = 'ui-grid-pagination ui-grid-infinite-scroll';
-                if(1473019687977 == $scope.gridId){
-                    _decideAdditionaliFunctionalities = '';
-                }
-
                 var gridConfigs = appInfoFactory.getViewConfigByReferrerId($scope.gridId);
+                var _decideAdditionaliFunctionalities ='';
+
+                if(gridConfigs && gridConfigs.config){
+                    var _keys = Object.keys(gridConfigs.config), keysData = [];
+                    _keys.forEach(function (item, i) {
+                        if(gridConfigs.config[item]){
+                            keysData.push(item);
+                            _decideAdditionaliFunctionalities += ' '+item;
+                        }
+                    });
+                }
                 //$scope.$digest();
                 var url = './data/10000_complex.json';
                 $scope.gridHeight = $(window).height() - 270 + "px";
-                debugger;
                 $scope.gridOptions = {data:[]};
                 var appendHtml = $compile('<div id="{{gridId}}" class="row gridInfo" ui-grid="gridOptions" style="height: {{gridHeight}}" '+ _decideAdditionaliFunctionalities+'></div>')($scope);
                 //angular.element($element.find('.ui-grid')).html(appendHtml);
@@ -443,7 +450,6 @@
                         var promise = $q.defer();
                         $http.get(url)
                             .success(function (data) {
-                                debugger;
                                 var newData = $scope.getPage(data, $scope.lastPage);
                                 $scope.gridOptions.data = $scope.gridOptions.data.concat(newData);
                                 promise.resolve();
@@ -809,6 +815,39 @@
                         });
                     },function (error) {});
                 };
+
+                $element.on('click', 'ul#ide-side-menu li', function (e) {
+                    e.stopPropagation();
+                   var _type = this.getAttribute('ide-type');
+                    $element.find('#ide-sidebar-container').html($compile('<div sidebar type='+_type+'></div>')($scope));
+                });
+            }
+        };
+    };
+
+    function sidebar() {
+        return {
+            restrict: 'AE',
+            templateUrl: function (itemDoc) {
+              var _type = itemDoc[0].getAttribute('type');
+                var controls = {
+                    masterPages:'./app/controls/control-options/sidebars/sidebar-master-pages.html',
+                    controls:'./app/controls/control-options/sidebars/sidebar-controls.html',
+                    chartControls:'./app/controls/control-options/sidebars/sidebar-controls.html',
+                    _blank:'./app/controls/control-options/sidebars/_blank.html',
+                };
+                var _template = controls[_type];
+                if(!_template) {
+                    _template= controls._blank;
+                };
+                
+                return _template;
+            },
+            controller: function ($scope, $element) {
+                $element.on('click', '#ide-sidebar-master ul>li', function (e) {
+                    e.stopPropagation();
+                    $scope.$emit('abc', {masterPageId:this.getAttribute('ide-type')});
+                });
             }
         };
     };
@@ -885,6 +924,42 @@
         };
     };
 
+    function masterPage($compile){
+        return {
+            restrict: 'AE',
+            template:'<div id="ide-wrapper-view"></div>',
+            controller: function ($scope, $element) {
+               $scope.$on('abc', function(e, data){
+                    e.stopPropagation();
+                    $element.find('#ide-wrapper-view').html($compile('<div master-content-view ideMasterPage='+data.masterPageId+'></div>')($scope));
+                });
+            }
+        };
+    };
+
+    function masterContentView($compile){
+        return {
+            restrict: 'AE',
+            templateUrl: function (itemDoc) {
+                var _type = itemDoc[0].getAttribute('ideMasterPage');
+                var controls = {};
+                new wrapper().getAllMasterPages().forEach(function(itemInfo){
+                    itemInfo.children.forEach(function(item) {
+                        controls[item.key] = item;
+                    });
+                });
+                var _template = controls[_type];
+                if(!_template) {
+                    _template= controls['none'];
+                };
+                return _template['templateUrl'];
+            },
+            controller: function ($scope, $element) {
+                $element.find('#ide-content-view').html($compile('<div view-decision-maker dropzone="models.dropzones"></div>')($scope));
+            }
+        };
+    };
+    
     function viewDecisionMaker($compile){
         return {
             restrict: 'AE',
@@ -1043,6 +1118,7 @@
         .directive('landingScrollspy', landingScrollspy)
         .directive('iboxTools', ['$timeout', iboxTools])
         .directive('skinConfigChanger', skinConfigChanger)
+        .directive('sidebar', sidebar)
         .directive('minimalizaSidebar', minimalizaSidebar)
         .directive('ideSplitter', ideSplitter)
         .directive('actions', goActions)
@@ -1055,6 +1131,8 @@
         .directive('checkDataType', ['$compile', checkDataType])//decide-controls
         .directive('viewMaker', ['$compile', viewMaker])
         .directive('decideControls', ['$compile', decideControls])
+        .directive('masterPage', ['$compile', masterPage])
+        .directive('masterContentView', ['$compile', masterContentView])
         .provider('appInfoFactory', appInfoFactory)
         .controller('ideController', ideController)
         .controller('draggablePanels', ['$scope', '$routeParams', 'projectService', 'popupService', 'appInfo', draggablePanels])

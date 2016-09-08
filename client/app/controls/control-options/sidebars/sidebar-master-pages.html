@@ -1,0 +1,21 @@
+<div class="sidebar-container" style="overflow: scroll; width: auto; height: 100%;">
+    <div id="ide-sidebar-master" class="nav nav-tabs navs-3">
+        <!--<div class="sidebar-title" style="padding-top: 10px; padding-bottom: 10px;">
+            <form role="form" class="ng-pristine ng-valid">
+                <div class="row">
+                    Master Pages
+                </div>
+            </form>
+        </div>-->
+        <!--<div nested-list data="data" ></div>-->
+        <ul ng-model="data.masterPages" style="margin: 0; padding: 5px 5px 5px 20px; list-style: none;">
+            <li ng-repeat="node in data.masterPages" ng-include="'nodes_renderer.html'"></li>
+        </ul>
+        <script type="text/ng-template" id="nodes_renderer.html">
+            <h5>{{node.name}}</h5>
+            <ul ng-model="node.children" class="ide-sidebar-master">
+                <li ng-repeat="node in node.children track by $index" ide-type="{{node.key}}" ng-include="'nodes_renderer.html'"></li>
+            </ul>
+        </script>
+    </div>
+</div>

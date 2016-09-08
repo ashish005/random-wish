@@ -1,5 +1,18 @@
 (function(){
     window.wrapper = function () {
+        this.getAllMasterPages = function(){
+            return [
+                {
+                    name: 'MasterPage', id:1,
+                    children:[
+                        { key:1, name:'MasterPage-1', templateUrl: 'app/controls/master-pages/master-page-1.html' },
+                        { key:2, name:'MasterPage-2', templateUrl: 'app/controls/master-pages/master-page-2.html' },
+                        { key:3, name:'MasterPage-3', templateUrl: 'app/controls/master-pages/master-page-3.html' },
+                        { key:'none', name:'MasterPage-3', templateUrl: 'app/controls/master-pages/master-page-none.html' }
+                    ]
+                }
+            ];
+        },
         this.getAllComponents = function () {
             return [
                 {
@@ -33,12 +46,10 @@
                 }
             ];
         };
-
-        this.getTemplates = function(data){
-
-            /*var tmplt = this.getAllComponents().forEach(function (record, index) {
+        this.templateKeyObjectModel = (function (that) {
+            var _result = {};
+            that.getAllComponents().forEach(function (record, index) {
                 var _child = record.children;
-                var _result = {};
                 if(_child && _child.length>0){
                     (function (data) {
                         data.forEach(function (item, i) {
@@ -56,19 +67,13 @@
                     })(_child);
                 }
                 return _result;
-            });*/
+            });
+            return _result;
+        })(this)
+        this.getTemplates = function(data){
             var _key = data['key'];
             if (typeof _key === 'number') {
-                var tmplt = {
-                    4: {type: 'tabContainer', key: 4, templateUrl: 'app/controls/tab-container.html'},
-                    3: {type: 'grid', key: 3},
-                    2: {type: "item", key: 2},
-                    5: {type: "textBox", key: 5},
-                    1: {
-                        type: "container", key: 1, columns: []
-                    }
-                };
-                var _item = tmplt[_key];
+                var _item = this.templateKeyObjectModel[_key];
                 _item['id'] = data['id'];
                 return _item;
             };
