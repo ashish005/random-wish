@@ -821,6 +821,7 @@
                    var _type = this.getAttribute('ide-type');
                     $element.find('#ide-sidebar-container').html($compile('<div sidebar type='+_type+'></div>')($scope));
                 });
+                $element.find('#ide-sidebar-container').html($compile('<div sidebar type="controls"></div>')($scope));
             }
         };
     };
@@ -929,7 +930,8 @@
             restrict: 'AE',
             template:'<div id="ide-wrapper-view"></div>',
             controller: function ($scope, $element) {
-               $scope.$on('abc', function(e, data){
+                $element.find('#ide-wrapper-view').html($compile('<div master-content-view ideMasterPage="none"></div>')($scope));
+                $scope.$on('abc', function(e, data){
                     e.stopPropagation();
                     $element.find('#ide-wrapper-view').html($compile('<div master-content-view ideMasterPage='+data.masterPageId+'></div>')($scope));
                 });
