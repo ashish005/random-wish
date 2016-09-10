@@ -267,6 +267,9 @@
             getViewDetails({id: appInfo.id, view: $routeParams.view}).then(
                 function (resp) {
                     var _data = resp['data']['data'][0];
+                    //$scope.models.masterPageId = _data.masterpageid;
+                    //$scope.$broadcast('masterPage', {masterPageId:_data.masterpageid});
+                    $scope.$emit('masterPage', {masterPageId:_data.masterpageid});
                     new wrapper().deserialize(_data['view'], function (res) {
                         $scope.models.dropzones = res['response'];
                     });
@@ -363,6 +366,7 @@
                     operation['reqModel'] = {
                         id: $routeParams.id,
                         name: resp.model.info.name,
+                        masterPageId:$scope.models.masterPageId,
                         view: JSON.stringify(res['response'])
                     };
 
@@ -805,6 +809,7 @@
 
                 $scope.selectAction = function () {
                     var _data = $scope.filter['actveOpt'];
+                    $scope.$emit('masterPage', {masterPageId:_data.masterpageid});
                     appInfoFactory.setAppInfo(_data);
                     var reqModel = {appid:_data.appid, viewid:_data.id}
                     ideProjectService.getViewConfigs(reqModel).then(function (resp, status, headers, config) {
@@ -847,7 +852,9 @@
             controller: function ($scope, $element) {
                 $element.on('click', '#ide-sidebar-master ul>li', function (e) {
                     e.stopPropagation();
-                    $scope.$emit('abc', {masterPageId:this.getAttribute('ide-type')});
+                    var _masterPageId = this.getAttribute('ide-type');
+                    $scope.data.masterPageId = _masterPageId;
+                    $scope.$emit('masterPage', {masterPageId:this.getAttribute('ide-type')});
                 });
             }
         };
@@ -872,6 +879,19 @@
                             template: popupView['project']['settings']['templateUrl'],
                             postPopupSvc: {
                                 serviceToCall: projectService.viewConfig,
+                                success: function (resp) {
+                                },
+                                failure: function (resp) { alert(err); },
+                            },
+                            type: 'view',
+                            name: 'Config Settings'
+                        },
+                        'tabs': {
+                            reqModel:{},
+                            prePopupSvc: popupService['showPopup'],
+                            template: popupView['project']['settings']['templateUrl'],
+                            postPopupSvc: {
+                                serviceToCall: null,
                                 success: function (resp) {
                                 },
                                 failure: function (resp) { alert(err); },
@@ -931,8 +951,12 @@
             template:'<div id="ide-wrapper-view"></div>',
             controller: function ($scope, $element) {
                 $element.find('#ide-wrapper-view').html($compile('<div master-content-view ideMasterPage="none"></div>')($scope));
-                $scope.$on('abc', function(e, data){
-                    e.stopPropagation();
+                $scope.$on('masterPage', function(e, data){
+                    if(!e.defaultPrevented){
+                        e.preventDefault();
+                    }else {
+                        e.stopPropagation();
+                    }
                     $element.find('#ide-wrapper-view').html($compile('<div master-content-view ideMasterPage='+data.masterPageId+'></div>')($scope));
                 });
             }

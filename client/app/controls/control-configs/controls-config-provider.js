@@ -1,6 +1,7 @@
 define(function(){
     var _options = {
-        'ui-grid':{ filePath:'app/../controls/control-configs/grid/ui-grid.config' }
+        'ui-grid':{ filePath:'app/../controls/control-configs/grid/ui-grid.config' },
+        'tabs':{filePath:'app/../controls/control-configs/tabs/tabs.config'}
     };
 
     var ConfigLoader = function () {

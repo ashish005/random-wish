@@ -131,8 +131,8 @@
                 }
                 // SQL Query > Insert Data
                 var _query = {
-                    text: 'INSERT INTO views (appid, name, view) values($1, $2, $3) RETURNING *;',
-                    values: [req.body['id'], req.body['name'], req.body['view']]
+                    text: 'INSERT INTO views (appid, name, view, masterpageid) values($1, $2, $3, $4) RETURNING *;',
+                    values: [req.body['id'], req.body['name'], req.body['view'], req.body['masterPageId']]
                 };
                 client.query(_query,
                     function(err, result) {

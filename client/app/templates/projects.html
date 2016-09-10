@@ -1,105 +1,24 @@
-<div class="row animated fadeInRight" ng-init="getProjectView()">
-    <div class="col-lg-3">
-        <div class="wrapper wrapper-content">
-            <page-toolkit data="models" filter="form"></page-toolkit>
-        </div>
-    </div>
-    <div class="col-lg-9 row">
-        <div class="wrapper wrapper-content animated fadeInUp">
-            <div class="ibox">
-                <div class="ibox-title">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-xs btn-white active" data-ng-click="createDropzone()">
-                            Create a DropZone
-                        </button>
-                        <button type="button" class="btn btn-xs btn-white" data-ng-click="SavePageAs('add')">Save Page
-                            as
-                        </button>
-                    </div>
-                    <div class="pull-right">
-                        <div ibox-tools></div>
-                    </div>
+<div ng-init="getProjectView()">
+    <page-toolkit data="models" filter="form"></page-toolkit>
+    <div class="wrapper sidebar-content wrapper-content animated fadeInUp">
+        <div class="ibox">
+            <div class="ibox-title">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-xs btn-white active" data-ng-click="createDropzone()">
+                        Create a DropZone
+                    </button>
+                    <button type="button" class="btn btn-xs btn-white" data-ng-click="SavePageAs('add')">Save Page
+                        as
+                    </button>
                 </div>
-                <div class="ibox-content">
-                    <pre>{{ models.dropzones | json }}</pre>
+                <div class="pull-right">
+                    <div ibox-tools></div>
                 </div>
             </div>
-            <div id="ide-view" master-page></div>
-            <!--<div id="view" view-decision-maker dropzone="models.dropzones"></div>-->
+            <div class="ibox-content">
+                <pre>{{ models.dropzones | json }}</pre>
+            </div>
         </div>
+        <div id="ide-view" master-page></div>
     </div>
 </div>
-<!--
-<script type="text/ng-template" id="responsiveColumns.html">
-    <div ng-repeat="item in list"
-         dnd-draggable="item"
-         dnd-effect-allowed="move"
-         dnd-moved="list.splice($index, 1)"
-         ng-class="getZoneClass($index, list)"
-         ng-include="item.type + '.html'">
-    </div>
-</script>
-<script type="text/ng-template" id="list.html">
-    <ul dnd-list="list" style="list-style: none;">
-        <li ng-repeat="item in list"
-            dnd-draggable="item"
-            dnd-effect-allowed="move"
-            dnd-moved="list.splice($index, 1)"
-            ng-class="{selected: models.selected === item}"
-            ng-include="item.type + '.html'">
-        </li>
-    </ul>
-</script>
-<script type="text/ng-template" id="dafault.html">
-    <div class="ibox">
-        <div class="ibox-title">
-            <h5>Container {{item.id}} {{list[0].columns}}</h5>
-            <div class="pull-right">
-                <div ibox-tools></div>
-            </div>
-            <div class="pull-right">
-                <div class="btn-group">
-                    <button type="button" column-splitter='0' class="btn btn-xs btn-white active" ng-click="">None</button>
-                    <button type="button" column-splitter='2' class="btn btn-xs btn-white">2</button>
-                    <button type="button" column-splitter='3' class="btn btn-xs btn-white">3</button>
-                    <button type="button" column-splitter='4' class="btn btn-xs btn-white">4</button>
-                    <button type="button" column-splitter='5' class="btn btn-xs btn-white">5</button>
-                    <button type="button" column-splitter='6' class="btn btn-xs btn-white">6</button>
-                    <button type="button" column-splitter='7' class="btn btn-xs btn-white">7</button>
-                    <button type="button" column-splitter='8' class="btn btn-xs btn-white">8</button>
-                    <button type="button" column-splitter='9' class="btn btn-xs btn-white">9</button>
-                    <button type="button" column-splitter='10' class="btn btn-xs btn-white">10</button>
-                    <button type="button" column-splitter='11' class="btn btn-xs btn-white">11</button>
-                    <button type="button" column-splitter='12' class="btn btn-xs btn-white">12</button>
-                </div>
-            </div>
-        </div>
-        <div class="ibox-content">
-            <div ng-include="'list.html'"></div>
-        </div>
-    </div>
-</script>
-<script type="text/ng-template" id="dafaultContainer.html">
-    <div class="ibox">
-        <div class="ibox-title">
-            <h5>Container {{item.id}}</h5>
-            <div class="pull-right">
-                <div ibox-tools></div>
-            </div>
-        </div>
-        <div class="ibox-content">
-            <div ng-repeat="rows in list[$index].columns"
-                    dnd-draggable="rows"
-                    dnd-effect-allowed="move"
-                    dnd-moved="list[$index].columns.splice($index, 1)">
-                    <div class="item">Item {{rows.id}}</div>
-                </div>
-            </div>
-        </div>
-    </div>
-</script>
-<script type="text/ng-template" id="tabContainer.html"><div ng-include src="item.templateUrl"></div></script>
-<script type="text/ng-template" id="grid.html"><div ide-grid></div></script>
-<script type="text/ng-template" id="item.html">
-    <div class="item">Item {{item.id}}</div>
-</script>-->
