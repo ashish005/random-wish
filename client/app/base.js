@@ -45,6 +45,14 @@
             templateUrl: _baseModulesPath.templateUrl + 'admin/dashboard.html',
             controller: draggablePanels
         },
+        middlelayer: {
+            templateUrl: _baseModulesPath.templateUrl + 'middle-layer',
+            controller: draggablePanels
+        },
+        databaselayer: {
+            templateUrl: _baseModulesPath.templateUrl + 'database-layer',
+            controller: draggablePanels
+        },
         dynamicAppView: {
             templateUrl: _baseModulesPath.templateUrl + 'templates/dynamic-app.view.html',
             controller: draggablePanels
@@ -58,6 +66,7 @@
             .when('/admin', routeConfig['admin'])
             .when('/client-dashboard', routeConfig['dashboard'])
             .when('/db-dashboard', routeConfig['details'])
+            .when('/milldlelayer-dashboard', routeConfig['middlelayer'])
             .when('/:view', routeConfig['dynamicAppView'])
             .otherwise({redirectTo: '/'});//Handle all exceptions
     };
@@ -1036,9 +1045,9 @@
                 var checkbox ='<div class="checkbox">\
                     <label class="checkbox" for="closeButton"><input id="closeButton" type="checkbox" ng-model="val" class="input-mini"> {{key}} </label>\
                 </div>';
-                var textBox ='<div class="form-group">\
-                    <label for="title">{{key}}</label>\
-                    <input type="text" ng-model="val" class="form-control">\
+                var textBox ='<div class="form-horizontal">\
+                    <label class="col-sm-2 control-label">{{key}}:</label>\
+                    <div class="col-sm-10"><input type="text" ng-model="val" class="form-control"></div>\
                     </div>';
                 var NumberBox ='<div class="form-group">\
                     <label for="title">{{key}}</label>\
@@ -1195,3 +1204,5 @@
     });
     return;
 })();
+
+

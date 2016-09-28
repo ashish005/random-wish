@@ -1,6 +1,6 @@
 define(function () {
     var _options = {};
-    _options = {
+    _options.configs = {
         'ui-grid-edit': false,
         'ui-grid-validate':false,
         'ui-grid-treeView':false,
@@ -18,6 +18,9 @@ define(function () {
         'ui-grid-exporter':false,
         'ui-grid-expandable':false,
         'ui-grid-cellNav':false
+    };
+    _options.middleLayer = {
+        'URL': 'Place your URl here..',
     };
     /*_options.config = {
         //Define an aggregate template to customize the rows when grouped. See github wiki for more details.

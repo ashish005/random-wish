@@ -3,10 +3,32 @@
     <h4 class="modal-title">Edit : <strong> {{modalOptions.model['name']}} </strong> </h4>
 </div>
 <div class="modal-body">
-    <form class="row">
+    <!--<form class="row">
         <div class="form-group col-lg-6"  style="margin-bottom: 0px;" ng-repeat="(key, val) in modalOptions.model.info" check-data-type key="{{key}}" val="modalOptions.model.info[key]">
         </div>
-    </form>
+    </form>-->
+    <div class="row">
+        <div class="tabs-container">
+            <tabset>
+                <tab heading="Config Settings">
+                    <div class="panel-body">
+                        <form class="form-horizontal">
+                            <div class="form-group col-lg-6" style="margin-bottom: 0px;" ng-repeat="(key, val) in modalOptions.model.info.configs" check-data-type key="{{key}}" val="modalOptions.model.info['configs'][key]">
+                            </div>
+                        </form>
+                    </div>
+                </tab>
+                <tab heading="Middle Layer Configs">
+                    <div class="panel-body">
+                        <form class="form-horizontal">
+                            <div style="margin-bottom: 0px;" ng-repeat="(key, val) in modalOptions.model.info.middleLayer" check-data-type key="{{key}}" val="modalOptions.model.info['middleLayer'][key]">
+                            </div>
+                        </form>
+                    </div>
+                </tab>
+            </tabset>
+        </div>
+    </div>
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-white" data-dismiss="modal" data-ng-click="modalOptions.close()">Close</button>
