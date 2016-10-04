@@ -1,0 +1,7 @@
+<div class="form-group" style="margin-bottom: 0px;" ng-repeat="(key, val) in config">
+    <label class="col-lg-3 control-label"><span style="text-transform: capitalize;">{{key}}</span></label>
+    <div class="col-lg-9"><div class="form-control" style="background: #F6F6F6;font-weight: bold;">
+        <span ng-if="'appLogo' != key && 'pic' != key">{{val}}</span>
+        <img style="height: 20px;" alt="Logo" ng-if="'appLogo' == key ||'pic' == key" ng-src="{{val}}"/>
+    </div> <span class="help-block m-b-none"></span></div>
+</div>

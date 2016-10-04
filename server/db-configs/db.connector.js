@@ -3,10 +3,27 @@
  */
 (function(){
     var _connector = {
-        mongoose:  require('./mongo.db.connector'),
+        mongoDb:  require('./mongo.db.connector'),
         mySql:  require('./mySql.db.connector'),
-        postgreSql:  require('./postgreSQL.db.connector'),
-        sqlServer:  require('./sql.db.connector')
+        postgreSql:  require('./postgres.db.connector'),
+        pg:  require('./pg.db.connector'),
+        mssql:  require('./sql.db.connector')
     };
+
+    _connector.dbConnect = function (config, cb) {
+        var db = this.activeDb;
+        db.connect(config, function(err, client, done){
+            if(err) {
+                console.log(JSON.stringify(err));
+            };
+            cb(client, done);
+        });
+        return db;
+    };
+
+    _connector.dbSelect = function (model, cb) {
+        this[model.type].dbSelect(model, cb);
+    };
+    
     exports = module.exports = _connector;
 })();

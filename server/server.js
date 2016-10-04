@@ -17,6 +17,7 @@ module.exports = function() {
     server.use(bodyParser.json());
     server.use(cors());
 
+    server.use('/dblayer', require('./db-layer/db-layer.main')(express, server, http));
     server.use('/apis', require('./routes')(express, server, http));
     server.use('/core', require('./core')(express));
 

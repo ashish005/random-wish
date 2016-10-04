@@ -12,6 +12,8 @@ require.config({
     waitSeconds: 200,
     paths: {
         app: 'app/base',
+        'middle-layer': 'app/middle-layer',
+        'database-layer': 'app/database-layer',
         jQuery:  _basePath.libs+'jquery/jquery-2.1.1.min',
         'jQuery-ui':  _basePath.libs+'jquery/jquery-ui/jquery-ui.min',
         angular: _basePath.libs+"angular/angular",

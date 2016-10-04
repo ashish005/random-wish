@@ -1,0 +1,13 @@
+<form class="form-horizontal">
+    <div class="form-group" ng-repeat="(key, val) in config">
+        <label class="col-lg-3 control-label"><span style="text-transform: capitalize;">{{key}}</span></label>
+        <div class="col-lg-9">
+            <input type="text" class="form-control" ng-model="val" ng-if="'appLogo' != key && 'pic' != key">
+            <img style="height: 30px;" alt="Logo" ng-if="'appLogo' == key ||'pic' == key" ng-src="{{val}}"/>
+            <span class="help-block m-b-none"></span>
+        </div>
+    </div>
+    <div class="pull-right">
+        <button type="button" class="btn btn-primary" data-ng-click="saveFormInfo(this)">Save changes</button>
+    </div>
+</form>

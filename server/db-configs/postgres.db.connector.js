@@ -1,13 +1,10 @@
-/**
- * Created by wiznidev on 6/3/16.
- */
-module.exports = (function(){
-    var pg = require('pg');
+ module.exports = (function(){
+    var pg = require('pg');//'require' the 'pg' module
     var serverConfig = {
-        serverName:'104.236.69.151:5432',
+        serverName:'127.0.0.1:5432',
         database:'postgres',
         userName:"postgres",
-        password : "password"
+        password : "password@123"
     };
 
     //pg.connectionString = "pg://"+serverConfig['userName']+':'+serverConfig['password']+'@'+serverConfig['serverName']+'/'+serverConfig['database'];

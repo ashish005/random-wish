@@ -1,6 +1,3 @@
-/**
- * Created by wiznidev on 5/21/16.
- */
 (function(){
     'use strict';
     var logger = require('./utility/db-logger');
@@ -75,7 +72,6 @@
             function reqHandler(req, res) {
 
             }
-
         }
 
         router.get('/setup', function(req, res) {
@@ -83,7 +79,6 @@
             db.connect(db.connectionString, function(err, client, done) {
                 if(err) {
                     done();
-                    console.log(err);
                     return res.status(500).json({ success: false, data: err});
                 }
 
