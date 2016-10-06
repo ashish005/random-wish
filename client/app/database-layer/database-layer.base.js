@@ -11,7 +11,7 @@
             $scope.dbInfos =  resp.data['data'];
         }, function (error) {});
         $scope.databasePanals = {
-            postgress:{ class:'panel-default', dbName:'Postgress' },
+            pg:{ class:'panel-default', dbName:'Postgress' },
             sql:{ class:'panel-default', dbName:'SQL' },
             mySql:{ class:'panel-default', dbName:'mySql' },
             mongodb:{ class:'panel-default', dbName:'Mongodb' },
@@ -39,10 +39,21 @@
 
         $scope.config = dbConfigs['postgress'];
 
-        $scope.saveFormData = function (data) {
-            dbLayerService.getViewConfigs(data).then(function (resp, status, headers, config) {
+        $scope.configCallback = function (data, key, type) {
+            var _connReq = {};
+            _connReq[key] = data;
+            if('save'===type) {
+                dbLayerService.saveConfig(_connReq).then(function (resp, status, headers, config) {
 
-            }, function (error) {});
+                }, function (error) {
+                });
+            } else if('test'===type) {
+                dbLayerService.testConnection(_connReq).then(function (resp, status, headers, config) {
+                    alert('connection Successful!');
+                }, function (error) {
+                    alert('connection Test Failed!');
+                });
+            }
         }
 
         $scope.changeTab = function (index) {
@@ -55,7 +66,8 @@
             restrict: 'AE',
             scope:{
                 config:'=',
-                saveForm:'&?'
+                key:'@',
+                configCallback:'&?'
             },
             templateUrl: function () {
                 var userRole = true, _optionTemplates = {
@@ -70,7 +82,10 @@
             },
             controller: function ($scope, $element) {
                 $scope.saveFormInfo = function (e) {
-                    $scope.saveForm()(e.config);
+                    $scope.configCallback()(e.config, $scope.key, 'save');
+                }
+                $scope.testConnectionInfo = function (e) {
+                    $scope.configCallback()(e.config, $scope.key, 'test');
                 }
             }
         };
@@ -84,9 +99,12 @@
             getUserDatabases: function (req) {
                 return $http({method: 'get', url: '/dblayer/userDbs', params: req});
             },
-            getViewConfigs: function (req) {
+            testConnection: function (req) {
+                return $http({method: 'post', url: '/dblayer/db/connection', data: req});
+            },
+            saveConfig: function (req) {
                 return $http({method: 'post', url: '/dblayer/db', data: req});
-            }
+            },
         };
         return _service;
     }

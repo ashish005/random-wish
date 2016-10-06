@@ -12,6 +12,7 @@ app.server.listen(4016, function () {
 
 app.server.use('/database', app.express.static(__dirname + '/database'));
 app.server.use('/data', app.express.static(__dirname + '/data'));
+app.server.use('/server', app.express.static(__dirname + '/server'));
 //app.server.use('/images', app.express.static(__dirname + '/images'));
 //app.server.use('/assets', app.express.static(__dirname + '/assets'));
 

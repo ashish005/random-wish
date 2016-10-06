@@ -17,13 +17,13 @@ module.exports = function() {
     server.use(bodyParser.json());
     server.use(cors());
 
-    server.use('/dblayer', require('./db-layer/db-layer.main')(express, server, http));
+    server.use('/dblayer', require('./db-layer/db-layer.base')(express, server, http));
     server.use('/apis', require('./routes')(express, server, http));
     server.use('/core', require('./core')(express));
 
     var port = process.env.PORT || 4010;        // set our port
     server.set('port', port);
-    server.set('views', __dirname + '/views');
+    server.set('views', __dirname);
     server.set('view engine', 'jade');
 
     //server.use(livereload({port: livereloadport}));
