@@ -1,0 +1,36 @@
+<div class="form-group">
+    <label class="col-sm-2 control-label">{{ val.name }}</label>
+    <div class="col-sm-10" ng-init="val.method = 'Get'">
+        <div class="input-group m-b">
+            <div class="input-group-btn" dropdown>
+                <button class="btn btn-white dropdown-toggle" dropdown-toggle type="button">
+                    {{val.method}} <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <li ng-click="val.method = 'Get'"><a href="">Get</a></li>
+                    <li ng-click="val.method = 'Put'"><a href="">Put</a></li>
+                    <li ng-click="val.method = 'Post'"><a href="">Post</a></li>
+                    <li ng-click="val.method = 'Delete'"><a href="">Delete</a></li>
+                </ul>
+            </div>
+            <input type="text" class="form-control" ng-model="val.value">
+            <div class="input-group-btn open">
+                <button class="btn btn-white dropdown-toggle" type="button">
+                    Params
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-10">
+            <div class="form-group">
+            <label class="col-sm-2 control-label">
+                Params
+            </label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control">
+            </div>
+            <div class="col-sm-5">
+                <input type="text" class="form-control">
+            </div>
+        </div>
+        </div>
+    </div>
+</div>

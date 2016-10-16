@@ -3,8 +3,9 @@
     <h4 class="modal-title">View : <strong> {{modalOptions.model['name']}} </strong> </h4>
 </div>
 <div class="modal-body" ng-init="model = modalOptions.model">
-    <apis-info></apis-info>
+    <popup-decision-maker type="{{model.type}}" model="model"></popup-decision-maker>
 </div>
 <div class="modal-footer">
+    <button type="button" class="btn btn-primary" data-ng-click="modalOptions.ok(this.modalOptions)">Save changes</button>
     <button type="button" class="btn btn-white" data-dismiss="modal" data-ng-click="modalOptions.close()">Close</button>
 </div>

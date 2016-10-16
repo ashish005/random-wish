@@ -1,6 +1,6 @@
 <div class="ibox float-e-margins">
     <div class="ibox-title">
-        <strong>API's Name :</strong> started following <br>
+        <strong>API's Name : </strong> started following <br>
         <strong>Description :</strong>
         <small class="text-muted"> Today 4:21 pm - 12.06.2014</small>
     </div>
@@ -11,20 +11,20 @@
                     <div class="input-group-btn">
                         <button data-toggle="dropdown"
                                 class="btn btn-white dropdown-toggle" type="button"
-                                aria-expanded="false">GET <span class="caret"></span>
+                                aria-expanded="false">
+                            {{apiInfo.method}}
+                            <span class="caret"></span>
                         </button>
-                        <ul class="dropdown-menu">
-                            <li><a href="#">GET</a></li>
-                            <li><a href="#">PUT</a></li>
-                            <li><a href="#">POST</a></li>
-                            <li><a href="#">DELETE</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#">Separated link</a></li>
+                        <ul class="dropdown-menu" style="left: 0px;">
+                            <li ng-click="apiInfo.method='Get'"><a href="">Get</a></li>
+                            <li ng-click="apiInfo.method='Put'"><a href="">Put</a></li>
+                            <li ng-click="apiInfo.method='Post'"><a href="">Post</a></li>
+                            <li ng-click="apiInfo.method='Delete'"><a href="">Delete</a></li>
                         </ul>
                     </div>
-                    <input type="text" class="form-control">
+                    <input type="text" class="form-control" ng-model="apiInfo.name">
                     <div class="input-group-btn open">
-                        <button class="btn btn-white dropdown-toggle" type="button">
+                        <button class="btn btn-white dropdown-toggle" ide-key="params" type="button" id="params"> <!--data-ng-click="showPopup('params');"-->
                             Params
                         </button>
                     </div>
@@ -44,8 +44,7 @@
             <div class="sidebar-container">
                 <ul class="nav nav-tabs">
                     <li ng-class="{active: (apisTab==1)}">
-                        <a ng-click="apisTab = 1" ng-init="apisTab = 1">
-                            Authorization </a>
+                        <a ng-click="apisTab = 1" ng-init="apisTab = 1"> Authorization </a>
                     </li>
                     <li ng-class="{active: (apisTab==2)}">
                         <a ng-click="apisTab = 2"> Headers </a>
@@ -60,65 +59,44 @@
                         <a ng-click="apisTab = 5"> Tests </a>
                     </li>
                 </ul>
-                <div class="tab-content">
+                <div class="tab-content col-xs-12" style="min-height: 400px;border: 1px solid #2f4050;">
                     <div class="tab-pane" ng-if="apisTab==1"
                          ng-class="{active: (apisTab==1)}">
-                        <div class="ibox">
-                            <div class="ibox-title">
-                                <h5>Issue list</h5>
-                            </div>
-                            <div class="ibox-content">
-                                <div class="m-b-lg">
-                                    <div class="input-group">
-                                        <input type="text"
-                                               placeholder="Search issue by name..."
-                                               class=" form-control">
-                                    <span class="input-group-btn">
-                                        <button type="button" class="btn btn-white"> Search</button>
-                                    </span>
-                                    </div>
-                                    <div class="m-t-md">
-                                        <div class="pull-right">
-                                            <button type="button"
-                                                    class="btn btn-sm btn-white"><i
-                                                    class="fa fa-comments"></i></button>
-                                            <button type="button"
-                                                    class="btn btn-sm btn-white"><i
-                                                    class="fa fa-user"></i></button>
-                                            <button type="button"
-                                                    class="btn btn-sm btn-white"><i
-                                                    class="fa fa-list"></i></button>
-                                            <button type="button"
-                                                    class="btn btn-sm btn-white"><i
-                                                    class="fa fa-pencil"></i></button>
-                                            <button type="button"
-                                                    class="btn btn-sm btn-white"><i
-                                                    class="fa fa-print"></i></button>
-                                            <button type="button"
-                                                    class="btn btn-sm btn-white"><i
-                                                    class="fa fa-cogs"></i></button>
-                                        </div>
-                                        <strong>Found 61 issues.</strong>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        {{ apiInfo.authrization }}
                     </div>
                     <div class="tab-pane" ng-if="apisTab==2"
                          ng-class="{active: (apisTab==2)}">
-                        apisTab 2
+                        {{ apiInfo.headers }}
                     </div>
                     <div class="tab-pane" ng-if="apisTab==3"
                          ng-class="{active: (apisTab==3)}">
-                        tab 3
+                        {{ apiInfo.body }}
                     </div>
                     <div class="tab-pane" ng-if="apisTab==4"
                          ng-class="{active: (apisTab==4)}">
-                        tab 4
+                        {{ apiInfo.prereqscript }}
+                        <div id="editor">function foo(items) {
+                            var x = "All this is syntax highlighted";
+                            return x;
+                            }</div>
+                        <script>
+                            var editor = ace.edit("editor");
+                            editor.setTheme("ace/theme/monokai");
+                            editor.getSession().setMode("ace/mode/javascript");
+                        </script>
                     </div>
                     <div class="tab-pane" ng-if="apisTab==5"
                          ng-class="{active: (apisTab==5)}">
-                        tab 5
+                        {{ apiInfo.simulation }}
+                        <div id="editor">function foo(items) {
+                            var x = "All this is syntax highlighted";
+                            return x;
+                            }</div>
+                        <script>
+                            var editor = ace.edit("editor");
+                            editor.setTheme("ace/theme/monokai");
+                            editor.getSession().setMode("ace/mode/javascript");
+                        </script>
                     </div>
                 </div>
             </div>

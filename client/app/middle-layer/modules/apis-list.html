@@ -1,0 +1,13 @@
+<div class="col-xs-12">
+    <ul class="list-group clear-list m-t">
+        <li class="list-group-item" ng-class="(0==$index)?'fist-item':''" ng-repeat="item in data">
+            <a class="pull-right btn btn-white btn-xs" style="margin-left: 4px;"><span class="fa fa-trash"></span></a>
+            <btn id="invokeApi" class="pull-right btn btn-white btn-xs" key="{{item.id}}" style="margin-left: 4px;"><span class="fa fa-angle-double-right"></span></btn>
+            <span class="label label-success" ng-if="'Get' == item.method">{{ item.method }}</span>
+            <span class="label label-warning-light" ng-if="'Post' == item.method">{{ item.method }}</span>
+            <span class="label label-info" ng-if="'Put' == item.method">{{ item.method }}</span>
+            <span class="label label-default" ng-if="'Delete' == item.method">{{ item.method }}</span>
+            {{item.name}}
+        </li>
+    </ul>
+</div>

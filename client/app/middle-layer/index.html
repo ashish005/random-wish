@@ -11,7 +11,7 @@
                     <div class="sidebar-title">
                         <div class="row">
                             <div class="pull-right">
-                                <button data-ng-click="createApis();" type="button" class="btn btn-outline btn-info"> + </button>
+                                <button data-ng-click="showPopup('add-module');" type="button" class="btn btn-outline btn-info"> + </button>
                             </div>
                             <div class="input-group col-xs-10">
                                 <input type="text" placeholder="Search issue by name..." class=" form-control">
@@ -19,16 +19,7 @@
                         </div>
                     </div>
                     <div>
-                        <div class="sidebar-message" ng-repeat="item in apis">
-                            <a href="#">
-                                <div class="pull-left text-center">
-                                    {{ item }}
-                                </div>
-                                <div class="media-body">
-                                    {{item}}
-                                </div>
-                            </a>
-                        </div>
+                        <apis-list></apis-list>
                     </div>
                 </div>
             </div>
@@ -44,7 +35,7 @@
                                 <a ng-click="tab = 1" ng-init="tab = 1"> API Info </a>
                             </li>
                             <li ng-class="{active: (tab==2)}">
-                                <a ng-click="tab = 2">API Module</a>
+                                <a ng-click="tab = 2">API's</a>
                             </li>
                             <li ng-class="{active: (tab==3)}">
                                 <a ng-click="tab = 3">API History </a>
@@ -55,7 +46,7 @@
                                 <apis-info></apis-info>
                             </div>
                             <div class="tab-pane" ng-if="tab==2" ng-class="{active: (tab==2)}">
-                                tab 3
+                                <apis-list></apis-list>
                             </div>
                             <div class="tab-pane" ng-if="tab==3" ng-class="{active: (tab==3)}">
                                 <div class="ibox">

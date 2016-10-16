@@ -16,8 +16,13 @@ module.exports = function() {
     server.use(bodyParser.urlencoded({extended: true}));
     server.use(bodyParser.json());
     server.use(cors());
+    server.use(function(err, req, res, next) {
+        console.error(err.stack);
+        res.status(500).send('Something broke!');
+    });
 
     server.use('/dblayer', require('./db-layer/db-layer.base')(express, server, http));
+    server.use('/middlelayer', require('./middle-layer/middle-layer.base')(express, server, http));
     server.use('/apis', require('./routes')(express, server, http));
     server.use('/core', require('./core')(express));
 

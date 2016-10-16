@@ -26,6 +26,20 @@ module.exports = (function(){
             }
         });
     };
+
+    pg.dbInsert = function (model, cb) {
+        this.dbConnect(model.config, function (error, client, done) {
+            errorHandler(error);
+            if(client) {
+                client.query(model.query, function(err, results) {
+                    done();
+                    cb(err, results);
+                });
+            }else {
+                cb(error, null);
+            }
+        });
+    };
     
     return pg;
 })();

@@ -26,6 +26,9 @@
     _connector.dbSelect = function (model, cb) {
         this[model.type].dbSelect(model, cb);
     };
+    _connector.dbInsert = function (model, cb) {
+        this[model.type].dbInsert(model, cb);
+    };
     
     exports = module.exports = _connector;
 })();
