@@ -25,7 +25,7 @@
             </div>
         </div>
     </div>
-    <div style=" margin-left: 260px;">
+    <div style="margin-left: 260px;">
         <div class="wrapper wrapper-content  animated fadeInRight" style="margin-top: -10px;">
             <div class="row">
                 <div class="col-lg-12">
@@ -35,7 +35,7 @@
                                 <a ng-click="tab = 1" ng-init="tab = 1"> API Info </a>
                             </li>
                             <li ng-class="{active: (tab==2)}">
-                                <a ng-click="tab = 2">API's</a>
+                                <a ng-click="tab = 2">API's Code</a>
                             </li>
                             <li ng-class="{active: (tab==3)}">
                                 <a ng-click="tab = 3">API History </a>
@@ -46,7 +46,16 @@
                                 <apis-info></apis-info>
                             </div>
                             <div class="tab-pane" ng-if="tab==2" ng-class="{active: (tab==2)}">
-                                <apis-list></apis-list>
+                                <div class="ibox float-e-margins">
+                                    <div class="ibox-title">
+                                        <strong>API's Name : </strong> started following <br>
+                                        <strong>Description :</strong>
+                                        <small class="text-muted"> Today 4:21 pm - 12.06.2014</small>
+                                    </div>
+                                    <div class="ibox-content" style="overflow: hidden;">
+                                        <div code-editor mode="javascript" style="position: relative;"></div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="tab-pane" ng-if="tab==3" ng-class="{active: (tab==3)}">
                                 <div class="ibox">

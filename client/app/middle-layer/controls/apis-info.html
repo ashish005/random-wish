@@ -74,29 +74,11 @@
                     </div>
                     <div class="tab-pane" ng-if="apisTab==4"
                          ng-class="{active: (apisTab==4)}">
-                        {{ apiInfo.prereqscript }}
-                        <div id="editor">function foo(items) {
-                            var x = "All this is syntax highlighted";
-                            return x;
-                            }</div>
-                        <script>
-                            var editor = ace.edit("editor");
-                            editor.setTheme("ace/theme/monokai");
-                            editor.getSession().setMode("ace/mode/javascript");
-                        </script>
+                        <div code-editor data="apiInfo.prereqscript" mode="javascript"></div>
                     </div>
                     <div class="tab-pane" ng-if="apisTab==5"
                          ng-class="{active: (apisTab==5)}">
-                        {{ apiInfo.simulation }}
-                        <div id="editor">function foo(items) {
-                            var x = "All this is syntax highlighted";
-                            return x;
-                            }</div>
-                        <script>
-                            var editor = ace.edit("editor");
-                            editor.setTheme("ace/theme/monokai");
-                            editor.getSession().setMode("ace/mode/javascript");
-                        </script>
+                        <div code-editor data="apiInfo.simulation" mode="json"></div>
                     </div>
                 </div>
             </div>

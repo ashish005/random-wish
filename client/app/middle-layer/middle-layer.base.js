@@ -281,6 +281,52 @@
             }
         };
     };
+
+    function codeEditor($compile) {
+        return {
+            restrict: 'AE',
+            replace: true,
+            scope: {
+                data: '=?',
+                mode:'@?'
+            },
+            template:'<div><div><ul id="codeOptions" class="list-group m-t">\
+                        <li ide-key="undo" class="list-group-item"> Undo </li>\
+                        <li ide-key="redo" class="list-group-item"> Redo </li>\
+                        </ul></div>\
+            <div id="editor">{{data}}</div><textarea name="editor" ng-model="data" style="display: none;" /></div>',
+            controller: function ($scope, $element) {
+                var editor = null;
+                $element.find('#codeOptions').on('click', 'li', function (e) {
+                    e.preventDefault();
+                    var type = this.getAttribute('ide-key');
+                    if('undo' === type){
+                        editor.undo();
+                    }else if('redo' === type){
+                        editor.redo();
+                    } else if('debug' === type){
+
+                    }
+                });
+                //$scope.data = 'function foo(items) { var x = "All this is syntax highlighted";return x;}';
+                require([ace], function(){
+                     editor = ace.edit('editor');
+                    var textarea = $('textarea[name="editor"]');
+                    editor.setTheme("ace/theme/monokai");
+                    editor.getSession().setMode("ace/mode/"+$scope.mode);
+
+                    editor.getSession().on("change", function () {
+                        textarea.val(editor.getSession().getValue());
+                    });
+                    setTimeout(function() {
+                        editor.setValue("And now how can I reset the\nundo stack,so pressing\nCTRL+Z (or Command + Z) will *NOT*\ngo back to previous value?", -1);
+                        editor.getSession().setUndoManager(new ace.UndoManager())
+                    }, 60000);
+                });
+            }
+        };
+    };
+
     function MiddleLayerService($q, $http, RequestResponseParser) {
         var projectService = {
             getApisCollectionsById: function (req) {
@@ -351,6 +397,7 @@
     app.directive('dynamicModelElements', dynamicModelElements);
     app.directive('apisList', ['$rootScope', 'middleLayerService', apisList]);
     app.directive('createElement', ['$compile', createElement]);
+    app.directive('codeEditor', ['$compile', codeEditor]);
     app.service('middleLayerService', ['$q', '$http', 'requestResponseParser', MiddleLayerService]);
     app.factory('requestResponseParser', ['$http', RequestResponseParser]);
     app.directive('popupDecisionMaker', ['$compile', popupDecisionMaker]);
