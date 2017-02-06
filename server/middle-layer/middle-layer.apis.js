@@ -1,15 +1,16 @@
 (function(){
     'use strict';
-    var connector = require('../db-configs/db.connector');
+    //var connector = require('../db-configs/db.connector');
 
-    function routes(router){
-        router.get('/s', function(req, res) {
+    function appRoutes(router){
+        router.get('/simulation/:api', function(req, res) {
             var results = {
+                api:req.params.api
             };
             return res.json({success: true, data: results});
         });
         return router;
     }
 
-    module.exports = routes;
+    module.exports = appRoutes;
 })();

@@ -1,29 +1,9 @@
 (function(){
     'use strict';
+    var fs = require('fs');
     var connector = require('../db-configs/db.connector');
     var config = "pg://postgres:password@123@127.0.0.1:5432/postgres";
     function routes(router){
-        router.get('/modules', function(req, res) {
-            var results = {
-            };
-            return res.json({success: true, data: results});
-        });
-        router.put('/modules', function(req, res) {
-            var results = {
-            };
-            return res.json({success: true, data: results});
-        });
-        router.post('/modules', function(req, res) {
-            var results = {
-            };
-            return res.json({success: true, data: results});
-        });
-        router.delete('/modules', function(req, res) {
-            var results = {
-            };
-            return res.json({success: true, data: results});
-        });
-
         router.get('/apis/:id', function(req, res) {
             var _query = "SELECT * FROM public.apisrepository where id = " + req.params.id;
 
@@ -36,9 +16,28 @@
                 if(err){
                     return res.json({success: false, message: JSON.stringify(err)});
                 }
+               /* var dir = './apis/';
+                checkDirectorySync(dir);
+                var v = function(req, res) {
+                    var results = {};
+                    return res.json({success: true, data: results});
+                };
+
+                fs.writeFile(dir+'helloworld.js', ''+v, function (err) {
+                    if (err) return console.log(err);
+                    console.log('Hello World > helloworld.txt');
+                });*/
                 return res.json({success: true, data: results.rows[0]});
             });
         });
+
+        /*function checkDirectorySync(directory) {
+            try {
+                fs.statSync(directory);
+            } catch(e) {
+                fs.mkdirSync(directory);
+            }
+        }*/
 
         router.get('/apis', function(req, res) {
             var _query = "SELECT id, method, name FROM public.apisrepository";
@@ -52,6 +51,7 @@
                 if(err){
                     return res.json({success: false, message: JSON.stringify(err)});
                 }
+
                 return res.json({success: true, data: results.rows});
             });
         });

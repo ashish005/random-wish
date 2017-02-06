@@ -1,0 +1,13 @@
+<form role="form" class="form-inline">
+    <div class="row" ng-repeat="(key, val) in data">
+        <div class="form-group col-lg-5">
+            <input type="text" placeholder="Enter email" class="textbox">
+        </div>
+        <div class="form-group col-lg-6">
+            <input type="text" placeholder="Password" class="textbox">
+        </div>
+        <div class="pull-right">
+            <button ng-if="(data.length-1)==$index" type="button" class="pull-right btn btn-outline btn-info btn-xs" ng-click="add(data)"> + </button>
+        </div>
+    </div>
+</form>

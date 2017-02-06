@@ -36,7 +36,7 @@
                 </button>
             </div>
             <div class="col-sm-2">
-                <button class="btn btn-white" style="width: 100%;" type="button"> Save
+                <button id="saveApi" class="btn btn-white" style="width: 100%;" type="button"> Save
                 </button>
             </div>
         </div>
@@ -66,19 +66,43 @@
                     </div>
                     <div class="tab-pane" ng-if="apisTab==2"
                          ng-class="{active: (apisTab==2)}">
-                        {{ apiInfo.headers }}
+                        <div class="col-lg-6">
+                            <div class="ibox float-e-margins">
+                                <div>
+                                    <h5>Headers</h5>
+                                </div>
+                                <div class="ibox-content">
+                                    <key-val-options data="apiInfo.headers"></key-val-options>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="ibox float-e-margins">
+                                <div>
+                                    <h5>Params</h5>
+                                </div>
+                                <div class="ibox-content">
+                                    <key-val-options data="apiInfo.params"></key-val-options>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="tab-pane" ng-if="apisTab==3"
                          ng-class="{active: (apisTab==3)}">
-                        {{ apiInfo.body }}
+                        <key-val-options data="apiInfo.body"></key-val-options>
                     </div>
                     <div class="tab-pane" ng-if="apisTab==4"
                          ng-class="{active: (apisTab==4)}">
-                        <div code-editor data="apiInfo.prereqscript" mode="javascript"></div>
+                        <div code-editor type="prereqscript" data="apiInfo.prereqscript" mode="javascript"></div>
                     </div>
                     <div class="tab-pane" ng-if="apisTab==5"
                          ng-class="{active: (apisTab==5)}">
-                        <div code-editor data="apiInfo.simulation" mode="json"></div>
+                        <div>
+                            /simulation/  {{apiInfo.name}}
+                        </div>
+                        <br>
+
+                        <div code-editor type="simulation" data="apiInfo.simulation" mode="json"></div>
                     </div>
                 </div>
             </div>

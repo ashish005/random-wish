@@ -113,7 +113,7 @@
         }
     }
 
-    function apisInfo($rootScope, popupService, MiddleLayerService){
+    function apisInfo($rootScope, popupService, MiddleLayerService, apiReqModel){
         return {
             restrict: 'AE',
             replace: true,
@@ -121,23 +121,11 @@
             transclude: true,
             templateUrl: _baseModulesPath['baseTemplateUrl'] + 'controls/apis-info.html',
             link: function ($scope, $element, $attrs) {
-                 function apiReqModel(){
-                     this.id=null;
-                     this.method='Get';
-                     this.name='';
-                     this.params=[];
-                     this.authrization=null;
-                     this.headers=null;
-                     this.body=null;
-                     this.prereqscript=null;
-                     this.simulation=null;
-                };
-                $scope.apiInfo = new apiReqModel();
+
+                $scope.apiInfo = apiReqModel.getInfoModel({});
                 $rootScope.$on('apiInfo', function(event, req) {
                     MiddleLayerService.getApisCollectionsById(req).then(function(resp){
-                        var _obj = new apiReqModel();
-                        angular.extend(_obj, resp.data);
-                        $scope.apiInfo = _obj;
+                        $scope.apiInfo = apiReqModel.getInfoModel(resp.data);
                     }, function(error){
                         console.log(JSON.stringify(error));
                     });
@@ -188,9 +176,32 @@
                         };
                     })(types[type]), _service[type],  popupService)();
                 });
+
+                $element.on('click', '#saveApi', function(e) {
+                    e.stopPropagation();
+                    debugger;
+                    console.log(apiReqModel.get());
+                    alert('hi');
+                });
             }
         };
     }
+
+    function keyValOptions($compile) {
+        return {
+            restrict: 'AE',
+            replace: true,
+            scope: {
+                data: '=?'
+            },
+            templateUrl: _baseModulesPath['baseTemplateUrl'] + 'controls/key-val-options.html',
+            controller: function ($scope, $element) {
+                $scope.add = function(data){
+                    data.push({key:'', val:''});
+                }
+            }
+        };
+    };
     
     function apisList($rootScope, MiddleLayerService){
         return {
@@ -282,11 +293,12 @@
         };
     };
 
-    function codeEditor($compile) {
+    function codeEditor($compile, apiReqModel) {
         return {
             restrict: 'AE',
             replace: true,
             scope: {
+                type:"@?",
                 data: '=?',
                 mode:'@?'
             },
@@ -315,13 +327,19 @@
                     editor.setTheme("ace/theme/monokai");
                     editor.getSession().setMode("ace/mode/"+$scope.mode);
 
+                    if($scope.data) {
+                        editor.getSession().setValue($scope.data);
+                    }
                     editor.getSession().on("change", function () {
-                        textarea.val(editor.getSession().getValue());
+                        var _val = editor.getSession().getValue();
+                        textarea.val(_val);
+                        $scope.data = _val;
+                        apiReqModel.update($scope.type, _val);
                     });
-                    setTimeout(function() {
+                    /*setTimeout(function() {
                         editor.setValue("And now how can I reset the\nundo stack,so pressing\nCTRL+Z (or Command + Z) will *NOT*\ngo back to previous value?", -1);
                         editor.getSession().setUndoManager(new ace.UndoManager())
-                    }, 60000);
+                    }, 60000);*/
                 });
             }
         };
@@ -391,14 +409,49 @@
 
         return fac;
     }
+
+    function apiReqModel(){
+        var _model = {
+            id : null,
+            method:'Get',
+            name : '',
+        };
+        function infoModel(model) {
+            this.id = model.id || null;
+            this.method = model.method || 'Get';
+            this.name = model.name || '';
+            this.params = model.params || [];
+            this.authrization = model.authrization || null;
+            this.headers = model.headers || [{key:'', val:''}];
+            this.params = model.params || [{key:'', val:''}];
+            this.body = model.body || [{key:'', val:''}];
+            this.prereqscript = model.prereqscript || 'function () {}';
+            this.simulation = model.simulation  || JSON.stringify({});
+        }
+        var info = {};
+        info.update = function (key, data) {
+            this[key] = data;
+        };
+        info.get = function () {
+            return this;
+        };
+        info.getInfoModel = function (model) {
+            return infoModel(model);
+        };
+        return info;
+    };
+
     app.controller('middleLayerBaseController', ['$scope', '$routeParams', 'popupService', 'appInfo', 'middleLayerService',
         middleLayerBaseController]);
-    app.directive('apisInfo',['$rootScope', 'popupService', 'middleLayerService', apisInfo]);
+    app.directive('apisInfo',['$rootScope', 'popupService', 'middleLayerService', 'apiReqModel', apisInfo]);
     app.directive('dynamicModelElements', dynamicModelElements);
     app.directive('apisList', ['$rootScope', 'middleLayerService', apisList]);
     app.directive('createElement', ['$compile', createElement]);
-    app.directive('codeEditor', ['$compile', codeEditor]);
+    app.directive('codeEditor', ['$compile', 'apiReqModel', codeEditor]);
+    app.directive('keyValOptions', ['$compile', keyValOptions]);
+
     app.service('middleLayerService', ['$q', '$http', 'requestResponseParser', MiddleLayerService]);
+    app.factory('apiReqModel',  apiReqModel);
     app.factory('requestResponseParser', ['$http', RequestResponseParser]);
     app.directive('popupDecisionMaker', ['$compile', popupDecisionMaker]);
 })();

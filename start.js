@@ -10,6 +10,10 @@ app.server.listen(4016, function () {
     console.log('I am listening ' + 4016);
 });
 
+app.server.listen(4022, function () {
+    console.log('I am listening ' + 4022);
+});
+
 app.server.use('/database', app.express.static(__dirname + '/database'));
 app.server.use('/data', app.express.static(__dirname + '/data'));
 app.server.use('/server', app.express.static(__dirname + '/server'));
